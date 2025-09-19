@@ -1,46 +1,25 @@
-package com.ep14.pet_manager.entity;
+package com.ep14.pet_manager.DTO;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.*;
+import com.ep14.pet_manager.entity.user;
 
-@Entity
-@Table(name = "Roles")
-public class Role {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class RoleDTO {
+
     private Long role_id;
-
-    @Column(name="code", nullable = false)
     private String code;
-
-    @Column(unique = true, length = 100)
     private String description;
-
-    @Column(nullable = false)
-    private OffsetDateTime created_at = OffsetDateTime.now();
-
-    @Column(nullable = false)
-    private OffsetDateTime updated_at = OffsetDateTime.now();
-
-    @OneToMany(mappedBy = "role")
+    private OffsetDateTime created_at;
+    private OffsetDateTime updated_at;
     private List<user> users;
-    
-    public Role() {
-    
+
+    public RoleDTO(){
+
     }
 
-    @JsonCreator
-    public Role(
-        @JsonProperty("id") Long role_id, 
-        @JsonProperty("code") String code, 
-        @JsonProperty("description") String description, 
-        @JsonProperty("createdAt") OffsetDateTime created_at, 
-        @JsonProperty("updatedAt") OffsetDateTime updated_at,
-        @JsonProperty("users") List<user> users) {
+    public RoleDTO(Long role_id, String code, String description, OffsetDateTime created_at, OffsetDateTime updated_at,
+            List<user> users) {
         this.role_id = role_id;
         this.code = code;
         this.description = description;
@@ -97,5 +76,6 @@ public class Role {
         this.users = users;
     }
 
+    
     
 }

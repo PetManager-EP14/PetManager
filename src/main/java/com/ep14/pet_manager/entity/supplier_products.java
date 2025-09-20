@@ -3,6 +3,9 @@ package com.ep14.pet_manager.entity;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -39,9 +42,14 @@ public class supplier_products {
     public supplier_products() {
     }
 
-    public supplier_products(com.ep14.pet_manager.entity.product product,
-            com.ep14.pet_manager.entity.suppliers suppliers, BigDecimal cost_ref, Integer lead_time_days,
-            boolean active, OffsetDateTime created_at, OffsetDateTime updated_at) {
+    @JsonCreator
+    public supplier_products(@JsonProperty("product") com.ep14.pet_manager.entity.product product,
+                @JsonProperty("suppliers") com.ep14.pet_manager.entity.suppliers suppliers,
+                @JsonProperty("cost_ref") BigDecimal cost_ref,
+                @JsonProperty("lead_time_days") Integer lead_time_days,
+                @JsonProperty("active") boolean active,
+                @JsonProperty("created_id") OffsetDateTime created_at,
+                @JsonProperty("updated_at") OffsetDateTime updated_at) {
         this.product = product;
         this.suppliers = suppliers;
         this.cost_ref = cost_ref;

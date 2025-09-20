@@ -84,9 +84,5 @@ public class shopping_details {
     public void setCreated(OffsetDateTime created_at) {
         this.created_at = created_at;
     }
-
-    
-
-    
     
 }

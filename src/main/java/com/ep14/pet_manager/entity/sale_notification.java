@@ -1,9 +1,6 @@
 package com.ep14.pet_manager.entity;
 
-import java.math.BigInteger;
 import java.time.OffsetDateTime;
-
-import org.springframework.data.domain.OffsetScrollPosition;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -16,7 +13,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -27,7 +24,7 @@ public class sale_notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long sale_notification_id;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(nullable = false)
     private sale sale;
 

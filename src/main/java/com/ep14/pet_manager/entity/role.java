@@ -8,8 +8,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "Roles")
-public class Role {
+@Table(name = "roles")
+public class role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long role_id;
@@ -29,12 +29,12 @@ public class Role {
     @OneToMany(mappedBy = "role")
     private List<user> users;
     
-    public Role() {
+    public role() {
     
     }
 
     @JsonCreator
-    public Role(
+    public role(
         @JsonProperty("id") Long role_id, 
         @JsonProperty("code") String code, 
         @JsonProperty("description") String description, 

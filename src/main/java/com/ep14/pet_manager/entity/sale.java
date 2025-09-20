@@ -2,6 +2,10 @@ package com.ep14.pet_manager.entity;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,6 +16,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -46,11 +52,26 @@ public class sale {
     @Column(nullable = false)
     private OffsetDateTime updated_at = OffsetDateTime.now();
 
+    @OneToOne
+    private sale_notification sale_notification;
+
+    @OneToMany(mappedBy = "sale")
+    private List<sale_details> sale_details;
+
     public sale() {
     }
 
-    public sale(Long sale_id, com.ep14.pet_manager.entity.user user, OffsetDateTime date, payment_method method,
-            sale_status status, BigDecimal total, OffsetDateTime created_at, OffsetDateTime updated_at) {
+    @JsonCreator
+    public sale(@JsonProperty("sale_id") Long sale_id,
+            @JsonProperty("user") com.ep14.pet_manager.entity.user user,
+            @JsonProperty("date") OffsetDateTime date,
+            @JsonProperty("method") payment_method method,
+            @JsonProperty("status") sale_status status,
+            @JsonProperty("total") BigDecimal total,
+            @JsonProperty("created_at") OffsetDateTime created_at,
+            @JsonProperty("updated_at") OffsetDateTime updated_at,
+            @JsonProperty("sale_notification") com.ep14.pet_manager.entity.sale_notification sale_notification,
+            @JsonProperty("sale_details") List<sale_details> sale_details) {
         this.sale_id = sale_id;
         this.user = user;
         this.date = date;
@@ -59,6 +80,8 @@ public class sale {
         this.total = total;
         this.created_at = created_at;
         this.updated_at = updated_at;
+        this.sale_notification = sale_notification;
+        this.sale_details = sale_details;
     }
 
     public Long getSale_id() {
@@ -123,6 +146,22 @@ public class sale {
 
     public void setUpdated_at(OffsetDateTime updated_at) {
         this.updated_at = updated_at;
+    }
+
+    public sale_notification getSale_notification() {
+        return sale_notification;
+    }
+
+    public void setSale_notification(sale_notification sale_notification) {
+        this.sale_notification = sale_notification;
+    }
+
+    public List<sale_details> getSale_details() {
+        return sale_details;
+    }
+
+    public void setSale_details(List<sale_details> sale_details) {
+        this.sale_details = sale_details;
     }
 
 

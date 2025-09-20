@@ -18,7 +18,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "sale_details")
 public class sale_details {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long sale_detail_id;
@@ -42,10 +42,10 @@ public class sale_details {
 
     @JsonCreator
     public sale_details(@JsonProperty("sale_detail_id") Long sale_detail_id,
-                @JsonProperty("sale") com.ep14.pet_manager.entity.sale sale,
-                @JsonProperty("product") com.ep14.pet_manager.entity.product product,
-                @JsonProperty("amount") BigDecimal amount,
-                @JsonProperty("created_at") OffsetDateTime created_at) {
+            @JsonProperty("sale") com.ep14.pet_manager.entity.sale sale,
+            @JsonProperty("product") com.ep14.pet_manager.entity.product product,
+            @JsonProperty("amount") BigDecimal amount,
+            @JsonProperty("created_at") OffsetDateTime created_at) {
         this.sale_detail_id = sale_detail_id;
         this.sale = sale;
         this.product = product;
@@ -92,5 +92,5 @@ public class sale_details {
     public void setCreated_at(OffsetDateTime created_at) {
         this.created_at = created_at;
     }
-    
+
 }

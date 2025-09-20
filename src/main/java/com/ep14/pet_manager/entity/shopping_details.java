@@ -16,7 +16,7 @@ public class shopping_details {
     private Long shopping_detail_id;
 
     @ManyToOne
-    @JoinColumn(nullable =false)
+    @JoinColumn(nullable = false)
     private shopping shopping;
 
     @ManyToOne
@@ -34,10 +34,10 @@ public class shopping_details {
 
     @JsonCreator
     public shopping_details(@JsonProperty("shopping_detail_id") Long shopping_detail_id,
-                @JsonProperty("shopping") com.ep14.pet_manager.entity.shopping shopping,
-                @JsonProperty("product") com.ep14.pet_manager.entity.product product, 
-                @JsonProperty("amount") BigDecimal amount,
-                @JsonProperty("created_at") OffsetDateTime created_at) {
+            @JsonProperty("shopping") com.ep14.pet_manager.entity.shopping shopping,
+            @JsonProperty("product") com.ep14.pet_manager.entity.product product,
+            @JsonProperty("amount") BigDecimal amount,
+            @JsonProperty("created_at") OffsetDateTime created_at) {
         this.shopping_detail_id = shopping_detail_id;
         this.shopping = shopping;
         this.product = product;
@@ -84,5 +84,5 @@ public class shopping_details {
     public void setCreated(OffsetDateTime created_at) {
         this.created_at = created_at;
     }
-    
+
 }

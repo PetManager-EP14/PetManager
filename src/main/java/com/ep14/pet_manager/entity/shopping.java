@@ -52,22 +52,22 @@ public class shopping {
     private user user;
 
     @OneToMany(mappedBy = "shopping")
-    private List<shopping_details> shopping_details ;
+    private List<shopping_details> shopping_details;
 
-    public shopping(){
+    public shopping() {
 
     }
 
     @JsonCreator
     public shopping(@JsonProperty("id") Long shopping_id,
-                @JsonProperty("suppliers") com.ep14.pet_manager.entity.suppliers suppliers,
-                @JsonProperty("date") OffsetDateTime date,
-                @JsonProperty("status") status_shopping status,
-                @JsonProperty("total") BigDecimal total,
-                @JsonProperty("created_at") OffsetDateTime created_at,
-                @JsonProperty("updated_at") OffsetDateTime updated_at,
-                @JsonProperty("user") com.ep14.pet_manager.entity.user user,
-                @JsonProperty("shopping_details") List<shopping_details> shopping_details ) {
+            @JsonProperty("suppliers") com.ep14.pet_manager.entity.suppliers suppliers,
+            @JsonProperty("date") OffsetDateTime date,
+            @JsonProperty("status") status_shopping status,
+            @JsonProperty("total") BigDecimal total,
+            @JsonProperty("created_at") OffsetDateTime created_at,
+            @JsonProperty("updated_at") OffsetDateTime updated_at,
+            @JsonProperty("user") com.ep14.pet_manager.entity.user user,
+            @JsonProperty("shopping_details") List<shopping_details> shopping_details) {
         this.shopping_id = shopping_id;
         this.suppliers = suppliers;
         this.date = date;
@@ -150,7 +150,7 @@ public class shopping {
     public void setShopping_details(List<shopping_details> shopping_details) {
         this.shopping_details = shopping_details;
     }
-    
+
     public enum status_shopping {
         DRAFT, REGISTERED, ANNULLED;
     }

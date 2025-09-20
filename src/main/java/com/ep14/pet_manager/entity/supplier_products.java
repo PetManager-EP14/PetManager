@@ -15,11 +15,11 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "supplier_products")
 public class supplier_products {
-    
+
     @ManyToOne
     @JoinColumn(name = "product")
     private product product;
-    
+
     @ManyToOne
     @JoinColumn(name = "supplier_product")
     private suppliers suppliers;
@@ -44,12 +44,12 @@ public class supplier_products {
 
     @JsonCreator
     public supplier_products(@JsonProperty("product") com.ep14.pet_manager.entity.product product,
-                @JsonProperty("suppliers") com.ep14.pet_manager.entity.suppliers suppliers,
-                @JsonProperty("cost_ref") BigDecimal cost_ref,
-                @JsonProperty("lead_time_days") Integer lead_time_days,
-                @JsonProperty("active") boolean active,
-                @JsonProperty("created_id") OffsetDateTime created_at,
-                @JsonProperty("updated_at") OffsetDateTime updated_at) {
+            @JsonProperty("suppliers") com.ep14.pet_manager.entity.suppliers suppliers,
+            @JsonProperty("cost_ref") BigDecimal cost_ref,
+            @JsonProperty("lead_time_days") Integer lead_time_days,
+            @JsonProperty("active") boolean active,
+            @JsonProperty("created_id") OffsetDateTime created_at,
+            @JsonProperty("updated_at") OffsetDateTime updated_at) {
         this.product = product;
         this.suppliers = suppliers;
         this.cost_ref = cost_ref;
@@ -115,5 +115,4 @@ public class supplier_products {
         this.updated_at = updated_at;
     }
 
-    
 }

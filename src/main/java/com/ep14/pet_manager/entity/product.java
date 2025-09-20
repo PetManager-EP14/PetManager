@@ -18,7 +18,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "products")
 public class product {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long product_id;
@@ -53,22 +53,22 @@ public class product {
     @OneToMany(mappedBy = "product")
     private List<shopping_details> shopping_details;
 
-    public product(){
+    public product() {
 
     }
 
     @JsonCreator
     public product(@JsonProperty("product_id") Long product_id,
-                @JsonProperty("name") String name,
-                @JsonProperty("category") String category,
-                @JsonProperty("stock") BigDecimal stock,
-                @JsonProperty("price_shopping") BigDecimal price_shopping,
-                @JsonProperty("price_sale") BigDecimal price_sale,
-                @JsonProperty("created_at") OffsetDateTime created_at,
-                @JsonProperty("updated_at") OffsetDateTime updated_at,
-                @JsonProperty("sale_details") List<sale_details> sale_details,
-                @JsonProperty("supplier_product") List<supplier_products> supplier_products,
-                @JsonProperty("shopping_details") List<shopping_details> shopping_details) {
+            @JsonProperty("name") String name,
+            @JsonProperty("category") String category,
+            @JsonProperty("stock") BigDecimal stock,
+            @JsonProperty("price_shopping") BigDecimal price_shopping,
+            @JsonProperty("price_sale") BigDecimal price_sale,
+            @JsonProperty("created_at") OffsetDateTime created_at,
+            @JsonProperty("updated_at") OffsetDateTime updated_at,
+            @JsonProperty("sale_details") List<sale_details> sale_details,
+            @JsonProperty("supplier_product") List<supplier_products> supplier_products,
+            @JsonProperty("shopping_details") List<shopping_details> shopping_details) {
         this.product_id = product_id;
         this.name = name;
         this.category = category;

@@ -23,7 +23,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "sale")
 public class sale {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long sale_id;
@@ -163,8 +163,6 @@ public class sale {
     public void setSale_details(List<sale_details> sale_details) {
         this.sale_details = sale_details;
     }
-
-
 
     public enum payment_method {
         CHASH, CARD, TRANSFER, CREDIT;

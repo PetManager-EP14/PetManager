@@ -14,7 +14,7 @@ public class role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long role_id;
 
-    @Column(name="code", nullable = false)
+    @Column(name = "code", nullable = false)
     private String code;
 
     @Column(unique = true, length = 100)
@@ -28,19 +28,18 @@ public class role {
 
     @OneToMany(mappedBy = "role")
     private List<user> users;
-    
+
     public role() {
-    
+
     }
 
     @JsonCreator
-    public role(
-        @JsonProperty("id") Long role_id, 
-        @JsonProperty("code") String code, 
-        @JsonProperty("description") String description, 
-        @JsonProperty("createdAt") OffsetDateTime created_at, 
-        @JsonProperty("updatedAt") OffsetDateTime updated_at,
-        @JsonProperty("users") List<user> users) {
+    public role(@JsonProperty("id") Long role_id,
+            @JsonProperty("code") String code,
+            @JsonProperty("description") String description,
+            @JsonProperty("createdAt") OffsetDateTime created_at,
+            @JsonProperty("updatedAt") OffsetDateTime updated_at,
+            @JsonProperty("users") List<user> users) {
         this.role_id = role_id;
         this.code = code;
         this.description = description;
@@ -97,5 +96,4 @@ public class role {
         this.users = users;
     }
 
-    
 }

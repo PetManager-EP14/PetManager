@@ -58,23 +58,22 @@ public class user {
     @OneToMany(mappedBy = "shopping")
     private List<shopping> shoppings;
 
-
     public user() {
     }
 
     @JsonCreator
     public user(@JsonProperty("user_id") UUID user_id,
-                @JsonProperty("role_id") Long role_id,
-                @JsonProperty("name") String name,
-                @JsonProperty("email") String email,
-                @JsonProperty("phone") String phone,
-                @JsonProperty("address") String address,
-                @JsonProperty("password_hash") String password_hash,
-                @JsonProperty("created_at") OffsetDateTime created_at,
-                @JsonProperty("updated_at") OffsetDateTime updated_at,
-                @JsonProperty("role") com.ep14.pet_manager.entity.role role, 
-                @JsonProperty("sales") List<sale> sales,
-                @JsonProperty("shoppings") List<shopping> shoppings) {
+            @JsonProperty("role_id") Long role_id,
+            @JsonProperty("name") String name,
+            @JsonProperty("email") String email,
+            @JsonProperty("phone") String phone,
+            @JsonProperty("address") String address,
+            @JsonProperty("password_hash") String password_hash,
+            @JsonProperty("created_at") OffsetDateTime created_at,
+            @JsonProperty("updated_at") OffsetDateTime updated_at,
+            @JsonProperty("role") com.ep14.pet_manager.entity.role role,
+            @JsonProperty("sales") List<sale> sales,
+            @JsonProperty("shoppings") List<shopping> shoppings) {
         this.user_id = user_id;
         this.role_id = role_id;
         this.name = name;

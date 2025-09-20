@@ -46,9 +46,9 @@ public class suppliers {
     @JsonCreator
     public suppliers(
             @JsonProperty("supplier_id") Long supplier_id,
-            @JsonProperty("nem") String name, 
-            @JsonProperty("email") String email, 
-            @JsonProperty("nit") String nit, 
+            @JsonProperty("nem") String name,
+            @JsonProperty("email") String email,
+            @JsonProperty("nit") String nit,
             @JsonProperty("phone") String phone,
             @JsonProperty("created_at") OffsetDateTime created_at,
             @JsonProperty("updated_at") OffsetDateTime updated_at,

@@ -19,7 +19,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "sale_notifications")
 public class sale_notification {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long sale_notification_id;
@@ -60,8 +60,6 @@ public class sale_notification {
         this.type = type;
         this.created_at = created_at;
     }
-
-    
 
     public Long getSale_notification_id() {
         return sale_notification_id;
@@ -110,8 +108,6 @@ public class sale_notification {
     public void setCreated_at(OffsetDateTime created_at) {
         this.created_at = created_at;
     }
-
-
 
     public enum media {
         email, sms, push

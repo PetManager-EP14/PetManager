@@ -15,17 +15,16 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient; 
 
 @Entity
-@Table(name = "users")
+@Table(name = "user")
 public class user {
     @Id
     @GeneratedValue
     @Column(nullable = false, columnDefinition = "UUID DEFAULT gen_random_uuid()")
     private UUID user_id;
 
-    @Column(nullable = false)
-    private Long role_id;
 
     @Column(nullable = false, length = 100)
     private String name;
@@ -49,7 +48,7 @@ public class user {
     private OffsetDateTime updated_at = OffsetDateTime.now();
 
     @ManyToOne
-    @JoinColumn(name = "rol_id", nullable = false)
+    @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
     @OneToMany(mappedBy = "user")
@@ -71,7 +70,6 @@ public class user {
             @JsonProperty("password_hash") String password_hash,
             @JsonProperty("role") Role role) {
         this.user_id = user_id;
-        this.role_id = role_id;
         this.name = name;
         this.email = email;
         this.phone = phone;
@@ -79,7 +77,14 @@ public class user {
         this.created_at = created_at;
         this.updated_at = updated_at;
         this.password_hash = password_hash;
-        this.role = role;
+        
+        if (role != null) {
+            this.role = role;
+        } else if (role_id != null) {
+            Role r = new Role();
+            r.setRole_id(role_id);
+            this.role = r;
+        }
     }
 
     public UUID getUser_id() {
@@ -88,14 +93,6 @@ public class user {
 
     public void setUser_id(UUID user_id) {
         this.user_id = user_id;
-    }
-
-    public Long getRole_id() {
-        return role_id;
-    }
-
-    public void setRole_id(Long role_id) {
-        this.role_id = role_id;
     }
 
     public String getName() {
@@ -160,5 +157,15 @@ public class user {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    @Transient
+    public Long getRole_id() {
+        return (role != null) ? role.getRole_id() : null;
+    }
+
+    public void setRole_id(Long role_id) {
+        if (role == null) role = new Role();
+        role.setRole_id(role_id);
     }
 }

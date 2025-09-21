@@ -55,25 +55,25 @@ public class User {
     @OneToMany(mappedBy = "user")
      private List<Sale> Sales;
 
-    @OneToMany(mappedBy = "shopping")
-    private List<purchase> shoppings;
+    @OneToMany(mappedBy = "user")
+    private List<Purchase> purchase;
 
     public User() {
     }
 
     @JsonCreator
-    public user(@JsonProperty("user_id") UUID user_id,
-            @JsonProperty("role_id") Long role_id,
-            @JsonProperty("name") String name,
-            @JsonProperty("email") String email,
-            @JsonProperty("phone") String phone,
-            @JsonProperty("address") String address,
-            @JsonProperty("password_hash") String password_hash,
-            @JsonProperty("created_at") OffsetDateTime created_at,
-            @JsonProperty("updated_at") OffsetDateTime updated_at,
-            @JsonProperty("role") com.ep14.pet_manager.entity.role role,
-            @JsonProperty("sales") List<sale> sales,
-            @JsonProperty("shoppings") List<purchase> shoppings) {
+    public User(@JsonProperty("user_id") UUID user_id,
+                @JsonProperty("role_id") Long role_id,
+                @JsonProperty("name") String name,
+                @JsonProperty("email") String email,
+                @JsonProperty("phone") String phone,
+                @JsonProperty("address") String address,
+                @JsonProperty("password_hash") String password_hash,
+                @JsonProperty("created_at") OffsetDateTime created_at,
+                @JsonProperty("updated_at") OffsetDateTime updated_at,
+                @JsonProperty("role") Role role,
+                @JsonProperty("sales") List<Sale> Sales,
+                @JsonProperty("shopping") List<Purchase> purchase) {
         this.user_id = user_id;
         this.role_id = role_id;
         this.name = name;
@@ -85,7 +85,7 @@ public class User {
         this.updated_at = updated_at;
         this.role = role;
         this.Sales = Sales;
-        this.shopping = shopping;
+        this.purchase = purchase;
     }
 
     public UUID getUser_id() {
@@ -176,12 +176,12 @@ public class User {
         this.Sales = Sales;
     }
 
-    public List<purchase> getShoppings() {
-        return shoppings;
+    public List<Purchase> getShopping() {
+        return purchase;
     }
 
-    public void setShoppings(List<purchase> shoppings) {
-        this.shoppings = shoppings;
+    public void setShoppings(List<Purchase> purchases) {
+        this.purchase = purchase;
     }
 
 }

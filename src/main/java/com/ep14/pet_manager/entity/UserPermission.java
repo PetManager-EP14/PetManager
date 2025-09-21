@@ -31,17 +31,37 @@ public class UserPermission {
     @JoinColumn(name = "permission_id")
     private Permission permission;
 
-    // --- getters/setters ---
-    public Id getId() { return id; }
-    public void setId(Id id) { this.id = id; }
+    public UserPermission() {}
 
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    public UserPermission(User user, Permission permission) {
+        this.user = user;
+        this.permission = permission;
+    }
 
-    public Permission getPermission() { return permission; }
-    public void setPermission(Permission permission) { this.permission = permission; }
+    public Id getId() {
+        return id;
+    }
 
-    // ===== PK embebida =====
+    public void setId(Id id) {
+        this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Permission getPermission() {
+        return permission;
+    }
+
+    public void setPermission(Permission permission) {
+        this.permission = permission;
+    }
+
     @Embeddable
     public static class Id implements Serializable {
         @Column(name = "user_id", columnDefinition = "uuid")
@@ -57,11 +77,21 @@ public class UserPermission {
             this.permissionId = permissionId;
         }
 
-        public UUID getUserId() { return userId; }
-        public void setUserId(UUID userId) { this.userId = userId; }
+        public UUID getUserId() {
+            return userId;
+        }
 
-        public Long getPermissionId() { return permissionId; }
-        public void setPermissionId(Long permissionId) { this.permissionId = permissionId; }
+        public void setUserId(UUID userId) {
+            this.userId = userId;
+        }
+
+        public Long getPermissionId() {
+            return permissionId;
+        }
+
+        public void setPermissionId(Long permissionId) {
+            this.permissionId = permissionId;
+        }
 
         @Override
         public boolean equals(Object o) {

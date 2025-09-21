@@ -11,11 +11,13 @@ import com.ep14.pet_manager.entity.UserPermission;
 public interface UserPermissionRepository extends JpaRepository<UserPermission, UserPermission.Id> {
 
     @Query("""
-       select up.permission.code
-       from UserPermission up
-       where up.user.user_id = :userId
+        select up.permission.code
+        from UserPermission up
+        where up.id.userId = :userId
     """)
     Set<String> findDirectCodesByUser(UUID userId);
 
-    void deleteByUser_User_id(UUID userId);
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.transaction.annotation.Transactional
+    void deleteByIdUserId(UUID userId);
 }

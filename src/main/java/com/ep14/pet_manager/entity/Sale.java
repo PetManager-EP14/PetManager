@@ -22,7 +22,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "sale")
-public class sale {
+public class Sale {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +30,7 @@ public class sale {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private user user;
+    private User user;
 
     @Column(nullable = false)
     private OffsetDateTime date = OffsetDateTime.now();
@@ -53,25 +53,25 @@ public class sale {
     private OffsetDateTime updated_at = OffsetDateTime.now();
 
     @OneToOne
-    private sale_notification sale_notification;
+    private SaleNotification SaleNotification;
 
     @OneToMany(mappedBy = "sale")
-    private List<sale_details> sale_details;
+    private List<SaleDetails> SaleDetails;
 
-    public sale() {
+    public Sale() {
     }
 
     @JsonCreator
-    public sale(@JsonProperty("sale_id") Long sale_id,
-            @JsonProperty("user") com.ep14.pet_manager.entity.user user,
-            @JsonProperty("date") OffsetDateTime date,
-            @JsonProperty("method") payment_method method,
-            @JsonProperty("status") sale_status status,
-            @JsonProperty("total") BigDecimal total,
-            @JsonProperty("created_at") OffsetDateTime created_at,
-            @JsonProperty("updated_at") OffsetDateTime updated_at,
-            @JsonProperty("sale_notification") com.ep14.pet_manager.entity.sale_notification sale_notification,
-            @JsonProperty("sale_details") List<sale_details> sale_details) {
+    public Sale(@JsonProperty("sale_id") Long sale_id,
+                @JsonProperty("user") User user,
+                @JsonProperty("date") OffsetDateTime date,
+                @JsonProperty("method") payment_method method,
+                @JsonProperty("status") sale_status status,
+                @JsonProperty("total") BigDecimal total,
+                @JsonProperty("created_at") OffsetDateTime created_at,
+                @JsonProperty("updated_at") OffsetDateTime updated_at,
+                @JsonProperty("sale_notification") SaleNotification SaleNotification,
+                @JsonProperty("sale_details") List<SaleDetails> SaleDetails) {
         this.sale_id = sale_id;
         this.user = user;
         this.date = date;
@@ -80,8 +80,8 @@ public class sale {
         this.total = total;
         this.created_at = created_at;
         this.updated_at = updated_at;
-        this.sale_notification = sale_notification;
-        this.sale_details = sale_details;
+        this.SaleNotification = SaleNotification;
+        this.SaleDetails = SaleDetails;
     }
 
     public Long getSale_id() {
@@ -92,11 +92,11 @@ public class sale {
         this.sale_id = sale_id;
     }
 
-    public user getUser() {
+    public User getUser() {
         return user;
     }
 
-    public void setUser(user user) {
+    public void setUser(User user) {
         this.user = user;
     }
 
@@ -148,20 +148,20 @@ public class sale {
         this.updated_at = updated_at;
     }
 
-    public sale_notification getSale_notification() {
-        return sale_notification;
+    public SaleNotification getSale_notification() {
+        return SaleNotification;
     }
 
-    public void setSale_notification(sale_notification sale_notification) {
-        this.sale_notification = sale_notification;
+    public void setSale_notification(SaleNotification SaleNotification) {
+        this.SaleNotification = SaleNotification;
     }
 
-    public List<sale_details> getSale_details() {
-        return sale_details;
+    public List<SaleDetails> getSale_details() {
+        return SaleDetails;
     }
 
-    public void setSale_details(List<sale_details> sale_details) {
-        this.sale_details = sale_details;
+    public void setSale_details(List<SaleDetails> SaleDetails) {
+        this.SaleDetails = SaleDetails;
     }
 
     public enum payment_method {

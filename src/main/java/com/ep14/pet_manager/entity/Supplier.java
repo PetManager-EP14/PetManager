@@ -10,7 +10,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "suppliers")
-public class suppliers {
+public class Supplier {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,26 +34,26 @@ public class suppliers {
     @Column(nullable = false)
     private OffsetDateTime updated_at = OffsetDateTime.now();
 
-    @OneToMany(mappedBy = "suppliers")
-    private List<shopping> shopping;
+    @OneToMany(mappedBy = "supplier")
+    private List<Shopping> shopping;
 
-    @OneToMany(mappedBy = "supplier_product")
-    private List<supplier_products> supplier_product;
+    @OneToMany(mappedBy = "supplier")
+    private List<SupplierProducts> supplier_product;
 
-    public suppliers() {
+    public Supplier() {
     }
 
     @JsonCreator
-    public suppliers(
+    public Supplier(
             @JsonProperty("supplier_id") Long supplier_id,
-            @JsonProperty("nem") String name,
+            @JsonProperty("name") String name,
             @JsonProperty("email") String email,
             @JsonProperty("nit") String nit,
             @JsonProperty("phone") String phone,
             @JsonProperty("created_at") OffsetDateTime created_at,
             @JsonProperty("updated_at") OffsetDateTime updated_at,
-            @JsonProperty("shopping") List<shopping> shopping,
-            @JsonProperty("supplier_product") List<supplier_products> supplier_product) {
+            @JsonProperty("shopping") List<Shopping> shopping,
+            @JsonProperty("supplier_product") List<SupplierProducts> supplier_product) {
         this.supplier_id = supplier_id;
         this.name = name;
         this.email = email;
@@ -121,19 +121,19 @@ public class suppliers {
         this.updated_at = updated_at;
     }
 
-    public List<shopping> getShopping() {
+    public List<Shopping> getShopping() {
         return shopping;
     }
 
-    public void setShopping(List<shopping> shopping) {
+    public void setShopping(List<Shopping> shopping) {
         this.shopping = shopping;
     }
 
-    public List<supplier_products> getSupplier_product() {
+    public List<SupplierProducts> getSupplier_product() {
         return supplier_product;
     }
 
-    public void setSupplier_product(List<supplier_products> supplier_product) {
+    public void setSupplier_product(List<SupplierProducts> supplier_product) {
         this.supplier_product = supplier_product;
     }
 

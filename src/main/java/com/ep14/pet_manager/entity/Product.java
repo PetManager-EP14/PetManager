@@ -17,7 +17,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "products")
-public class product {
+public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,30 +45,30 @@ public class product {
     private OffsetDateTime updated_at = OffsetDateTime.now();
 
     @OneToMany(mappedBy = "product")
-    private List<sale_details> sale_details;
+    private List<SaleDetails> SaleDetails;
 
     @OneToMany(mappedBy = "product")
-    private List<supplier_products> supplier_products;
+    private List<SupplierProducts> SupplierProducts;
 
     @OneToMany(mappedBy = "product")
-    private List<shopping_details> shopping_details;
+    private List<ShoppingDetails> ShoppingDetails;
 
-    public product() {
+    public Product() {
 
     }
 
     @JsonCreator
-    public product(@JsonProperty("product_id") Long product_id,
-            @JsonProperty("name") String name,
-            @JsonProperty("category") String category,
-            @JsonProperty("stock") BigDecimal stock,
-            @JsonProperty("price_shopping") BigDecimal price_shopping,
-            @JsonProperty("price_sale") BigDecimal price_sale,
-            @JsonProperty("created_at") OffsetDateTime created_at,
-            @JsonProperty("updated_at") OffsetDateTime updated_at,
-            @JsonProperty("sale_details") List<sale_details> sale_details,
-            @JsonProperty("supplier_product") List<supplier_products> supplier_products,
-            @JsonProperty("shopping_details") List<shopping_details> shopping_details) {
+    public Product(@JsonProperty("product_id") Long product_id,
+                   @JsonProperty("name") String name,
+                   @JsonProperty("category") String category,
+                   @JsonProperty("stock") BigDecimal stock,
+                   @JsonProperty("price_shopping") BigDecimal price_shopping,
+                   @JsonProperty("price_sale") BigDecimal price_sale,
+                   @JsonProperty("created_at") OffsetDateTime created_at,
+                   @JsonProperty("updated_at") OffsetDateTime updated_at,
+                   @JsonProperty("sale_details") List<SaleDetails> SaleDetails,
+                   @JsonProperty("supplier_product") List<SupplierProducts> SupplierProducts,
+                   @JsonProperty("shopping_details") List<ShoppingDetails> ShoppingDetails) {
         this.product_id = product_id;
         this.name = name;
         this.category = category;
@@ -77,9 +77,9 @@ public class product {
         this.price_sale = price_sale;
         this.created_at = created_at;
         this.updated_at = updated_at;
-        this.sale_details = sale_details;
-        this.supplier_products = supplier_products;
-        this.shopping_details = shopping_details;
+        this.SaleDetails = SaleDetails;
+        this.SupplierProducts = SupplierProducts;
+        this.ShoppingDetails = ShoppingDetails;
     }
 
     public Long getProduct_id() {
@@ -146,28 +146,28 @@ public class product {
         this.updated_at = updated_at;
     }
 
-    public List<sale_details> getSale_details() {
-        return sale_details;
+    public List<SaleDetails> getSale_details() {
+        return SaleDetails;
     }
 
-    public void setSale_details(List<sale_details> sale_details) {
-        this.sale_details = sale_details;
+    public void setSale_details(List<SaleDetails> SaleDetails) {
+        this.SaleDetails = SaleDetails;
     }
 
-    public List<supplier_products> getSupplier_products() {
-        return supplier_products;
+    public List<SupplierProducts> getSupplier_products() {
+        return SupplierProducts;
     }
 
-    public void setSupplier_products(List<supplier_products> supplier_products) {
-        this.supplier_products = supplier_products;
+    public void setSupplier_products(List<SupplierProducts> SupplierProducts) {
+        this.SupplierProducts = SupplierProducts;
     }
 
-    public List<shopping_details> getShopping_details() {
-        return shopping_details;
+    public List<ShoppingDetails> getShopping_details() {
+        return ShoppingDetails;
     }
 
-    public void setShopping_details(List<shopping_details> shopping_details) {
-        this.shopping_details = shopping_details;
+    public void setShopping_details(List<ShoppingDetails> ShoppingDetails) {
+        this.ShoppingDetails = ShoppingDetails;
     }
 
 }

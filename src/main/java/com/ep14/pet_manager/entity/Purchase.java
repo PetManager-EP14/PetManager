@@ -51,7 +51,7 @@ public class Purchase {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "shopping")
+    @OneToMany(mappedBy = "purchase")
     private List<PurchaseDetails> PurchaseDetails;
 
     public Purchase() {

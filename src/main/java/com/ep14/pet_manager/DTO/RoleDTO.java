@@ -3,7 +3,7 @@ package com.ep14.pet_manager.DTO;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import com.ep14.pet_manager.entity.user;
+import com.ep14.pet_manager.entity.User;
 
 public class RoleDTO {
 
@@ -12,20 +12,20 @@ public class RoleDTO {
     private String description;
     private OffsetDateTime created_at;
     private OffsetDateTime updated_at;
-    private List<user> users;
+    private List<User> Users;
 
     public RoleDTO(){
 
     }
 
     public RoleDTO(Long role_id, String code, String description, OffsetDateTime created_at, OffsetDateTime updated_at,
-            List<user> users) {
+            List<User> Users) {
         this.role_id = role_id;
         this.code = code;
         this.description = description;
         this.created_at = created_at;
         this.updated_at = updated_at;
-        this.users = users;
+        this.Users = Users;
     }
 
     public Long getRole_id() {
@@ -68,12 +68,12 @@ public class RoleDTO {
         this.updated_at = updated_at;
     }
 
-    public List<user> getUsers() {
-        return users;
+    public List<User> getUsers() {
+        return Users;
     }
 
-    public void setUsers(List<user> users) {
-        this.users = users;
+    public void setUsers(List<User> Users) {
+        this.Users = Users;
     }
 
     

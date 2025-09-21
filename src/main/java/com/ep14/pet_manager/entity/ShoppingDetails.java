@@ -10,18 +10,18 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "shopping_details")
-public class shopping_details {
+public class ShoppingDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long shopping_detail_id;
 
     @ManyToOne
     @JoinColumn(nullable = false)
-    private shopping shopping;
+    private Shopping shopping;
 
     @ManyToOne
     @JoinColumn(nullable = false)
-    private product product;
+    private Product product;
 
     @Column(nullable = false, precision = 12, scale = 3)
     private BigDecimal amount;
@@ -29,15 +29,15 @@ public class shopping_details {
     @Column(nullable = false)
     private OffsetDateTime created_at = OffsetDateTime.now();
 
-    public shopping_details() {
+    public ShoppingDetails() {
     }
 
     @JsonCreator
-    public shopping_details(@JsonProperty("shopping_detail_id") Long shopping_detail_id,
-            @JsonProperty("shopping") com.ep14.pet_manager.entity.shopping shopping,
-            @JsonProperty("product") com.ep14.pet_manager.entity.product product,
-            @JsonProperty("amount") BigDecimal amount,
-            @JsonProperty("created_at") OffsetDateTime created_at) {
+    public ShoppingDetails(@JsonProperty("shopping_detail_id") Long shopping_detail_id,
+                           @JsonProperty("shopping") Shopping shopping,
+                           @JsonProperty("product") Product product,
+                           @JsonProperty("amount") BigDecimal amount,
+                           @JsonProperty("created_at") OffsetDateTime created_at) {
         this.shopping_detail_id = shopping_detail_id;
         this.shopping = shopping;
         this.product = product;
@@ -53,19 +53,19 @@ public class shopping_details {
         this.shopping_detail_id = shopping_detail_id;
     }
 
-    public shopping getShopping() {
+    public Shopping getShopping() {
         return shopping;
     }
 
-    public void setShopping(shopping shopping) {
+    public void setShopping(Shopping shopping) {
         this.shopping = shopping;
     }
 
-    public product getProduct() {
+    public Product getProduct() {
         return product;
     }
 
-    public void setProduct(product product) {
+    public void setProduct(Product product) {
         this.product = product;
     }
 

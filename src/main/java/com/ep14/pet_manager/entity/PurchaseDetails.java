@@ -1,11 +1,12 @@
 package com.ep14.pet_manager.entity;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.*;
-
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "shopping_details")
@@ -16,7 +17,7 @@ public class PurchaseDetails {
 
     @ManyToOne
     @JoinColumn(nullable = false)
-    private Purchase shopping;
+    private Purchase purchase;
 
     @ManyToOne
     @JoinColumn(nullable = false)
@@ -33,12 +34,12 @@ public class PurchaseDetails {
 
     @JsonCreator
     public PurchaseDetails(@JsonProperty("shopping_detail_id") Long shopping_detail_id,
-                           @JsonProperty("shopping") Purchase shopping,
+                           @JsonProperty("shopping") Purchase purchase,
                            @JsonProperty("product") Product product,
                            @JsonProperty("amount") BigDecimal amount,
                            @JsonProperty("created_at") OffsetDateTime created_at) {
         this.shopping_detail_id = shopping_detail_id;
-        this.shopping = shopping;
+        this.purchase = purchase;
         this.product = product;
         this.amount = amount;
         this.created_at = created_at;
@@ -53,11 +54,11 @@ public class PurchaseDetails {
     }
 
     public Purchase getShopping() {
-        return shopping;
+        return purchase;
     }
 
-    public void setShopping(Purchase shopping) {
-        this.shopping = shopping;
+    public void setShopping(Purchase purchase) {
+        this.purchase = purchase;
     }
 
     public Product getProduct() {
@@ -76,11 +77,12 @@ public class PurchaseDetails {
         this.amount = amount;
     }
 
-    public OffsetDateTime getCreated_at() {
+    public OffsetDateTime getCreated() {
         return created_at;
     }
 
-    public void setCreated_at(OffsetDateTime created_at) {
+    public void setCreated(OffsetDateTime created_at) {
         this.created_at = created_at;
     }
+
 }

@@ -21,8 +21,8 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "shoppings")
-
 public class Purchase {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long shopping_id;
@@ -51,10 +51,10 @@ public class Purchase {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "shopping")
-    private List<PurchaseDetails> shopping_details;
+    @OneToMany(mappedBy = "purchase")
+    private List<PurchaseDetails> PurchaseDetails;
 
-    public purchase() {
+    public Purchase() {
 
     }
 
@@ -67,7 +67,7 @@ public class Purchase {
                     @JsonProperty("created_at") OffsetDateTime created_at,
                     @JsonProperty("updated_at") OffsetDateTime updated_at,
                     @JsonProperty("user") User user,
-                    @JsonProperty("shopping_details") List<PurchaseDetails> shoppingDetails) {
+                    @JsonProperty("shopping_details") List<PurchaseDetails> PurchaseDetails) {
         this.shopping_id = shopping_id;
         this.supplier = supplier;
         this.date = date;
@@ -76,7 +76,15 @@ public class Purchase {
         this.created_at = created_at;
         this.updated_at = updated_at;
         this.user = user;
-        this.ShoppingDetails = shoppingDetails;
+        this.PurchaseDetails = PurchaseDetails;
+    }
+
+    public List<PurchaseDetails> getShoppingDetails() {
+        return PurchaseDetails;
+    }
+
+    public void setShoppingDetails(List<PurchaseDetails> purchaseDetails) {
+        PurchaseDetails = purchaseDetails;
     }
 
     public Long getShopping_id() {
@@ -144,10 +152,15 @@ public class Purchase {
     }
 
     public List<PurchaseDetails> getShopping_details() {
-        return shopping_details;
+        return PurchaseDetails;
     }
 
-    public void setShopping_details(List<PurchaseDetails> shopping_details) {
-        this.shopping_details = shopping_details;
+    public void setShopping_details(List<PurchaseDetails> PurchaseDetails) {
+        this.PurchaseDetails = PurchaseDetails;
     }
+
+    public enum status_shopping {
+        DRAFT, REGISTERED, ANNULLED;
+    }
+
 }

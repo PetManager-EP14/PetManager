@@ -45,13 +45,13 @@ public class Product {
     private OffsetDateTime updated_at = OffsetDateTime.now();
 
     @OneToMany(mappedBy = "product")
-    private List<SaleDetails> saleDetails;
+    private List<SaleDetails> SaleDetails;
 
     @OneToMany(mappedBy = "product")
-    private List<SupplierProducts> supplierProducts;
+    private List<SupplierProducts> SupplierProducts;
 
     @OneToMany(mappedBy = "product")
-    private List<PurchaseDetails> shoppingDetails;
+    private List<PurchaseDetails> PurchaseDetails;
 
     public Product() {
 
@@ -59,16 +59,16 @@ public class Product {
 
     @JsonCreator
     public Product(@JsonProperty("product_id") Long product_id,
-            @JsonProperty("name") String name,
-            @JsonProperty("category") String category,
-            @JsonProperty("stock") BigDecimal stock,
-            @JsonProperty("price_shopping") BigDecimal price_shopping,
-            @JsonProperty("price_sale") BigDecimal price_sale,
-            @JsonProperty("created_at") OffsetDateTime created_at,
-            @JsonProperty("updated_at") OffsetDateTime updated_at,
-            @JsonProperty("sale_details") List<SaleDetails> saleDetails,
-            @JsonProperty("supplier_product") List<SupplierProducts> supplierProducts,
-            @JsonProperty("shopping_details") List<PurchaseDetails> shoppingDetails) {
+                   @JsonProperty("name") String name,
+                   @JsonProperty("category") String category,
+                   @JsonProperty("stock") BigDecimal stock,
+                   @JsonProperty("price_shopping") BigDecimal price_shopping,
+                   @JsonProperty("price_sale") BigDecimal price_sale,
+                   @JsonProperty("created_at") OffsetDateTime created_at,
+                   @JsonProperty("updated_at") OffsetDateTime updated_at,
+                   @JsonProperty("sale_details") List<SaleDetails> SaleDetails,
+                   @JsonProperty("supplier_product") List<SupplierProducts> SupplierProducts,
+                   @JsonProperty("shopping_details") List<PurchaseDetails> PurchaseDetails) {
         this.product_id = product_id;
         this.name = name;
         this.category = category;
@@ -77,9 +77,9 @@ public class Product {
         this.price_sale = price_sale;
         this.created_at = created_at;
         this.updated_at = updated_at;
-        this.saleDetails = saleDetails;
-        this.supplierProducts = supplierProducts;
-        this.shoppingDetails = shoppingDetails;
+        this.SaleDetails = SaleDetails;
+        this.SupplierProducts = SupplierProducts;
+        this.PurchaseDetails = PurchaseDetails;
     }
 
     public Long getProduct_id() {
@@ -146,27 +146,28 @@ public class Product {
         this.updated_at = updated_at;
     }
 
-    public List<SaleDetails> getSaleDetails() {
-        return saleDetails;
+    public List<SaleDetails> getSale_details() {
+        return SaleDetails;
     }
 
-    public void setSaleDetails(List<SaleDetails> saleDetails) {
-        this.saleDetails = saleDetails;
+    public void setSale_details(List<SaleDetails> SaleDetails) {
+        this.SaleDetails = SaleDetails;
     }
 
-    public List<SupplierProducts> getSupplierProducts() {
-        return supplierProducts;
+    public List<SupplierProducts> getSupplier_products() {
+        return SupplierProducts;
     }
 
-    public void setSupplierProducts(List<SupplierProducts> supplierProducts) {
-        this.supplierProducts = supplierProducts;
+    public void setSupplier_products(List<SupplierProducts> SupplierProducts) {
+        this.SupplierProducts = SupplierProducts;
     }
 
-    public List<PurchaseDetails> getShoppingDetails() {
-        return shoppingDetails;
+    public List<PurchaseDetails> getShopping_details() {
+        return PurchaseDetails;
     }
 
-    public void setShoppingDetails(List<PurchaseDetails> shoppingDetails) {
-        this.shoppingDetails = shoppingDetails;
+    public void setShopping_details(List<PurchaseDetails> PurchaseDetails) {
+        this.PurchaseDetails = PurchaseDetails;
     }
+
 }

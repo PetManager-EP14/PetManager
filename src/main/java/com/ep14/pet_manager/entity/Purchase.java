@@ -21,8 +21,8 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "shoppings")
-public class Shopping {
 
+public class Purchase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long shopping_id;
@@ -52,14 +52,14 @@ public class Shopping {
     private User user;
 
     @OneToMany(mappedBy = "shopping")
-    private List<ShoppingDetails> ShoppingDetails;
+    private List<PurchaseDetails> shopping_details;
 
-    public Shopping() {
+    public purchase() {
 
     }
 
     @JsonCreator
-    public Shopping(@JsonProperty("id") Long shopping_id,
+    public Purchase(@JsonProperty("id") Long shopping_id,
                     @JsonProperty("supplier") Supplier supplier,
                     @JsonProperty("date") OffsetDateTime date,
                     @JsonProperty("status") status_shopping status,
@@ -67,7 +67,7 @@ public class Shopping {
                     @JsonProperty("created_at") OffsetDateTime created_at,
                     @JsonProperty("updated_at") OffsetDateTime updated_at,
                     @JsonProperty("user") User user,
-                    @JsonProperty("shopping_details") List<ShoppingDetails> ShoppingDetails) {
+                    @JsonProperty("shopping_details") List<PurchaseDetails> shoppingDetails) {
         this.shopping_id = shopping_id;
         this.supplier = supplier;
         this.date = date;
@@ -76,15 +76,7 @@ public class Shopping {
         this.created_at = created_at;
         this.updated_at = updated_at;
         this.user = user;
-        this.ShoppingDetails = ShoppingDetails;
-    }
-
-    public List<ShoppingDetails> getShoppingDetails() {
-        return ShoppingDetails;
-    }
-
-    public void setShoppingDetails(List<ShoppingDetails> shoppingDetails) {
-        ShoppingDetails = shoppingDetails;
+        this.ShoppingDetails = shoppingDetails;
     }
 
     public Long getShopping_id() {
@@ -151,16 +143,11 @@ public class Shopping {
         this.user = user;
     }
 
-    public List<ShoppingDetails> getShopping_details() {
-        return ShoppingDetails;
+    public List<PurchaseDetails> getShopping_details() {
+        return shopping_details;
     }
 
-    public void setShopping_details(List<ShoppingDetails> ShoppingDetails) {
-        this.ShoppingDetails = ShoppingDetails;
+    public void setShopping_details(List<PurchaseDetails> shopping_details) {
+        this.shopping_details = shopping_details;
     }
-
-    public enum status_shopping {
-        DRAFT, REGISTERED, ANNULLED;
-    }
-
 }

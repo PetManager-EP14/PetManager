@@ -10,14 +10,14 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "shopping_details")
-public class ShoppingDetails {
+public class PurchaseDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long shopping_detail_id;
 
     @ManyToOne
     @JoinColumn(nullable = false)
-    private Shopping shopping;
+    private Purchase purchase;
 
     @ManyToOne
     @JoinColumn(nullable = false)
@@ -29,17 +29,17 @@ public class ShoppingDetails {
     @Column(nullable = false)
     private OffsetDateTime created_at = OffsetDateTime.now();
 
-    public ShoppingDetails() {
+    public PurchaseDetails() {
     }
 
     @JsonCreator
-    public ShoppingDetails(@JsonProperty("shopping_detail_id") Long shopping_detail_id,
-                           @JsonProperty("shopping") Shopping shopping,
+    public PurchaseDetails(@JsonProperty("shopping_detail_id") Long shopping_detail_id,
+                           @JsonProperty("shopping") Purchase purchase,
                            @JsonProperty("product") Product product,
                            @JsonProperty("amount") BigDecimal amount,
                            @JsonProperty("created_at") OffsetDateTime created_at) {
         this.shopping_detail_id = shopping_detail_id;
-        this.shopping = shopping;
+        this.purchase = purchase;
         this.product = product;
         this.amount = amount;
         this.created_at = created_at;
@@ -53,12 +53,12 @@ public class ShoppingDetails {
         this.shopping_detail_id = shopping_detail_id;
     }
 
-    public Shopping getShopping() {
-        return shopping;
+    public Purchase getShopping() {
+        return purchase;
     }
 
-    public void setShopping(Shopping shopping) {
-        this.shopping = shopping;
+    public void setShopping(Purchase purchase) {
+        this.purchase = purchase;
     }
 
     public Product getProduct() {

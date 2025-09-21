@@ -35,7 +35,7 @@ public class Supplier {
     private OffsetDateTime updated_at = OffsetDateTime.now();
 
     @OneToMany(mappedBy = "supplier")
-    private List<Shopping> shopping;
+    private List<Purchase> purchase;
 
     @OneToMany(mappedBy = "supplier")
     private List<SupplierProducts> supplier_product;
@@ -52,7 +52,7 @@ public class Supplier {
             @JsonProperty("phone") String phone,
             @JsonProperty("created_at") OffsetDateTime created_at,
             @JsonProperty("updated_at") OffsetDateTime updated_at,
-            @JsonProperty("shopping") List<Shopping> shopping,
+            @JsonProperty("shopping") List<Purchase> purchase,
             @JsonProperty("supplier_product") List<SupplierProducts> supplier_product) {
         this.supplier_id = supplier_id;
         this.name = name;
@@ -61,7 +61,7 @@ public class Supplier {
         this.phone = phone;
         this.created_at = created_at;
         this.updated_at = updated_at;
-        this.shopping = shopping;
+        this.purchase = purchase;
         this.supplier_product = supplier_product;
     }
 
@@ -121,12 +121,12 @@ public class Supplier {
         this.updated_at = updated_at;
     }
 
-    public List<Shopping> getShopping() {
-        return shopping;
+    public List<Purchase> getShopping() {
+        return purchase;
     }
 
-    public void setShopping(List<Shopping> shopping) {
-        this.shopping = shopping;
+    public void setShopping(List<Purchase> purchase) {
+        this.purchase = purchase;
     }
 
     public List<SupplierProducts> getSupplier_product() {

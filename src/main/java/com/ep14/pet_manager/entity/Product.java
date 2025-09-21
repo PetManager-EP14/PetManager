@@ -51,7 +51,7 @@ public class Product {
     private List<SupplierProducts> SupplierProducts;
 
     @OneToMany(mappedBy = "product")
-    private List<ShoppingDetails> ShoppingDetails;
+    private List<PurchaseDetails> PurchaseDetails;
 
     public Product() {
 
@@ -68,7 +68,7 @@ public class Product {
                    @JsonProperty("updated_at") OffsetDateTime updated_at,
                    @JsonProperty("sale_details") List<SaleDetails> SaleDetails,
                    @JsonProperty("supplier_product") List<SupplierProducts> SupplierProducts,
-                   @JsonProperty("shopping_details") List<ShoppingDetails> ShoppingDetails) {
+                   @JsonProperty("shopping_details") List<PurchaseDetails> PurchaseDetails) {
         this.product_id = product_id;
         this.name = name;
         this.category = category;
@@ -79,7 +79,7 @@ public class Product {
         this.updated_at = updated_at;
         this.SaleDetails = SaleDetails;
         this.SupplierProducts = SupplierProducts;
-        this.ShoppingDetails = ShoppingDetails;
+        this.PurchaseDetails = PurchaseDetails;
     }
 
     public Long getProduct_id() {
@@ -162,12 +162,12 @@ public class Product {
         this.SupplierProducts = SupplierProducts;
     }
 
-    public List<ShoppingDetails> getShopping_details() {
-        return ShoppingDetails;
+    public List<PurchaseDetails> getShopping_details() {
+        return PurchaseDetails;
     }
 
-    public void setShopping_details(List<ShoppingDetails> ShoppingDetails) {
-        this.ShoppingDetails = ShoppingDetails;
+    public void setShopping_details(List<PurchaseDetails> PurchaseDetails) {
+        this.PurchaseDetails = PurchaseDetails;
     }
 
 }

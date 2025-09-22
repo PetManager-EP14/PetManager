@@ -18,7 +18,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "sale_notifications")
-public class sale_notification {
+public class SaleNotification {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +26,7 @@ public class sale_notification {
 
     @OneToOne
     @JoinColumn(nullable = false)
-    private sale sale;
+    private Sale sale;
 
     @Column(nullable = false)
     private OffsetDateTime shipping_date = OffsetDateTime.now();
@@ -42,17 +42,17 @@ public class sale_notification {
     @Column(nullable = false)
     private OffsetDateTime created_at = OffsetDateTime.now();
 
-    public sale_notification() {
+    public SaleNotification() {
 
     }
 
     @JsonCreator
-    public sale_notification(@JsonProperty("sale_notification_id") Long sale_notification_id,
-            @JsonProperty("sale") com.ep14.pet_manager.entity.sale sale,
-            @JsonProperty("shipping_date") OffsetDateTime shipping_date,
-            @JsonProperty("media") com.ep14.pet_manager.entity.sale_notification.media media,
-            @JsonProperty("type") com.ep14.pet_manager.entity.sale_notification.type type,
-            @JsonProperty("created_at") OffsetDateTime created_at) {
+    public SaleNotification(@JsonProperty("sale_notification_id") Long sale_notification_id,
+                            @JsonProperty("sale") Sale sale,
+                            @JsonProperty("shipping_date") OffsetDateTime shipping_date,
+                            @JsonProperty("media") SaleNotification.media media,
+                            @JsonProperty("type") SaleNotification.type type,
+                            @JsonProperty("created_at") OffsetDateTime created_at) {
         this.sale_notification_id = sale_notification_id;
         this.sale = sale;
         this.shipping_date = shipping_date;
@@ -69,11 +69,11 @@ public class sale_notification {
         this.sale_notification_id = sale_notification_id;
     }
 
-    public sale getSale() {
+    public Sale getSale() {
         return sale;
     }
 
-    public void setSale(sale sale) {
+    public void setSale(Sale sale) {
         this.sale = sale;
     }
 

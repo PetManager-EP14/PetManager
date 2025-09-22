@@ -6,23 +6,23 @@ import java.time.OffsetDateTime;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "supplier_products")
-public class supplier_products {
+public class SupplierProducts {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "product")
-    private product product;
+    private Product product;
 
     @ManyToOne
-    @JoinColumn(name = "supplier_product")
-    private suppliers suppliers;
+    @JoinColumn(name = "supplier")
+    private Supplier supplier;
 
     @Column(precision = 12, scale = 2)
     private BigDecimal cost_ref;
@@ -39,19 +39,19 @@ public class supplier_products {
     @Column(nullable = false)
     private OffsetDateTime updated_at = OffsetDateTime.now();
 
-    public supplier_products() {
+    public SupplierProducts() {
     }
 
     @JsonCreator
-    public supplier_products(@JsonProperty("product") com.ep14.pet_manager.entity.product product,
-            @JsonProperty("suppliers") com.ep14.pet_manager.entity.suppliers suppliers,
-            @JsonProperty("cost_ref") BigDecimal cost_ref,
-            @JsonProperty("lead_time_days") Integer lead_time_days,
-            @JsonProperty("active") boolean active,
-            @JsonProperty("created_id") OffsetDateTime created_at,
-            @JsonProperty("updated_at") OffsetDateTime updated_at) {
+    public SupplierProducts(@JsonProperty("product") Product product,
+                            @JsonProperty("supplier") Supplier supplier,
+                            @JsonProperty("cost_ref") BigDecimal cost_ref,
+                            @JsonProperty("lead_time_days") Integer lead_time_days,
+                            @JsonProperty("active") boolean active,
+                            @JsonProperty("created_id") OffsetDateTime created_at,
+                            @JsonProperty("updated_at") OffsetDateTime updated_at) {
         this.product = product;
-        this.suppliers = suppliers;
+        this.supplier = supplier;
         this.cost_ref = cost_ref;
         this.lead_time_days = lead_time_days;
         this.active = active;
@@ -59,20 +59,28 @@ public class supplier_products {
         this.updated_at = updated_at;
     }
 
-    public product getProduct() {
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Product getProduct() {
         return product;
     }
 
-    public void setProduct(product product) {
+    public void setProduct(Product product) {
         this.product = product;
     }
 
-    public suppliers getSuppliers() {
-        return suppliers;
+    public Supplier getSupplier() {
+        return supplier;
     }
 
-    public void setSuppliers(suppliers suppliers) {
-        this.suppliers = suppliers;
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
     }
 
     public BigDecimal getCost_ref() {

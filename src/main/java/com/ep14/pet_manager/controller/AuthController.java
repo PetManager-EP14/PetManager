@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ep14.pet_manager.Repository.UserRepository;
-import com.ep14.pet_manager.Service.JwtService;
-import com.ep14.pet_manager.entity.user;
+import com.ep14.pet_manager.repository.UserRepository;
+import com.ep14.pet_manager.service.JwtService;
+import com.ep14.pet_manager.entity.User;
 // Add this import if LoginResponse exists in the dto package
 import com.ep14.pet_manager.DTO.LoginResponse;
 import com.ep14.pet_manager.DTO.LoginRequest;
@@ -40,7 +40,7 @@ public class AuthController {
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String token = jwtService.generateToken(userDetails);
-        user u = userRepository.findByEmail(userDetails.getUsername()).orElseThrow();
+        User u = userRepository.findByEmail(userDetails.getUsername()).orElseThrow();
         LoginResponse resp = new LoginResponse(token, u.getRole().getCode(), u.getName());
         return ResponseEntity.ok(resp);
     

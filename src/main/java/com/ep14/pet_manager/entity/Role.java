@@ -9,7 +9,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "roles")
-public class role {
+public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long role_id;
@@ -27,25 +27,25 @@ public class role {
     private OffsetDateTime updated_at = OffsetDateTime.now();
 
     @OneToMany(mappedBy = "role")
-    private List<user> users;
+    private List<User> Users;
 
-    public role() {
+    public Role() {
 
     }
 
     @JsonCreator
-    public role(@JsonProperty("id") Long role_id,
-            @JsonProperty("code") String code,
-            @JsonProperty("description") String description,
-            @JsonProperty("createdAt") OffsetDateTime created_at,
-            @JsonProperty("updatedAt") OffsetDateTime updated_at,
-            @JsonProperty("users") List<user> users) {
+    public Role(@JsonProperty("id") Long role_id,
+                @JsonProperty("code") String code,
+                @JsonProperty("description") String description,
+                @JsonProperty("createdAt") OffsetDateTime created_at,
+                @JsonProperty("updatedAt") OffsetDateTime updated_at,
+                @JsonProperty("users") List<User> Users) {
         this.role_id = role_id;
         this.code = code;
         this.description = description;
         this.created_at = created_at;
         this.updated_at = updated_at;
-        this.users = users;
+        this.Users = Users;
     }
 
     public Long getRole_id() {
@@ -88,12 +88,12 @@ public class role {
         this.updated_at = updated_at;
     }
 
-    public List<user> getUsers() {
-        return users;
+    public List<User> getUsers() {
+        return Users;
     }
 
-    public void setUsers(List<user> users) {
-        this.users = users;
+    public void setUsers(List<User> Users) {
+        this.Users = Users;
     }
 
 }

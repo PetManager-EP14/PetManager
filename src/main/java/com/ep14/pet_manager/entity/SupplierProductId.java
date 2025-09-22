@@ -3,7 +3,7 @@ package com.ep14.pet_manager.entity;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class supplier_product_id implements Serializable {
+public class SupplierProductId implements Serializable {
     private Long product_id;
     private Long supplier_id;
 
@@ -11,9 +11,9 @@ public class supplier_product_id implements Serializable {
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (!(o instanceof supplier_product_id))
+        if (!(o instanceof SupplierProductId))
             return false;
-        supplier_product_id that = (supplier_product_id) o;
+        SupplierProductId that = (SupplierProductId) o;
         return Objects.equals(product_id, that.product_id) && Objects.equals(supplier_id, that.supplier_id);
     }
 

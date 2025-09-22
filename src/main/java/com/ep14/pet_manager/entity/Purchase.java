@@ -21,15 +21,15 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "shoppings")
-public class shopping {
+public class Purchase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long shopping_id;
 
     @ManyToOne
-    @JoinColumn(name = "shoppings", nullable = false)
-    private suppliers suppliers;
+    @JoinColumn(name = "supplier_id", nullable = false)
+    private Supplier supplier;
 
     @Column(nullable = false)
     private OffsetDateTime date = OffsetDateTime.now();
@@ -48,35 +48,43 @@ public class shopping {
     private OffsetDateTime updated_at = OffsetDateTime.now();
 
     @ManyToOne
-    @JoinColumn(name = "shoppings", nullable = false)
-    private user user;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @OneToMany(mappedBy = "shopping")
-    private List<shopping_details> shopping_details;
+    @OneToMany(mappedBy = "purchase")
+    private List<PurchaseDetails> PurchaseDetails;
 
-    public shopping() {
+    public Purchase() {
 
     }
 
     @JsonCreator
-    public shopping(@JsonProperty("id") Long shopping_id,
-            @JsonProperty("suppliers") com.ep14.pet_manager.entity.suppliers suppliers,
-            @JsonProperty("date") OffsetDateTime date,
-            @JsonProperty("status") status_shopping status,
-            @JsonProperty("total") BigDecimal total,
-            @JsonProperty("created_at") OffsetDateTime created_at,
-            @JsonProperty("updated_at") OffsetDateTime updated_at,
-            @JsonProperty("user") com.ep14.pet_manager.entity.user user,
-            @JsonProperty("shopping_details") List<shopping_details> shopping_details) {
+    public Purchase(@JsonProperty("id") Long shopping_id,
+                    @JsonProperty("supplier") Supplier supplier,
+                    @JsonProperty("date") OffsetDateTime date,
+                    @JsonProperty("status") status_shopping status,
+                    @JsonProperty("total") BigDecimal total,
+                    @JsonProperty("created_at") OffsetDateTime created_at,
+                    @JsonProperty("updated_at") OffsetDateTime updated_at,
+                    @JsonProperty("user") User user,
+                    @JsonProperty("shopping_details") List<PurchaseDetails> PurchaseDetails) {
         this.shopping_id = shopping_id;
-        this.suppliers = suppliers;
+        this.supplier = supplier;
         this.date = date;
         this.status = status;
         this.total = total;
         this.created_at = created_at;
         this.updated_at = updated_at;
         this.user = user;
-        this.shopping_details = shopping_details;
+        this.PurchaseDetails = PurchaseDetails;
+    }
+
+    public List<PurchaseDetails> getShoppingDetails() {
+        return PurchaseDetails;
+    }
+
+    public void setShoppingDetails(List<PurchaseDetails> purchaseDetails) {
+        PurchaseDetails = purchaseDetails;
     }
 
     public Long getShopping_id() {
@@ -87,12 +95,12 @@ public class shopping {
         this.shopping_id = shopping_id;
     }
 
-    public suppliers getSuppliers() {
-        return suppliers;
+    public Supplier getSupplier() {
+        return supplier;
     }
 
-    public void setSuppliers(suppliers suppliers) {
-        this.suppliers = suppliers;
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
     }
 
     public OffsetDateTime getDate() {
@@ -135,20 +143,20 @@ public class shopping {
         this.updated_at = updated_at;
     }
 
-    public user getUser() {
+    public User getUser() {
         return user;
     }
 
-    public void setUser(user user) {
+    public void setUser(User user) {
         this.user = user;
     }
 
-    public List<shopping_details> getShopping_details() {
-        return shopping_details;
+    public List<PurchaseDetails> getPurchaseDetails() {
+        return PurchaseDetails;
     }
 
-    public void setShopping_details(List<shopping_details> shopping_details) {
-        this.shopping_details = shopping_details;
+    public void setPurchaseDetails(List<PurchaseDetails> purchaseDetails) {
+        PurchaseDetails = purchaseDetails;
     }
 
     public enum status_shopping {

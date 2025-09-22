@@ -1,4 +1,4 @@
-package com.ep14.pet_manager.Service;
+package com.ep14.pet_manager.service;
 
 import java.util.List;
 
@@ -9,8 +9,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
-import com.ep14.pet_manager.Repository.UserRepository;
-import com.ep14.pet_manager.entity.user;
+import com.ep14.pet_manager.repository.UserRepository;
 
 @Service
 public class UsersDetailsService implements UserDetailsService {
@@ -22,7 +21,9 @@ public class UsersDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername (String email) throws UsernameNotFoundException {
-        user u = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Usuario No Encontrado!"));
+        com.ep14.pet_manager.entity.User u = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario No Encontrado!"));
+
         List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + u.getRole().getCode().toUpperCase()));
         return new User(u.getEmail(), u.getPassword_hash(), authorities);
 

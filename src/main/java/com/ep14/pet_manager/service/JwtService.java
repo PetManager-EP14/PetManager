@@ -1,4 +1,4 @@
-package com.ep14.pet_manager.Service;
+package com.ep14.pet_manager.service;
 
 import java.security.Key;
 import java.util.Date;

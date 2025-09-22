@@ -18,7 +18,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "users")
-public class user {
+public class User {
     @Id
     @GeneratedValue
     @Column(nullable = false, columnDefinition = "UUID DEFAULT gen_random_uuid()")
@@ -50,30 +50,30 @@ public class user {
 
     @ManyToOne
     @JoinColumn(name = "rol_id", nullable = false)
-    private role role;
+    private Role role;
 
     @OneToMany(mappedBy = "user")
-    private List<sale> sales;
+    private List<Sale> sales;
 
-    @OneToMany(mappedBy = "shopping")
-    private List<shopping> shoppings;
+    @OneToMany(mappedBy = "user")
+    private List<Purchase> purchases;
 
-    public user() {
+    public User() {
     }
 
     @JsonCreator
-    public user(@JsonProperty("user_id") UUID user_id,
-            @JsonProperty("role_id") Long role_id,
-            @JsonProperty("name") String name,
-            @JsonProperty("email") String email,
-            @JsonProperty("phone") String phone,
-            @JsonProperty("address") String address,
-            @JsonProperty("password_hash") String password_hash,
-            @JsonProperty("created_at") OffsetDateTime created_at,
-            @JsonProperty("updated_at") OffsetDateTime updated_at,
-            @JsonProperty("role") com.ep14.pet_manager.entity.role role,
-            @JsonProperty("sales") List<sale> sales,
-            @JsonProperty("shoppings") List<shopping> shoppings) {
+    public User(@JsonProperty("user_id") UUID user_id,
+                @JsonProperty("role_id") Long role_id,
+                @JsonProperty("name") String name,
+                @JsonProperty("email") String email,
+                @JsonProperty("phone") String phone,
+                @JsonProperty("address") String address,
+                @JsonProperty("password_hash") String password_hash,
+                @JsonProperty("created_at") OffsetDateTime created_at,
+                @JsonProperty("updated_at") OffsetDateTime updated_at,
+                @JsonProperty("role") Role role,
+                @JsonProperty("sales") List<Sale> Sales,
+                @JsonProperty("shopping") List<Purchase> purchases) {
         this.user_id = user_id;
         this.role_id = role_id;
         this.name = name;
@@ -84,8 +84,8 @@ public class user {
         this.created_at = created_at;
         this.updated_at = updated_at;
         this.role = role;
-        this.sales = sales;
-        this.shoppings = shoppings;
+        this.sales = Sales;
+        this.purchases = purchases;
     }
 
     public UUID getUser_id() {
@@ -160,28 +160,27 @@ public class user {
         this.updated_at = updated_at;
     }
 
-    public role getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(role role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 
-    public List<sale> getSales() {
+    public List<Sale> getSales() {
         return sales;
     }
 
-    public void setSales(List<sale> sales) {
+    public void setSales(List<Sale> sales) {
         this.sales = sales;
     }
 
-    public List<shopping> getShoppings() {
-        return shoppings;
+    public List<Purchase> getPurchases() {
+        return purchases;
     }
 
-    public void setShoppings(List<shopping> shoppings) {
-        this.shoppings = shoppings;
+    public void setPurchases(List<Purchase> purchases) {
+        this.purchases = purchases;
     }
-
 }

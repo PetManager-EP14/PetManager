@@ -1,4 +1,4 @@
-package com.ep14.pet_manager.Service;
+package com.ep14.pet_manager.service;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;

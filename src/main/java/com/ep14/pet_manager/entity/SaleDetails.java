@@ -17,7 +17,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "sale_details")
-public class sale_details {
+public class SaleDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,11 +25,11 @@ public class sale_details {
 
     @ManyToOne
     @JoinColumn(name = "sale_id", nullable = false)
-    private sale sale;
+    private Sale sale;
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
-    private product product;
+    private Product product;
 
     @Column(nullable = false)
     private BigDecimal amount;
@@ -37,15 +37,15 @@ public class sale_details {
     @Column(nullable = false)
     private OffsetDateTime created_at = OffsetDateTime.now();
 
-    public sale_details() {
+    public SaleDetails() {
     }
 
     @JsonCreator
-    public sale_details(@JsonProperty("sale_detail_id") Long sale_detail_id,
-            @JsonProperty("sale") com.ep14.pet_manager.entity.sale sale,
-            @JsonProperty("product") com.ep14.pet_manager.entity.product product,
-            @JsonProperty("amount") BigDecimal amount,
-            @JsonProperty("created_at") OffsetDateTime created_at) {
+    public SaleDetails(@JsonProperty("sale_detail_id") Long sale_detail_id,
+                       @JsonProperty("sale") Sale sale,
+                       @JsonProperty("product") Product product,
+                       @JsonProperty("amount") BigDecimal amount,
+                       @JsonProperty("created_at") OffsetDateTime created_at) {
         this.sale_detail_id = sale_detail_id;
         this.sale = sale;
         this.product = product;
@@ -61,19 +61,19 @@ public class sale_details {
         this.sale_detail_id = sale_detail_id;
     }
 
-    public sale getSale() {
+    public Sale getSale() {
         return sale;
     }
 
-    public void setSale(sale sale) {
+    public void setSale(Sale sale) {
         this.sale = sale;
     }
 
-    public product getProduct() {
+    public Product getProduct() {
         return product;
     }
 
-    public void setProduct(product product) {
+    public void setProduct(Product product) {
         this.product = product;
     }
 

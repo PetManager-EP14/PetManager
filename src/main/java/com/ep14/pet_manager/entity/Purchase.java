@@ -151,12 +151,12 @@ public class Purchase {
         this.user = user;
     }
 
-    public List<PurchaseDetails> getShopping_details() {
+    public List<PurchaseDetails> getPurchaseDetails() {
         return PurchaseDetails;
     }
 
-    public void setShopping_details(List<PurchaseDetails> PurchaseDetails) {
-        this.PurchaseDetails = PurchaseDetails;
+    public void setPurchaseDetails(List<PurchaseDetails> purchaseDetails) {
+        PurchaseDetails = purchaseDetails;
     }
 
     public enum status_shopping {

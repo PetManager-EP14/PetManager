@@ -11,7 +11,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "permission")
+@Table(name = "permissions")
 public class Permission {
 
     @Id

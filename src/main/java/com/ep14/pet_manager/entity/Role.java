@@ -1,11 +1,24 @@
 package com.ep14.pet_manager.entity;
 
 import java.time.OffsetDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.*;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "roles")
@@ -28,6 +41,13 @@ public class Role {
 
     @OneToMany(mappedBy = "role")
     private List<User> Users;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "role_permission",                         
+        inverseJoinColumns = @JoinColumn(name = "permission_id")
+    )
+    private Set<Permission> permissions = new HashSet<>();
 
     public Role() {
 
@@ -95,5 +115,9 @@ public class Role {
     public void setUsers(List<User> Users) {
         this.Users = Users;
     }
+
+    public Set<Permission> getPermissions() { return permissions; }
+    
+    public void setPermissions(Set<Permission> permissions) { this.permissions = permissions; }
 
 }

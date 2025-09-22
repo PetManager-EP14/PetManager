@@ -1,12 +1,10 @@
 package com.ep14.pet_manager.DTO;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.UUID;
 
 public class PurchaseDTO implements Serializable {
 
@@ -17,7 +15,7 @@ public class PurchaseDTO implements Serializable {
     private BigDecimal total;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
-    private Long userId;
+    private UUID userId;
     private List<Long> shoppingDetailIds;
 
     public enum StatusShopping {
@@ -30,7 +28,7 @@ public class PurchaseDTO implements Serializable {
     public PurchaseDTO(Long id, Long supplierId, OffsetDateTime date, StatusShopping status, BigDecimal total,
                        OffsetDateTime createdAt,
                        OffsetDateTime updatedAt,
-                       Long userId,
+                       UUID userId,
                        List<Long> shoppingDetailIds
     ) {
         this.id = id;
@@ -100,11 +98,11 @@ public class PurchaseDTO implements Serializable {
         this.updatedAt = updatedAt;
     }
 
-    public Long getUserId() {
+    public UUID getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 

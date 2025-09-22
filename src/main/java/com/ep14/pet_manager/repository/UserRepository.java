@@ -21,6 +21,6 @@ public interface UserRepository extends JpaRepository <User, UUID> {
     // Verificar si ya existe un email registrado
     boolean existsByEmail(String email);
     @Query("select u from User u where u.role_id = :roleId")
-    Optional<User> findByRoleId(@Para("roleId") Long roleId);
+    Optional<User> findByRoleId(@Param("roleId") Long roleId);
 
 }

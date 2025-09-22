@@ -21,7 +21,9 @@ public class UsersDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername (String email) throws UsernameNotFoundException {
-        User u = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Usuario No Encontrado!"));
+        com.ep14.pet_manager.entity.User u = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario No Encontrado!"));
+
         List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + u.getRole().getCode().toUpperCase()));
         return new User(u.getEmail(), u.getPassword_hash(), authorities);
 

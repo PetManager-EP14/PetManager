@@ -53,10 +53,10 @@ public class User {
     private Role role;
 
     @OneToMany(mappedBy = "user")
-     private List<Sale> Sales;
+    private List<Sale> sales;
 
-    @OneToMany(mappedBy = "user")
-    private List<Purchase> purchase;
+    @OneToMany(mappedBy = "shopping")
+    private List<Purchase> purchases;
 
     public User() {
     }
@@ -72,8 +72,8 @@ public class User {
                 @JsonProperty("created_at") OffsetDateTime created_at,
                 @JsonProperty("updated_at") OffsetDateTime updated_at,
                 @JsonProperty("role") Role role,
-                @JsonProperty("sales") List<Sale> Sales,
-                @JsonProperty("shopping") List<Purchase> purchase) {
+                @JsonProperty("sales") List<Sale> sales,
+                @JsonProperty("shoppings") List<Purchase> purchases) {
         this.user_id = user_id;
         this.role_id = role_id;
         this.name = name;
@@ -84,8 +84,8 @@ public class User {
         this.created_at = created_at;
         this.updated_at = updated_at;
         this.role = role;
-        this.Sales = Sales;
-        this.purchase = purchase;
+        this.sales = sales;
+        this.purchases = purchases;
     }
 
     public UUID getUser_id() {
@@ -169,19 +169,19 @@ public class User {
     }
 
     public List<Sale> getSales() {
-        return Sales;
+        return sales;
     }
 
-    public void setSales(List<Sale> Sales) {
-        this.Sales = Sales;
+    public void setSales(List<Sale> sales) {
+        this.sales = sales;
     }
 
-    public List<Purchase> getShopping() {
-        return purchase;
+    public List<Purchase> getPurchases() {
+        return purchases;
     }
 
-    public void setShoppings(List<Purchase> purchases) {
-        this.purchase = purchase;
+    public void setPurchases(List<Purchase> purchases) {
+        this.purchases = purchases;
     }
 
 }

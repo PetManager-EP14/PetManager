@@ -25,7 +25,8 @@ import jakarta.persistence.Table;
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long role_id;
+    @Column(name = "role_id")
+    private Long roleId;
 
     @Column(name = "code", nullable = false)
     private String code;
@@ -33,14 +34,14 @@ public class Role {
     @Column(unique = true, length = 100)
     private String description;
 
-    @Column(nullable = false)
-    private OffsetDateTime created_at = OffsetDateTime.now();
+    @Column(name = "created_at", nullable = false)
+    private OffsetDateTime createdAt = OffsetDateTime.now();
 
-    @Column(nullable = false)
-    private OffsetDateTime updated_at = OffsetDateTime.now();
+    @Column(name = "updated_at", nullable = false)
+    private OffsetDateTime updatedAt = OffsetDateTime.now();
 
     @OneToMany(mappedBy = "role")
-    private List<User> Users;
+    private List<User> users;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -54,26 +55,26 @@ public class Role {
     }
 
     @JsonCreator
-    public Role(@JsonProperty("id") Long role_id,
+    public Role(@JsonProperty("id") Long roleId,
                 @JsonProperty("code") String code,
                 @JsonProperty("description") String description,
-                @JsonProperty("createdAt") OffsetDateTime created_at,
-                @JsonProperty("updatedAt") OffsetDateTime updated_at,
-                @JsonProperty("users") List<User> Users) {
-        this.role_id = role_id;
+                @JsonProperty("createdAt") OffsetDateTime createdAt,
+                @JsonProperty("updated_at") OffsetDateTime updatedAt,
+                @JsonProperty("users") List<User> users) {
+        this.roleId = roleId;
         this.code = code;
         this.description = description;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
-        this.Users = Users;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.users = users;
     }
 
-    public Long getRole_id() {
-        return role_id;
+    public Long getRoleId() {
+        return roleId;
     }
 
-    public void setRole_id(Long role_id) {
-        this.role_id = role_id;
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
     }
 
     public String getCode() {
@@ -92,28 +93,28 @@ public class Role {
         this.description = description;
     }
 
-    public OffsetDateTime getCreated_at() {
-        return created_at;
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreated_at(OffsetDateTime created_at) {
-        this.created_at = created_at;
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public OffsetDateTime getUpdated_at() {
-        return updated_at;
+    public OffsetDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setUpdated_at(OffsetDateTime updated_at) {
-        this.updated_at = updated_at;
+    public void setUpdatedAt(OffsetDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public List<User> getUsers() {
-        return Users;
+        return users;
     }
 
     public void setUsers(List<User> Users) {
-        this.Users = Users;
+        this.users = Users;
     }
 
     public Set<Permission> getPermissions() { return permissions; }

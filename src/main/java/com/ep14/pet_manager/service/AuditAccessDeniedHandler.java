@@ -38,7 +38,7 @@ public class AuditAccessDeniedHandler implements AccessDeniedHandler {
             if (username != null && !username.isBlank()) {
                 var uOpt = userRepository.findByEmail(username);
                 if (uOpt.isPresent()) {
-                    userId = uOpt.get().getUser_id();
+                    userId = uOpt.get().getUserId();
                 }
             }
         }

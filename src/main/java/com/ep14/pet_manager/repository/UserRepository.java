@@ -1,5 +1,6 @@
 package com.ep14.pet_manager.repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,7 +21,7 @@ public interface UserRepository extends JpaRepository <User, UUID> {
     
     // Verificar si ya existe un email registrado
     boolean existsByEmail(String email);
-    @Query("select u from User u where u.role_id = :roleId")
-    Optional<User> findByRoleId(@Param("roleId") Long roleId);
+    @Query("select u from User u where u.role.roleId = :roleId")
+    List<User> findAllByRoleId(@Param("roleId") Long roleId);
 
 }

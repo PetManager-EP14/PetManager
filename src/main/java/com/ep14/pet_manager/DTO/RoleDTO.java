@@ -7,33 +7,33 @@ import com.ep14.pet_manager.entity.User;
 
 public class RoleDTO {
 
-    private Long role_id;
+    private Long roleId;
     private String code;
     private String description;
-    private OffsetDateTime created_at;
-    private OffsetDateTime updated_at;
+    private OffsetDateTime createdAt;
+    private OffsetDateTime updatedAt;
     private List<User> Users;
 
     public RoleDTO(){
 
     }
 
-    public RoleDTO(Long role_id, String code, String description, OffsetDateTime created_at, OffsetDateTime updated_at,
-            List<User> Users) {
-        this.role_id = role_id;
+    public RoleDTO(Long roleId, String code, String description, OffsetDateTime createdAt, OffsetDateTime updatedAt,
+                   List<User> Users) {
+        this.roleId = roleId;
         this.code = code;
         this.description = description;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
         this.Users = Users;
     }
 
-    public Long getRole_id() {
-        return role_id;
+    public Long getRoleId() {
+        return roleId;
     }
 
-    public void setRole_id(Long role_id) {
-        this.role_id = role_id;
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
     }
 
     public String getCode() {
@@ -52,20 +52,20 @@ public class RoleDTO {
         this.description = description;
     }
 
-    public OffsetDateTime getCreated_at() {
-        return created_at;
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreated_at(OffsetDateTime created_at) {
-        this.created_at = created_at;
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public OffsetDateTime getUpdated_at() {
-        return updated_at;
+    public OffsetDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setUpdated_at(OffsetDateTime updated_at) {
-        this.updated_at = updated_at;
+    public void setUpdatedAt(OffsetDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public List<User> getUsers() {

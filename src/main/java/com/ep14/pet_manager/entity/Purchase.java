@@ -25,7 +25,8 @@ public class Purchase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long shopping_id;
+    @Column(name = "shopping_id")
+    private Long purchaseId;
 
     @ManyToOne
     @JoinColumn(name = "supplier_id", nullable = false)
@@ -36,16 +37,16 @@ public class Purchase {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private status_shopping status = status_shopping.DRAFT;
+    private statusShopping status = statusShopping.DRAFT;
 
     @Column(nullable = false, precision = 14, scale = 2)
     private BigDecimal total = BigDecimal.ZERO;
 
-    @Column(nullable = false)
-    private OffsetDateTime created_at = OffsetDateTime.now();
+    @Column(name = "created_at", nullable = false)
+    private OffsetDateTime createdAt = OffsetDateTime.now();
 
-    @Column(nullable = false)
-    private OffsetDateTime updated_at = OffsetDateTime.now();
+    @Column(name = "updated_at",nullable = false)
+    private OffsetDateTime updatedAt = OffsetDateTime.now();
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -59,24 +60,24 @@ public class Purchase {
     }
 
     @JsonCreator
-    public Purchase(@JsonProperty("id") Long shopping_id,
+    public Purchase(@JsonProperty("id") Long purchaseId,
                     @JsonProperty("supplier") Supplier supplier,
                     @JsonProperty("date") OffsetDateTime date,
-                    @JsonProperty("status") status_shopping status,
+                    @JsonProperty("status") statusShopping status,
                     @JsonProperty("total") BigDecimal total,
-                    @JsonProperty("created_at") OffsetDateTime created_at,
-                    @JsonProperty("updated_at") OffsetDateTime updated_at,
+                    @JsonProperty("createdAt") OffsetDateTime createdAt,
+                    @JsonProperty("updatedAt") OffsetDateTime updatedAt,
                     @JsonProperty("user") User user,
-                    @JsonProperty("shopping_details") List<PurchaseDetails> PurchaseDetails) {
-        this.shopping_id = shopping_id;
+                    @JsonProperty("shoppingDetails") List<PurchaseDetails> purchaseDetails) {
+        this.purchaseId = purchaseId;
         this.supplier = supplier;
         this.date = date;
         this.status = status;
         this.total = total;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
         this.user = user;
-        this.PurchaseDetails = PurchaseDetails;
+        this.PurchaseDetails = purchaseDetails;
     }
 
     public List<PurchaseDetails> getShoppingDetails() {
@@ -87,12 +88,12 @@ public class Purchase {
         PurchaseDetails = purchaseDetails;
     }
 
-    public Long getShopping_id() {
-        return shopping_id;
+    public Long getPurchaseId() {
+        return purchaseId;
     }
 
-    public void setShopping_id(Long shopping_id) {
-        this.shopping_id = shopping_id;
+    public void setPurchaseId(Long purchaseId) {
+        this.purchaseId = purchaseId;
     }
 
     public Supplier getSupplier() {
@@ -111,11 +112,11 @@ public class Purchase {
         this.date = date;
     }
 
-    public status_shopping getStatus() {
+    public statusShopping getStatus() {
         return status;
     }
 
-    public void setStatus(status_shopping status) {
+    public void setStatus(statusShopping status) {
         this.status = status;
     }
 
@@ -127,20 +128,20 @@ public class Purchase {
         this.total = total;
     }
 
-    public OffsetDateTime getCreated_at() {
-        return created_at;
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreated_at(OffsetDateTime created_at) {
-        this.created_at = created_at;
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public OffsetDateTime getUpdated_at() {
-        return updated_at;
+    public OffsetDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setUpdated_at(OffsetDateTime updated_at) {
-        this.updated_at = updated_at;
+    public void setUpdatedAt(OffsetDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public User getUser() {
@@ -159,7 +160,7 @@ public class Purchase {
         PurchaseDetails = purchaseDetails;
     }
 
-    public enum status_shopping {
+    public enum statusShopping {
         DRAFT, REGISTERED, ANNULLED;
     }
 

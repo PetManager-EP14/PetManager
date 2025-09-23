@@ -47,11 +47,11 @@ public class UserAdminServiceImpl implements UserAdminService {
             : new HashSet<>();
 
         // Permisos directos
-        Set<String> direct = userPermRepo.findDirectCodesByUser(u.getUser_id());
+        Set<String> direct = userPermRepo.findDirectCodesByUser(u.getUserId());
         rolePerms.addAll(direct);
 
         return new UserSummary(
-            u.getUser_id() != null ? u.getUser_id().toString() : null,
+            u.getUserId() != null ? u.getUserId().toString() : null,
             u.getName(),
             u.getEmail(),
             roleCode,
@@ -80,14 +80,14 @@ public class UserAdminServiceImpl implements UserAdminService {
         var u = userRepo.findById(uuid).orElseThrow(() -> new NoSuchElementException("User not found"));
 
         // 1) Limpiar actuales (usa método alineado al EmbeddedId)
-        userPermRepo.deleteByIdUserId(u.getUser_id());
+        userPermRepo.deleteByIdUserId(u.getUserId());
 
         // 2) Insertar nuevos (resolviendo por code, validando existencia)
         for (String code : codes) {
             var p = permRepo.findByCode(code)
                 .orElseThrow(() -> new NoSuchElementException("Unknown permission: " + code));
 
-            var upId = new UserPermission.Id(u.getUser_id(), p.getPermissionId());
+            var upId = new UserPermission.Id(u.getUserId(), p.getPermissionId());
             var up = new UserPermission();
             up.setId(upId);
             up.setUser(u);

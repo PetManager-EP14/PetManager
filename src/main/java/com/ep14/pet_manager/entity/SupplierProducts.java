@@ -24,20 +24,20 @@ public class SupplierProducts {
     @JoinColumn(name = "supplier")
     private Supplier supplier;
 
-    @Column(precision = 12, scale = 2)
-    private BigDecimal cost_ref;
+    @Column(name = "cost_ref", precision = 12, scale = 2)
+    private BigDecimal costRef;
 
-    @Column
-    private Integer lead_time_days;
+    @Column(name = "lead_time_days")
+    private Integer leadTimeDays;
 
     @Column(nullable = false, columnDefinition = "boolean default true")
     private boolean active = true;
 
-    @Column(nullable = false)
-    private OffsetDateTime created_at = OffsetDateTime.now();
+    @Column(name = "created_at", nullable = false)
+    private OffsetDateTime createdAt = OffsetDateTime.now();
 
-    @Column(nullable = false)
-    private OffsetDateTime updated_at = OffsetDateTime.now();
+    @Column(name = "updated_at", nullable = false)
+    private OffsetDateTime updatedAt = OffsetDateTime.now();
 
     public SupplierProducts() {
     }
@@ -45,18 +45,18 @@ public class SupplierProducts {
     @JsonCreator
     public SupplierProducts(@JsonProperty("product") Product product,
                             @JsonProperty("supplier") Supplier supplier,
-                            @JsonProperty("cost_ref") BigDecimal cost_ref,
-                            @JsonProperty("lead_time_days") Integer lead_time_days,
+                            @JsonProperty("costRef") BigDecimal costRef,
+                            @JsonProperty("leadTimeDays") Integer leadTimeDays,
                             @JsonProperty("active") boolean active,
-                            @JsonProperty("created_id") OffsetDateTime created_at,
-                            @JsonProperty("updated_at") OffsetDateTime updated_at) {
+                            @JsonProperty("createdAt") OffsetDateTime createdAt,
+                            @JsonProperty("updatedAt") OffsetDateTime updatedAt) {
         this.product = product;
         this.supplier = supplier;
-        this.cost_ref = cost_ref;
-        this.lead_time_days = lead_time_days;
+        this.costRef = costRef;
+        this.leadTimeDays = leadTimeDays;
         this.active = active;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public Long getId() {
@@ -83,20 +83,20 @@ public class SupplierProducts {
         this.supplier = supplier;
     }
 
-    public BigDecimal getCost_ref() {
-        return cost_ref;
+    public BigDecimal getCostRef() {
+        return costRef;
     }
 
-    public void setCost_ref(BigDecimal cost_ref) {
-        this.cost_ref = cost_ref;
+    public void setCostRef(BigDecimal costRef) {
+        this.costRef = costRef;
     }
 
-    public Integer getLead_time_days() {
-        return lead_time_days;
+    public Integer getLeadTimeDays() {
+        return leadTimeDays;
     }
 
-    public void setLead_time_days(Integer lead_time_days) {
-        this.lead_time_days = lead_time_days;
+    public void setLeadTimeDays(Integer leadTimeDays) {
+        this.leadTimeDays = leadTimeDays;
     }
 
     public boolean isActive() {
@@ -107,20 +107,20 @@ public class SupplierProducts {
         this.active = active;
     }
 
-    public OffsetDateTime getCreated_at() {
-        return created_at;
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreated_at(OffsetDateTime created_at) {
-        this.created_at = created_at;
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public OffsetDateTime getUpdated_at() {
-        return updated_at;
+    public OffsetDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setUpdated_at(OffsetDateTime updated_at) {
-        this.updated_at = updated_at;
+    public void setUpdatedAt(OffsetDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
 }

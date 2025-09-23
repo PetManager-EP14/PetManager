@@ -21,11 +21,8 @@ import jakarta.persistence.Table;
 public class User {
     @Id
     @GeneratedValue
-    @Column(nullable = false, columnDefinition = "UUID DEFAULT gen_random_uuid()")
-    private UUID user_id;
-
-    @Column(nullable = false)
-    private Long role_id;
+    @Column(name = "user_id", nullable = false, columnDefinition = "UUID DEFAULT gen_random_uuid()")
+    private UUID userId;
 
     @Column(nullable = false, length = 100)
     private String name;
@@ -39,17 +36,17 @@ public class User {
     @Column(nullable = false)
     private String address;
 
-    @Column(nullable = false)
-    private String password_hash;
+    @Column(name = "password_hash", nullable = false)
+    private String passwordHash;
 
-    @Column(nullable = false)
-    private OffsetDateTime created_at = OffsetDateTime.now();
+    @Column(name = "created_at", nullable = false)
+    private OffsetDateTime createdAt = OffsetDateTime.now();
 
-    @Column(nullable = false)
-    private OffsetDateTime updated_at = OffsetDateTime.now();
+    @Column(name = "updated_at", nullable = false)
+    private OffsetDateTime updatedAt = OffsetDateTime.now();
 
     @ManyToOne
-    @JoinColumn(name = "rol_id", nullable = false)
+    @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
     @OneToMany(mappedBy = "user")
@@ -62,46 +59,36 @@ public class User {
     }
 
     @JsonCreator
-    public User(@JsonProperty("user_id") UUID user_id,
-                @JsonProperty("role_id") Long role_id,
+    public User(@JsonProperty("userId") UUID userId,
                 @JsonProperty("name") String name,
                 @JsonProperty("email") String email,
                 @JsonProperty("phone") String phone,
                 @JsonProperty("address") String address,
-                @JsonProperty("password_hash") String password_hash,
-                @JsonProperty("created_at") OffsetDateTime created_at,
-                @JsonProperty("updated_at") OffsetDateTime updated_at,
+                @JsonProperty("passwordHash") String passwordHash,
+                @JsonProperty("createdAt") OffsetDateTime createdAt,
+                @JsonProperty("updatedAt") OffsetDateTime updatedAt,
                 @JsonProperty("role") Role role,
-                @JsonProperty("sales") List<Sale> Sales,
+                @JsonProperty("sales") List<Sale> sales,
                 @JsonProperty("shopping") List<Purchase> purchases) {
-        this.user_id = user_id;
-        this.role_id = role_id;
+        this.userId = userId;
         this.name = name;
         this.email = email;
         this.phone = phone;
         this.address = address;
-        this.password_hash = password_hash;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
+        this.passwordHash = passwordHash;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
         this.role = role;
-        this.sales = Sales;
+        this.sales = sales;
         this.purchases = purchases;
     }
 
-    public UUID getUser_id() {
-        return user_id;
+    public UUID getUserId() {
+        return userId;
     }
 
-    public void setUser_id(UUID user_id) {
-        this.user_id = user_id;
-    }
-
-    public Long getRole_id() {
-        return role_id;
-    }
-
-    public void setRole_id(Long role_id) {
-        this.role_id = role_id;
+    public void setUserId(UUID userId) {
+        this.userId = userId;
     }
 
     public String getName() {
@@ -136,28 +123,28 @@ public class User {
         this.address = address;
     }
 
-    public String getPassword_hash() {
-        return password_hash;
+    public String getPasswordHash() {
+        return passwordHash;
     }
 
-    public void setPassword_hash(String password_hash) {
-        this.password_hash = password_hash;
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
     }
 
-    public OffsetDateTime getCreated_at() {
-        return created_at;
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreated_at(OffsetDateTime created_at) {
-        this.created_at = created_at;
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public OffsetDateTime getUpdated_at() {
-        return updated_at;
+    public OffsetDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setUpdated_at(OffsetDateTime updated_at) {
-        this.updated_at = updated_at;
+    public void setUpdatedAt(OffsetDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public Role getRole() {

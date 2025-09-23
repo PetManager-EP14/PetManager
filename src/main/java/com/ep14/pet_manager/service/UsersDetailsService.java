@@ -36,7 +36,7 @@ public class UsersDetailsService implements UserDetailsService {
 
 
         // 1) Permisos directos del usuario
-        Set<String> codes = new HashSet<>(userPermRepo.findDirectCodesByUser(u.getUser_id()));
+        Set<String> codes = new HashSet<>(userPermRepo.findDirectCodesByUser(u.getUserId()));
 
         // 2) Permisos por rol (desde la relación ManyToMany en Role)
         Role role = u.getRole();
@@ -59,7 +59,7 @@ public class UsersDetailsService implements UserDetailsService {
             authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getCode().toUpperCase()));
         }
 
-        return new User(u.getEmail(), u.getPassword_hash(), authorities);
+        return new User(u.getEmail(), u.getPasswordHash(), authorities);
 
     }
 }

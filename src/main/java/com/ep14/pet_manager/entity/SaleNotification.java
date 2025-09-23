@@ -22,14 +22,15 @@ public class SaleNotification {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long sale_notification_id;
+    @Column(name = "sale_notification_id")
+    private Long saleNotificationId;
 
     @OneToOne
     @JoinColumn(nullable = false)
     private Sale sale;
 
-    @Column(nullable = false)
-    private OffsetDateTime shipping_date = OffsetDateTime.now();
+    @Column(name = "shipping_date", nullable = false)
+    private OffsetDateTime shippingDate = OffsetDateTime.now();
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -39,34 +40,34 @@ public class SaleNotification {
     @Enumerated(EnumType.STRING)
     private type type;
 
-    @Column(nullable = false)
-    private OffsetDateTime created_at = OffsetDateTime.now();
+    @Column(name = "created_at", nullable = false)
+    private OffsetDateTime createdAt = OffsetDateTime.now();
 
     public SaleNotification() {
 
     }
 
     @JsonCreator
-    public SaleNotification(@JsonProperty("sale_notification_id") Long sale_notification_id,
+    public SaleNotification(@JsonProperty("saleNotificationId") Long saleNotificationId,
                             @JsonProperty("sale") Sale sale,
-                            @JsonProperty("shipping_date") OffsetDateTime shipping_date,
+                            @JsonProperty("shippingDate") OffsetDateTime shippingDate,
                             @JsonProperty("media") SaleNotification.media media,
                             @JsonProperty("type") SaleNotification.type type,
-                            @JsonProperty("created_at") OffsetDateTime created_at) {
-        this.sale_notification_id = sale_notification_id;
+                            @JsonProperty("createdAt") OffsetDateTime createdAt) {
+        this.saleNotificationId = saleNotificationId;
         this.sale = sale;
-        this.shipping_date = shipping_date;
+        this.shippingDate = shippingDate;
         this.media = media;
         this.type = type;
-        this.created_at = created_at;
+        this.createdAt = createdAt;
     }
 
-    public Long getSale_notification_id() {
-        return sale_notification_id;
+    public Long getSaleNotificationId() {
+        return saleNotificationId;
     }
 
-    public void setSale_notification_id(Long sale_notification_id) {
-        this.sale_notification_id = sale_notification_id;
+    public void setSaleNotificationId(Long saleNotificationId) {
+        this.saleNotificationId = saleNotificationId;
     }
 
     public Sale getSale() {
@@ -77,12 +78,12 @@ public class SaleNotification {
         this.sale = sale;
     }
 
-    public OffsetDateTime getShipping_date() {
-        return shipping_date;
+    public OffsetDateTime getShippingDate() {
+        return shippingDate;
     }
 
-    public void setShipping_date(OffsetDateTime shipping_date) {
-        this.shipping_date = shipping_date;
+    public void setShippingDate(OffsetDateTime shippingDate) {
+        this.shippingDate = shippingDate;
     }
 
     public media getMedia() {
@@ -101,12 +102,12 @@ public class SaleNotification {
         this.type = type;
     }
 
-    public OffsetDateTime getCreated_at() {
-        return created_at;
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreated_at(OffsetDateTime created_at) {
-        this.created_at = created_at;
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public enum media {

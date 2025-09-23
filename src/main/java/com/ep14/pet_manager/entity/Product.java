@@ -21,7 +21,8 @@ public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long product_id;
+    @Column(name = "product_id")
+    private Long productId;
 
     @Column(nullable = false)
     private String name;
@@ -32,62 +33,62 @@ public class Product {
     @Column(nullable = false, precision = 12, scale = 3, columnDefinition = "numeric(12,3) default 0 check (stock >= 0)")
     private BigDecimal stock = BigDecimal.ZERO;
 
-    @Column(precision = 12, scale = 2)
-    private BigDecimal price_shopping;
+    @Column(name = "price_shopping", precision = 12, scale = 2)
+    private BigDecimal priceShopping;
 
-    @Column(precision = 12, scale = 2)
-    private BigDecimal price_sale;
+    @Column(name = "price_sale", precision = 12, scale = 2)
+    private BigDecimal priceSale;
 
-    @Column(nullable = false)
-    private OffsetDateTime created_at = OffsetDateTime.now();
+    @Column(name = "created_at", nullable = false)
+    private OffsetDateTime createdAt = OffsetDateTime.now();
 
-    @Column(nullable = false)
-    private OffsetDateTime updated_at = OffsetDateTime.now();
-
-    @OneToMany(mappedBy = "product")
-    private List<SaleDetails> SaleDetails;
+    @Column(name = "updated_at", nullable = false)
+    private OffsetDateTime updatedAt = OffsetDateTime.now();
 
     @OneToMany(mappedBy = "product")
-    private List<SupplierProducts> SupplierProducts;
+    private List<SaleDetails> saleDetails;
 
     @OneToMany(mappedBy = "product")
-    private List<PurchaseDetails> PurchaseDetails;
+    private List<SupplierProducts> supplierProducts;
+
+    @OneToMany(mappedBy = "product")
+    private List<PurchaseDetails> purchaseDetails;
 
     public Product() {
 
     }
 
     @JsonCreator
-    public Product(@JsonProperty("product_id") Long product_id,
+    public Product(@JsonProperty("productId") Long productId,
                    @JsonProperty("name") String name,
                    @JsonProperty("category") String category,
                    @JsonProperty("stock") BigDecimal stock,
-                   @JsonProperty("price_shopping") BigDecimal price_shopping,
-                   @JsonProperty("price_sale") BigDecimal price_sale,
-                   @JsonProperty("created_at") OffsetDateTime created_at,
-                   @JsonProperty("updated_at") OffsetDateTime updated_at,
-                   @JsonProperty("sale_details") List<SaleDetails> SaleDetails,
-                   @JsonProperty("supplier_product") List<SupplierProducts> SupplierProducts,
-                   @JsonProperty("shopping_details") List<PurchaseDetails> PurchaseDetails) {
-        this.product_id = product_id;
+                   @JsonProperty("priceShopping") BigDecimal priceShopping,
+                   @JsonProperty("priceSale") BigDecimal priceSale,
+                   @JsonProperty("createdAt") OffsetDateTime createdAt,
+                   @JsonProperty("updatedAt") OffsetDateTime updatedAt,
+                   @JsonProperty("saleDetails") List<SaleDetails> saleDetails,
+                   @JsonProperty("supplierProduct") List<SupplierProducts> SupplierProducts,
+                   @JsonProperty("shoppingDetails") List<PurchaseDetails> PurchaseDetails) {
+        this.productId = productId;
         this.name = name;
         this.category = category;
         this.stock = stock;
-        this.price_shopping = price_shopping;
-        this.price_sale = price_sale;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
-        this.SaleDetails = SaleDetails;
-        this.SupplierProducts = SupplierProducts;
-        this.PurchaseDetails = PurchaseDetails;
+        this.priceShopping = priceShopping;
+        this.priceSale = priceSale;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.saleDetails = saleDetails;
+        this.supplierProducts = SupplierProducts;
+        this.purchaseDetails = PurchaseDetails;
     }
 
-    public Long getProduct_id() {
-        return product_id;
+    public Long getProductId() {
+        return productId;
     }
 
-    public void setProduct_id(Long product_id) {
-        this.product_id = product_id;
+    public void setProductId(Long productId) {
+        this.productId = productId;
     }
 
     public String getName() {
@@ -114,60 +115,60 @@ public class Product {
         this.stock = stock;
     }
 
-    public BigDecimal getPrice_shopping() {
-        return price_shopping;
+    public BigDecimal getPriceShopping() {
+        return priceShopping;
     }
 
-    public void setPrice_shopping(BigDecimal price_shopping) {
-        this.price_shopping = price_shopping;
+    public void setPriceShopping(BigDecimal priceShopping) {
+        this.priceShopping = priceShopping;
     }
 
-    public BigDecimal getPrice_sale() {
-        return price_sale;
+    public BigDecimal getPriceSale() {
+        return priceSale;
     }
 
-    public void setPrice_sale(BigDecimal price_sale) {
-        this.price_sale = price_sale;
+    public void setPriceSale(BigDecimal priceSale) {
+        this.priceSale = priceSale;
     }
 
-    public OffsetDateTime getCreated_at() {
-        return created_at;
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreated_at(OffsetDateTime created_at) {
-        this.created_at = created_at;
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public OffsetDateTime getUpdated_at() {
-        return updated_at;
+    public OffsetDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setUpdated_at(OffsetDateTime updated_at) {
-        this.updated_at = updated_at;
+    public void setUpdatedAt(OffsetDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
-    public List<SaleDetails> getSale_details() {
-        return SaleDetails;
+    public List<SaleDetails> getSaleDetails() {
+        return saleDetails;
     }
 
-    public void setSale_details(List<SaleDetails> SaleDetails) {
-        this.SaleDetails = SaleDetails;
+    public void setSaleDetails(List<SaleDetails> saleDetails) {
+        this.saleDetails = saleDetails;
     }
 
-    public List<SupplierProducts> getSupplier_products() {
-        return SupplierProducts;
+    public List<SupplierProducts> getSupplierProducts() {
+        return supplierProducts;
     }
 
-    public void setSupplier_products(List<SupplierProducts> SupplierProducts) {
-        this.SupplierProducts = SupplierProducts;
+    public void setSupplierProducts(List<SupplierProducts> supplierProducts) {
+        this.supplierProducts = supplierProducts;
     }
 
-    public List<PurchaseDetails> getShopping_details() {
-        return PurchaseDetails;
+    public List<PurchaseDetails> getPurchaseDetails() {
+        return purchaseDetails;
     }
 
-    public void setShopping_details(List<PurchaseDetails> PurchaseDetails) {
-        this.PurchaseDetails = PurchaseDetails;
+    public void setPurchaseDetails(List<PurchaseDetails> purchaseDetails) {
+        this.purchaseDetails = purchaseDetails;
     }
 
 }

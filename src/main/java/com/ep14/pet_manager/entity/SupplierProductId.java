@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class SupplierProductId implements Serializable {
-    private Long product_id;
-    private Long supplier_id;
+    private Long productId;
+    private Long supplierId;
 
     @Override
     public boolean equals(Object o) {
@@ -14,11 +14,11 @@ public class SupplierProductId implements Serializable {
         if (!(o instanceof SupplierProductId))
             return false;
         SupplierProductId that = (SupplierProductId) o;
-        return Objects.equals(product_id, that.product_id) && Objects.equals(supplier_id, that.supplier_id);
+        return Objects.equals(productId, that.productId) && Objects.equals(supplierId, that.supplierId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(product_id, supplier_id);
+        return Objects.hash(productId, supplierId);
     }
 }

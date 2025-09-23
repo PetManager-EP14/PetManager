@@ -55,8 +55,8 @@ public class PurchaseService {
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado: " + purchaseDTO.getUserId()));
         entity.setUser(user);
 
-        if (entity.getCreated_at() == null) entity.setCreated_at(OffsetDateTime.now());
-        entity.setUpdated_at(OffsetDateTime.now());
+        if (entity.getCreatedAt() == null) entity.setCreatedAt(OffsetDateTime.now());
+        entity.setUpdatedAt(OffsetDateTime.now());
 
         Purchase saved = purchaseRepository.save(entity);
         return purchaseMapper.toDTO(saved);

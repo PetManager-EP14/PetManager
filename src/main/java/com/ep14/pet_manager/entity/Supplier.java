@@ -14,7 +14,8 @@ public class Supplier {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long supplier_id;
+    @Column(name = "supplier_id")
+    private Long supplierId;
 
     @Column(nullable = false)
     private String name;
@@ -28,49 +29,49 @@ public class Supplier {
     @Column
     private String phone;
 
-    @Column(nullable = false)
-    private OffsetDateTime created_at = OffsetDateTime.now();
+    @Column(name = "created_at", nullable = false)
+    private OffsetDateTime createdAt = OffsetDateTime.now();
 
-    @Column(nullable = false)
-    private OffsetDateTime updated_at = OffsetDateTime.now();
+    @Column(name = "updated_at", nullable = false)
+    private OffsetDateTime updatedAt = OffsetDateTime.now();
 
     @OneToMany(mappedBy = "supplier")
     private List<Purchase> purchase;
 
     @OneToMany(mappedBy = "supplier")
-    private List<SupplierProducts> supplier_product;
+    private List<SupplierProducts> supplierProduct;
 
     public Supplier() {
     }
 
     @JsonCreator
     public Supplier(
-            @JsonProperty("supplier_id") Long supplier_id,
+            @JsonProperty("supplierId") Long supplierId,
             @JsonProperty("name") String name,
             @JsonProperty("email") String email,
             @JsonProperty("nit") String nit,
             @JsonProperty("phone") String phone,
-            @JsonProperty("created_at") OffsetDateTime created_at,
-            @JsonProperty("updated_at") OffsetDateTime updated_at,
+            @JsonProperty("createdAt") OffsetDateTime createdAt,
+            @JsonProperty("updatedAt") OffsetDateTime updatedAt,
             @JsonProperty("shopping") List<Purchase> purchase,
-            @JsonProperty("supplier_product") List<SupplierProducts> supplier_product) {
-        this.supplier_id = supplier_id;
+            @JsonProperty("supplierProduct") List<SupplierProducts> supplierProduct) {
+        this.supplierId = supplierId;
         this.name = name;
         this.email = email;
         this.nit = nit;
         this.phone = phone;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
         this.purchase = purchase;
-        this.supplier_product = supplier_product;
+        this.supplierProduct = supplierProduct;
     }
 
-    public Long getSupplier_id() {
-        return supplier_id;
+    public Long getSupplierId() {
+        return supplierId;
     }
 
-    public void setSupplier_id(Long supplier_id) {
-        this.supplier_id = supplier_id;
+    public void setSupplierId(Long supplierId) {
+        this.supplierId = supplierId;
     }
 
     public String getName() {
@@ -105,20 +106,20 @@ public class Supplier {
         this.phone = phone;
     }
 
-    public OffsetDateTime getCreated_at() {
-        return created_at;
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreated_at(OffsetDateTime created_at) {
-        this.created_at = created_at;
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public OffsetDateTime getUpdated_at() {
-        return updated_at;
+    public OffsetDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setUpdated_at(OffsetDateTime updated_at) {
-        this.updated_at = updated_at;
+    public void setUpdatedAt(OffsetDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public List<Purchase> getShopping() {
@@ -129,12 +130,19 @@ public class Supplier {
         this.purchase = purchase;
     }
 
-    public List<SupplierProducts> getSupplier_product() {
-        return supplier_product;
+    public List<SupplierProducts> getSupplierProduct() {
+        return supplierProduct;
     }
 
-    public void setSupplier_product(List<SupplierProducts> supplier_product) {
-        this.supplier_product = supplier_product;
+    public void setSupplierProduct(List<SupplierProducts> supplierProduct) {
+        this.supplierProduct = supplierProduct;
     }
 
+    public List<Purchase> getPurchase() {
+        return purchase;
+    }
+
+    public void setPurchase(List<Purchase> purchase) {
+        this.purchase = purchase;
+    }
 }

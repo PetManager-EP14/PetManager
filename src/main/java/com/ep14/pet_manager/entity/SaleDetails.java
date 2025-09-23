@@ -21,7 +21,8 @@ public class SaleDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long sale_detail_id;
+    @Column(name = "sale_detail_id")
+    private Long saleDetailId;
 
     @ManyToOne
     @JoinColumn(name = "sale_id", nullable = false)
@@ -34,31 +35,31 @@ public class SaleDetails {
     @Column(nullable = false)
     private BigDecimal amount;
 
-    @Column(nullable = false)
-    private OffsetDateTime created_at = OffsetDateTime.now();
+    @Column(name = "created_at", nullable = false)
+    private OffsetDateTime createdAt = OffsetDateTime.now();
 
     public SaleDetails() {
     }
 
     @JsonCreator
-    public SaleDetails(@JsonProperty("sale_detail_id") Long sale_detail_id,
+    public SaleDetails(@JsonProperty("saleDetailId") Long saleDetailId,
                        @JsonProperty("sale") Sale sale,
                        @JsonProperty("product") Product product,
                        @JsonProperty("amount") BigDecimal amount,
-                       @JsonProperty("created_at") OffsetDateTime created_at) {
-        this.sale_detail_id = sale_detail_id;
+                       @JsonProperty("createdAt") OffsetDateTime createdAt) {
+        this.saleDetailId = saleDetailId;
         this.sale = sale;
         this.product = product;
         this.amount = amount;
-        this.created_at = created_at;
+        this.createdAt = createdAt;
     }
 
-    public Long getSale_detail_id() {
-        return sale_detail_id;
+    public Long getSaleDetailId() {
+        return saleDetailId;
     }
 
-    public void setSale_detail_id(Long sale_detail_id) {
-        this.sale_detail_id = sale_detail_id;
+    public void setSaleDetailId(Long saleDetailId) {
+        this.saleDetailId = saleDetailId;
     }
 
     public Sale getSale() {
@@ -85,12 +86,12 @@ public class SaleDetails {
         this.amount = amount;
     }
 
-    public OffsetDateTime getCreated_at() {
-        return created_at;
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreated_at(OffsetDateTime created_at) {
-        this.created_at = created_at;
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
 }

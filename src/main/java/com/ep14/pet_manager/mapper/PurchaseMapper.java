@@ -10,17 +10,17 @@ import org.mapstruct.factory.Mappers;
 public interface PurchaseMapper {
     PurchaseMapper INSTANCE = Mappers.getMapper(PurchaseMapper.class);
 
-    @Mapping(source = "shopping_id", target = "id")
-    @Mapping(source = "supplier.supplier_id", target = "supplierId")
-    @Mapping(source = "user.user_id", target = "userId")
-    @Mapping(source = "created_at", target = "createdAt")
-    @Mapping(source = "updated_at", target = "updatedAt")
+    @Mapping(source = "purchaseId", target = "id")
+    @Mapping(source = "supplier.supplierId", target = "supplierId")
+    @Mapping(source = "user.userId", target = "userId")
+    @Mapping(source = "createdAt", target = "createdAt")
+    @Mapping(source = "updatedAt", target = "updatedAt")
     PurchaseDTO toDTO(Purchase purchase);
 
-    @Mapping(source = "id", target = "shopping_id")
-    @Mapping(source = "supplierId", target = "supplier.supplier_id")
-    @Mapping(source = "userId", target = "user.user_id")
-    @Mapping(source = "createdAt", target = "created_at")
-    @Mapping(source = "updatedAt", target = "updated_at")
+    @Mapping(source = "id", target = "purchaseId")
+    @Mapping(source = "supplierId", target = "supplier.supplierId")
+    @Mapping(source = "userId", target = "user.userId")
+    @Mapping(source = "createdAt", target = "createdAt")
+    @Mapping(source = "updatedAt", target = "updatedAt")
     Purchase toEntity(PurchaseDTO purchaseDTO);
 }

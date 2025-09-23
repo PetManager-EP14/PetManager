@@ -26,7 +26,8 @@ public class Sale {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long sale_id;
+    @Column(name = "sale_id")
+    private Long saleId;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -37,59 +38,59 @@ public class Sale {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private payment_method method;
+    private paymentMethod method;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private sale_status status = sale_status.DRAFT;
+    private saleStatus status = saleStatus.DRAFT;
 
     @Column(nullable = false, precision = 14, scale = 2)
     private BigDecimal total = BigDecimal.ZERO;
 
-    @Column(nullable = false)
-    private OffsetDateTime created_at = OffsetDateTime.now();
+    @Column(name = "created_at", nullable = false)
+    private OffsetDateTime createdAt = OffsetDateTime.now();
 
-    @Column(nullable = false)
-    private OffsetDateTime updated_at = OffsetDateTime.now();
+    @Column(name = "updated_at", nullable = false)
+    private OffsetDateTime updatedAt = OffsetDateTime.now();
 
     @OneToOne
-    private SaleNotification SaleNotification;
+    private SaleNotification saleNotification;
 
     @OneToMany(mappedBy = "sale")
-    private List<SaleDetails> SaleDetails;
+    private List<SaleDetails> saleDetails;
 
     public Sale() {
     }
 
     @JsonCreator
-    public Sale(@JsonProperty("sale_id") Long sale_id,
+    public Sale(@JsonProperty("saleId") Long saleId,
                 @JsonProperty("user") User user,
                 @JsonProperty("date") OffsetDateTime date,
-                @JsonProperty("method") payment_method method,
-                @JsonProperty("status") sale_status status,
+                @JsonProperty("method") paymentMethod method,
+                @JsonProperty("status") saleStatus status,
                 @JsonProperty("total") BigDecimal total,
-                @JsonProperty("created_at") OffsetDateTime created_at,
-                @JsonProperty("updated_at") OffsetDateTime updated_at,
-                @JsonProperty("sale_notification") SaleNotification SaleNotification,
-                @JsonProperty("sale_details") List<SaleDetails> SaleDetails) {
-        this.sale_id = sale_id;
+                @JsonProperty("createdAt") OffsetDateTime createdAt,
+                @JsonProperty("updatedAt") OffsetDateTime updatedAt,
+                @JsonProperty("saleNotification") SaleNotification saleNotification,
+                @JsonProperty("saleDetails") List<SaleDetails> saleDetails) {
+        this.saleId = saleId;
         this.user = user;
         this.date = date;
         this.method = method;
         this.status = status;
         this.total = total;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
-        this.SaleNotification = SaleNotification;
-        this.SaleDetails = SaleDetails;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.saleNotification = saleNotification;
+        this.saleDetails = saleDetails;
     }
 
-    public Long getSale_id() {
-        return sale_id;
+    public Long getSaleId() {
+        return saleId;
     }
 
-    public void setSale_id(Long sale_id) {
-        this.sale_id = sale_id;
+    public void setSaleId(Long saleId) {
+        this.saleId = saleId;
     }
 
     public User getUser() {
@@ -108,19 +109,19 @@ public class Sale {
         this.date = date;
     }
 
-    public payment_method getMethod() {
+    public paymentMethod getMethod() {
         return method;
     }
 
-    public void setMethod(payment_method method) {
+    public void setMethod(paymentMethod method) {
         this.method = method;
     }
 
-    public sale_status getStatus() {
+    public saleStatus getStatus() {
         return status;
     }
 
-    public void setStatus(sale_status status) {
+    public void setStatus(saleStatus status) {
         this.status = status;
     }
 
@@ -132,43 +133,43 @@ public class Sale {
         this.total = total;
     }
 
-    public OffsetDateTime getCreated_at() {
-        return created_at;
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreated_at(OffsetDateTime created_at) {
-        this.created_at = created_at;
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public OffsetDateTime getUpdated_at() {
-        return updated_at;
+    public OffsetDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setUpdated_at(OffsetDateTime updated_at) {
-        this.updated_at = updated_at;
+    public void setUpdatedAt(OffsetDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
-    public SaleNotification getSale_notification() {
-        return SaleNotification;
+    public SaleNotification getSaleNotification() {
+        return saleNotification;
     }
 
-    public void setSale_notification(SaleNotification SaleNotification) {
-        this.SaleNotification = SaleNotification;
+    public void setSaleNotification(SaleNotification saleNotification) {
+        this.saleNotification = saleNotification;
     }
 
-    public List<SaleDetails> getSale_details() {
-        return SaleDetails;
+    public List<SaleDetails> getSaleDetails() {
+        return saleDetails;
     }
 
-    public void setSale_details(List<SaleDetails> SaleDetails) {
-        this.SaleDetails = SaleDetails;
+    public void setSaleDetails(List<SaleDetails> saleDetails) {
+        this.saleDetails = saleDetails;
     }
 
-    public enum payment_method {
+    public enum paymentMethod {
         CHASH, CARD, TRANSFER, CREDIT;
     }
 
-    public enum sale_status {
+    public enum saleStatus {
         DRAFT, REGISTERED, ANNULLED;
     }
 }

@@ -151,6 +151,134 @@ curl http://localhost:8080/endpoint-protegido \
 - **Swagger** queda público por la whitelist (`/v3/api-docs/**`, `/swagger-ui/**`).
 
 
+-----
+
+# Endpoints de Administración de Permisos
+
+Esta sección describe los endpoints disponibles para la gestión de usuarios, roles y permisos.
+
+-----
+
+## Obtener resumen de usuario
+
+### `GET /api/admin/users/{id}`
+
+Este endpoint devuelve un resumen detallado de un usuario específico, incluyendo su rol y permisos efectivos.
+
+  * **Controlador:** `UserAdminController`
+  * **Autorización requerida:** `@PreAuthorize("hasAuthority('user.read')")`
+  * **Parámetros de entrada:**
+      * `id`: UUID del usuario (en la URL/path).
+  * **Proceso interno:**
+      * `UserAdminServiceImpl.getUserSummary` busca al usuario en la base de datos (`UserRepository.findById`).
+      * Extrae el **ID**, **nombre**, **email** y **rol asignado**.
+      * Obtiene los permisos del rol y los permisos directos del usuario (`UserPermissionRepository`).
+  * **Salida (JSON):**
+    ```json
+    {
+      "userId": "uuid-del-usuario",
+      "name": "Carlos Pérez",
+      "email": "carlos@mail.com",
+      "roleCode": "admin",
+      "effectivePermissions": ["purchase.read", "purchase.create"]
+    }
+    ```
+
+-----
+
+## Asignar rol a usuario
+
+### `PUT /api/admin/users/{id}/role`
+
+Permite asignar un rol específico a un usuario.
+
+  * **Autorización requerida:** `@PreAuthorize("hasAuthority('user.assign_role')")`
+  * **Entrada (JSON):**
+    ```json
+    {
+      "roleId": 2
+    }
+    ```
+      * **DTO:** `AssignRoleRequest`
+  * **Proceso interno:**
+      * `UserAdminServiceImpl.assignRole` busca al usuario por su UUID.
+      * Busca el rol correspondiente en `RoleRepository`.
+      * Actualiza el rol del usuario y guarda los cambios en la base de datos.
+  * **Salida:** `200 OK` (sin cuerpo/body).
+
+-----
+
+## Asignar permisos directos a usuario
+
+### `PUT /api/admin/users/{id}/permissions`
+
+Este endpoint permite asignar un conjunto de permisos directos a un usuario, **reemplazando** los permisos directos existentes.
+
+  * **Autorización requerida:** `@PreAuthorize("hasAuthority('user.assign_permissions')")`
+  * **Entrada (JSON):**
+    ```json
+    {
+      "permissions": ["purchase.read", "purchase.update"]
+    }
+    ```
+      * **DTO:** `AssignPermissionsRequest`
+  * **Proceso interno:**
+      * `UserAdminServiceImpl.assignDirectPermissions`:
+          * Borra los permisos directos actuales del usuario.
+          * Valida que cada código de permiso exista en `PermissionRepository`.
+          * Inserta los nuevos permisos en `UserPermissionRepository`.
+  * **Salida:** `200 OK` (sin cuerpo/body).
+
+-----
+
+## Estructuras y Contratos
+
+### DTOs (Data Transfer Objects)
+
+  * **`UserSummary`**: Un objeto que representa el resumen de un usuario con sus permisos efectivos.
+  * **`AssignRoleRequest`**: `{ "roleId" }`
+  * **`AssignPermissionsRequest`**: `{ "permissions": Set<String> }`
+
+### Repositorios
+
+  * `UserRepository`
+  * `RoleRepository`
+  * `PermissionRepository`
+  * `UserPermissionRepository`
+
+### Servicios
+
+  * **`UserAdminService`** y **`UserAdminServiceImpl`**: Implementan la lógica de negocio para las consultas y asignaciones.
+
+-----
+
+## Ejemplos de flujo (usando cURL)
+
+### Obtener usuario
+
+```bash
+curl -H "Authorization: Bearer <jwt>" \
+  http://localhost:8080/api/admin/users/6eaf5... 
+```
+
+### Asignar rol
+
+```bash
+curl -X PUT -H "Authorization: Bearer <jwt>" \
+  -H "Content-Type: application/json" \
+  -d '{"roleId":1}' \
+  http://localhost:8080/api/admin/users/6eaf5.../role
+```
+
+### Asignar permisos directos
+
+```bash
+curl -X PUT -H "Authorization: Bearer <jwt>" \
+  -H "Content-Type: application/json" \
+  -d '{"permissions":["purchase.read","purchase.update"]}' \
+  http://localhost:8080/api/admin/users/6eaf5.../permissions
+```
+
 ## Authors
 
 - [@Juan Jose Monsalve Hernandez](https://github.com/JuanJoM14)

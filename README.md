@@ -49,7 +49,7 @@ Content-Type: application/json
 }
 
 ```
-- Respond
+- Response
 ```javascript
 {
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -277,6 +277,273 @@ curl -X PUT -H "Authorization: Bearer <jwt>" \
   -H "Content-Type: application/json" \
   -d '{"permissions":["purchase.read","purchase.update"]}' \
   http://localhost:8080/api/admin/users/6eaf5.../permissions
+```
+
+
+# Endpoints de Compras
+
+Esta sección documenta los endpoints para gestionar **compras**.
+
+---
+
+## Listar compras
+
+### `GET /api/purchases`
+
+* **Controlador:** `PurchaseController` (`@RestController`, `@RequestMapping("/api/purchases")`)
+* **Autorización requerida:** `@PreAuthorize("hasAuthority('purchase.read')")`
+* **Parámetros de entrada:** *(ninguno)*
+* **Query params:** *(no admite filtros ni paginación por ahora)*
+* **Proceso interno:**
+
+    1. `PurchaseService.getAllPurchases()` llama a `PurchaseRepository.findAll()`.
+    2. Mapea cada entidad `Purchase` a `PurchaseDTO` mediante `PurchaseMapper.toDTO`.
+* **Salida (JSON):** Lista de `PurchaseDTO`.
+
+**Ejemplo – Response (200 OK)**
+
+```json
+[
+  {
+    "id": 1,
+    "supplierId": 2,
+    "date": "2025-09-21T00:00:00Z",
+    "status": "DRAFT",
+    "total": 20.00,
+    "createdAt": "2025-09-21T00:00:00Z",
+    "updatedAt": "2025-09-21T00:00:00Z",
+    "userId": "fb042c3d-fd39-4dd2-a1ef-a5fa4cb0dbbf",
+    "shoppingDetailIds": null
+  },
+  {
+    "id": 2,
+    "supplierId": 1,
+    "date": "2025-09-21T00:00:00Z",
+    "status": "DRAFT",
+    "total": 20.00,
+    "createdAt": "2025-09-21T00:00:00Z",
+    "updatedAt": "2025-09-21T00:00:00Z",
+    "userId": "fb042c3d-fd39-4dd2-a1ef-a5fa4cb0dbbf",
+    "shoppingDetailIds": null
+  }
+]
+```
+
+**cURL**
+
+```bash
+curl -H "Authorization: Bearer <jwt>" \
+  http://localhost:8080/api/purchases
+```
+
+**Errores comunes**
+
+* `401 Unauthorized` / `403 Forbidden`: token inválido o sin permiso `purchase.read`.
+* `500 Internal Server Error`: error no controlado al consultar o mapear resultados.
+
+---
+
+## Obtener compra por ID
+
+### `GET /api/purchases/{id}`
+
+* **Controlador:** `PurchaseController`
+* **Autorización requerida:** `@PreAuthorize("hasAuthority('purchase.read')")`
+* **Parámetros de entrada:**
+
+    * `id` (path): `Long` (identificador de la compra)
+* **Proceso interno:**
+
+    1. `PurchaseService.getPurchaseById(id)` → `PurchaseRepository.findById(id)`.
+    2. Si no existe: lanza `RuntimeException("Compra no encontrada")` (gestionado por `GlobalExceptionHandler`).
+    3. Si existe: mapea a `PurchaseDTO` con `PurchaseMapper.toDTO`.
+* **Salida (JSON):** `PurchaseDTO`.
+
+**Ejemplo – Response (200 OK)**
+
+```json
+{
+  "id": 1,
+  "supplierId": 2,
+  "date": "2025-09-21T00:00:00Z",
+  "status": "DRAFT",
+  "total": 20.00,
+  "createdAt": "2025-09-21T00:00:00Z",
+  "updatedAt": "2025-09-21T00:00:00Z",
+  "userId": "fb042c3d-fd39-4dd2-a1ef-a5fa4cb0dbbf",
+  "shoppingDetailIds": null
+}
+```
+
+**cURL**
+
+```bash
+curl -H "Authorization: Bearer <jwt>" \
+  http://localhost:8080/api/purchases/1
+```
+
+**Errores comunes**
+
+* `401/403`: autenticación/autorización.
+* `500 Internal Server Error`: cuando la compra no existe (debido a `RuntimeException("Compra no encontrada")`).
+
+    * *Sugerencia*: cambiar a excepción específica mapeada a `404 Not Found`.
+
+---
+
+## Crear compra
+
+### `POST /api/purchases`
+
+* **Controlador:** `PurchaseController`
+* **Autorización requerida:** `@PreAuthorize("hasAuthority('purchase.create')")`
+* **Entrada (JSON):** `PurchaseDTO`
+
+**Request:**
+
+```json
+{
+  "supplierId": 2,
+  "date": "2025-09-21T00:00:00Z",
+  "status": "DRAFT",
+  "total": 20.00,
+  "createdAt": "2025-09-21T00:00:00Z",
+  "updatedAt": "2025-09-21T00:00:00Z",
+  "userId": "fb042c3d-fd39-4dd2-a1ef-a5fa4cb0dbbf",
+  "shoppingDetailIds": null
+}
+```
+
+* **Validaciones/Reglas actuales:**
+
+    * Si `status` es `null` → `400 Bad Request` con cuerpo de texto: `"El estado es obligatorio"`.
+    * `supplierId` debe existir (`SupplierRepository.findById`) → si no, `IllegalArgumentException` (mapeada a `400`).
+    * `userId` debe existir (`UserRepository.findById`) → si no, `IllegalArgumentException` (mapeada a `400`).
+    * `date` y `total` **no deben ser nulos** por restricciones de entidad (`@Column(nullable=false)`). Si llegan nulos podrían provocar error 500 a nivel de persistencia.
+    * `createdAt` se fija a `now` si viene `null`; `updatedAt` siempre se actualiza a `now`.
+
+* **Proceso interno:**
+
+    1. `PurchaseMapper.toEntity(purchaseDTO)` convierte el DTO a entidad `Purchase`.
+    2. Carga y asigna `Supplier` y `User` por sus IDs.
+    3. Normaliza timestamps (`createdAt` si null; `updatedAt` = now).
+    4. `PurchaseRepository.save(entity)` y mapeo de vuelta a `PurchaseDTO`.
+
+* **Salida (JSON):** `PurchaseDTO` de la compra creada.
+
+* **Código de respuesta:** `200 OK` *(actual)*.
+
+    * *Sugerencia*: considerar `201 Created` + `Location: /api/purchases/{id}`.
+
+**Request (cURL)**
+
+```bash
+curl -X POST http://localhost:8080/api/purchases \
+  -H "Authorization: Bearer <jwt>" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "supplierId": 2,
+        "date": "2025-09-21T00:00:00Z",
+        "status": "DRAFT",
+        "total": 20.00,
+        "userId": "fb042c3d-fd39-4dd2-a1ef-a5fa4cb0dbbf",
+        "shoppingDetailIds": null
+      }'
+```
+
+**Response (200 OK)**
+
+```json
+{
+  "id": 1,
+  "supplierId": 2,
+  "date": "2025-09-21T00:00:00Z",
+  "status": "DRAFT",
+  "total": 20.00,
+  "createdAt": "2025-09-21T12:34:56Z",
+  "updatedAt": "2025-09-21T12:34:56Z",
+  "userId": "fb042c3d-fd39-4dd2-a1ef-a5fa4cb0dbbf",
+  "shoppingDetailIds": null
+}
+```
+
+**Errores comunes**
+
+* `400 Bad Request`:
+
+    * `"El estado es obligatorio"` (cuando `status` es `null`).
+    * `IllegalArgumentException` por `supplierId` o `userId` inexistentes (ver manejador global).
+* `401/403`: autenticación/autorización.
+* `500 Internal Server Error`: error al persistir (p. ej., campos nulos que violan `nullable=false`).
+
+---
+
+## Estructuras y contratos
+
+### DTOs
+
+* **`PurchaseDTO`**
+
+    * `id: Long` *(solo salida)*
+    * `supplierId: Long` *(requerido)*
+    * `date: OffsetDateTime` *(ISO-8601, requerido)*
+    * `status: "DRAFT" | "REGISTERED" | "ANNULLED"` *(requerido)*
+    * `total: BigDecimal` *(2 decimales, requerido)*
+    * `createdAt: OffsetDateTime` *(salida; en entrada se permite null)*
+    * `updatedAt: OffsetDateTime` *(salida; se setea a now)*
+    * `userId: UUID` *(requerido)*
+    * `shoppingDetailIds: List<Long> | null` *(actualmente informativo; no se crean detalles desde este endpoint)*
+
+### Enumeraciones
+
+* **`StatusShopping` / `statusShopping`**: `DRAFT`, `REGISTERED`, `ANNULLED`.
+
+### Repositorios
+
+* `PurchaseRepository`
+* `SupplierRepository`
+* `UserRepository`
+
+### Servicio
+
+* **`PurchaseService`**
+
+    * `getAllPurchases()`
+    * `getPurchaseById(Long id)`
+    * `createPurchase(PurchaseDTO purchaseDTO)`
+
+### Mapper
+
+* **`PurchaseMapper`** (MapStruct)
+
+    * Mapea `Purchase <-> PurchaseDTO` (incluye `supplier.supplierId -> supplierId`, `user.userId -> userId`).
+
+---
+
+## Manejo de errores global
+
+Los errores se gestionan con `GlobalExceptionHandler` (`@RestControllerAdvice`).
+
+* **IllegalArgumentException** → `400 Bad Request`:
+
+```json
+{
+  "timestamp": "2025-09-27T18:10:00",
+  "status": 400,
+  "error": "Bad Request",
+  "message": "Proveedor no encontrado: 2"
+}
+```
+
+* **Exception (cualquier otra)** → `500 Internal Server Error`:
+
+```json
+{
+  "timestamp": "2025-09-27T18:10:00",
+  "status": 500,
+  "error": "Internal Server Error",
+  "message": "Compra no encontrada"
+}
 ```
 
 ## Authors

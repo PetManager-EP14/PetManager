@@ -43,7 +43,7 @@ public class Role {
     @OneToMany(mappedBy = "role")
     private List<User> users;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "role_permission",                         
         inverseJoinColumns = @JoinColumn(name = "permission_id")

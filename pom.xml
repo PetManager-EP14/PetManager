@@ -191,7 +191,7 @@
 				</executions>
 			</plugin>
 		</plugins>
-		<finalName>PetManager</finalName>
+		<finalName>PM</finalName>
 	</build>
 
 </project>

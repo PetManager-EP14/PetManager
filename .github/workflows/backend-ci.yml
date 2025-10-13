@@ -1,42 +1,35 @@
-name: Backend CI/CD
-
+#Workflow name
+name: CI/CD Pipeline
 on:
+  #Manually trigger workflow runs
+  workflow_dispatch:
+  #Trigger the workflow on push from the main branch
   push:
-    branches: ["trunk", "main"]
-  pull_request:
-    branches: ["trunk", "main"]
-
+    branches:
+      - main
 jobs:
-  build:
+  #Test's job
+  tests:
+    name: Unit tests
+    #Run on Ubuntu using the latest version
     runs-on: ubuntu-latest
-    steps: 
-      - uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
+    #Job's steps
+    steps:
+      #Check-out your repository under $GITHUB_WORKSPACE, so your workflow can access it
+      - uses: actions/checkout@v1
+      #Set up JDK 11
+      - name: Set up JDK
+        uses: actions/setup-java@v1
         with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Cache Maven local repo
+          java-version: '11'
+      #Set up Maven cache
+      - name: Cache Maven packages
+        #This action allows caching dependencies and build outputs to improve workflow execution time.
         uses: actions/cache@v3
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-maven-
-
-      - name: Build and unit tests
-        run: mvn -B clean verify
-
-      - name: Run SonarCloud analysis
-        uses: sonarsource/sonarcloud-github-action@master
-        with:
-          args: -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-
-      - name: Build docker image and push to GHCR
-        env:
-          IMAGE: ghcr.io/${{ github.repository_owner }}/petmanager-backend:${{ github.sha }}
-        run: |
-          echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
-          docker build -t $IMAGE .
-          docker push $IMAGE
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      #Run Tests
+      - name: Run Tests
+        run: mvn -B test

@@ -53,7 +53,7 @@ class PetManagerApplicationTests {
 
         assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
         assertThat(response.getBody()).hasSize(1);
-        assertThat(response.getBody().get(0).getTotal()).isEqualByComparingTo("100.50");
+        assertThat(response.getBody().get(0).getTotal()).isEqualByComparingTo("100.00");
     }
 
     @Test

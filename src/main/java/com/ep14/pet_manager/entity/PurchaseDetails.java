@@ -46,10 +46,6 @@ public class PurchaseDetails {
         this.createdAt = createdAt;
     }
 
-    public Purchase getPurchase() {
-        return purchase;
-    }
-
     public Long getPurchaseDetailId() {
         return purchaseDetailId;
     }
@@ -58,11 +54,11 @@ public class PurchaseDetails {
         this.purchaseDetailId = purchaseDetailId;
     }
 
-    public Purchase getShopping() {
+    public Purchase getPurchase() {
         return purchase;
     }
 
-    public void setShopping(Purchase purchase) {
+    public void setPurchase(Purchase purchase) {
         this.purchase = purchase;
     }
 
@@ -80,10 +76,6 @@ public class PurchaseDetails {
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
-    }
-
-    public void setPurchase(Purchase purchase) {
-        this.purchase = purchase;
     }
 
     public OffsetDateTime getCreatedAt() {

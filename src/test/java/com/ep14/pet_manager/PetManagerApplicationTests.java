@@ -1,8 +1,7 @@
 package com.ep14.pet_manager;
 
-import static org.mockito.Mockito.when;
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -22,7 +21,7 @@ import com.ep14.pet_manager.service.PurchaseService;
 @SpringBootTest
 class PetManagerApplicationTests {
 
-	@Mock
+    @Mock
     private PurchaseService purchaseService;
 
     @InjectMocks
@@ -36,19 +35,19 @@ class PetManagerApplicationTests {
     @SuppressWarnings("null")
     @Test
     void testGetAllPurchases() {
-        PurchaseDTO dto = new PurchaseDTO(
-                1L,
-                2L,
-                OffsetDateTime.now(),
-                PurchaseDTO.StatusShopping.DRAFT,
-                new BigDecimal("100.50"),
-                OffsetDateTime.now(),
-                OffsetDateTime.now(),
-                UUID.randomUUID(),
-                null
-        );
+        PurchaseDTO purchase = new PurchaseDTO.Builder()
+                .id(1L)
+                .supplierId(123L)
+                .date(OffsetDateTime.now())
+                .status(PurchaseDTO.StatusShopping.DRAFT)
+                .total(new BigDecimal("100.00"))
+                .createdAt(OffsetDateTime.now())
+                .updatedAt(OffsetDateTime.now())
+                .userId(UUID.randomUUID())
+                .shoppingDetailIds(List.of(1L, 2L, 3L))
+                .build();
 
-        when(purchaseService.getAllPurchases()).thenReturn(List.of(dto));
+        when(purchaseService.getAllPurchases()).thenReturn(List.of(purchase));
 
         ResponseEntity<List<PurchaseDTO>> response = purchaseController.getAllPurchases();
 

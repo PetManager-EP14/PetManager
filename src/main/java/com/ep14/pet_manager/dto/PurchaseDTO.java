@@ -25,21 +25,77 @@ public class PurchaseDTO implements Serializable {
     public PurchaseDTO() {
     }
 
-    public PurchaseDTO(Long id, Long supplierId, OffsetDateTime date, StatusShopping status, BigDecimal total,
-                       OffsetDateTime createdAt,
-                       OffsetDateTime updatedAt,
-                       UUID userId,
-                       List<Long> shoppingDetailIds
-    ) {
-        this.id = id;
-        this.supplierId = supplierId;
-        this.date = date;
-        this.status = status;
-        this.total = total;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.userId = userId;
-        this.shoppingDetailIds = shoppingDetailIds;
+    private PurchaseDTO(Builder builder) {
+        this.id = builder.id;
+        this.supplierId = builder.supplierId;
+        this.date = builder.date;
+        this.status = builder.status;
+        this.total = builder.total;
+        this.createdAt = builder.createdAt;
+        this.updatedAt = builder.updatedAt;
+        this.userId = builder.userId;
+        this.shoppingDetailIds = builder.shoppingDetailIds;
+    }
+
+    public static class Builder {
+        private Long id;
+        private Long supplierId;
+        private OffsetDateTime date;
+        private StatusShopping status;
+        private BigDecimal total;
+        private OffsetDateTime createdAt;
+        private OffsetDateTime updatedAt;
+        private UUID userId;
+        private List<Long> shoppingDetailIds;
+
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder supplierId(Long supplierId) {
+            this.supplierId = supplierId;
+            return this;
+        }
+
+        public Builder date(OffsetDateTime date) {
+            this.date = date;
+            return this;
+        }
+
+        public Builder status(StatusShopping status) {
+            this.status = status;
+            return this;
+        }
+
+        public Builder total(BigDecimal total) {
+            this.total = total;
+            return this;
+        }
+
+        public Builder createdAt(OffsetDateTime createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+
+        public Builder updatedAt(OffsetDateTime updatedAt) {
+            this.updatedAt = updatedAt;
+            return this;
+        }
+
+        public Builder userId(UUID userId) {
+            this.userId = userId;
+            return this;
+        }
+
+        public Builder shoppingDetailIds(List<Long> shoppingDetailIds) {
+            this.shoppingDetailIds = shoppingDetailIds;
+            return this;
+        }
+
+        public PurchaseDTO build() {
+            return new PurchaseDTO(this);
+        }
     }
 
     public Long getId() {

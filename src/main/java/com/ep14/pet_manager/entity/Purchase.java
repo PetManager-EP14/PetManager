@@ -7,17 +7,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "shoppings")
@@ -55,9 +45,7 @@ public class Purchase {
     @OneToMany(mappedBy = "purchase")
     private List<PurchaseDetails> purchaseDetails;
 
-    public Purchase() {
-
-    }
+    public Purchase() {}
 
     @JsonCreator
     public Purchase(@JsonProperty("id") Long purchaseId,
@@ -80,11 +68,11 @@ public class Purchase {
         this.purchaseDetails = purchaseDetails;
     }
 
-    public List<PurchaseDetails> getShoppingDetails() {
+    public List<PurchaseDetails> getPurchaseDetails() {
         return purchaseDetails;
     }
 
-    public void setShoppingDetails(List<PurchaseDetails> purchaseDetails) {
+    public void setPurchaseDetails(List<PurchaseDetails> purchaseDetails) {
         this.purchaseDetails = purchaseDetails;
     }
 
@@ -152,16 +140,7 @@ public class Purchase {
         this.user = user;
     }
 
-    public List<PurchaseDetails> getPurchaseDetails() {
-        return purchaseDetails;
-    }
-
-    public void setPurchaseDetails(List<PurchaseDetails> purchaseDetails) {
-        this.purchaseDetails = purchaseDetails;
-    }
-
     public enum statusShopping {
         DRAFT, REGISTERED, ANNULLED;
     }
-
 }

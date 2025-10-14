@@ -41,8 +41,7 @@ public class Supplier {
     @OneToMany(mappedBy = "supplier")
     private List<SupplierProducts> supplierProduct;
 
-    public Supplier() {
-    }
+    public Supplier() {}
 
     @JsonCreator
     public Supplier(
@@ -122,11 +121,11 @@ public class Supplier {
         this.updatedAt = updatedAt;
     }
 
-    public List<Purchase> getShopping() {
+    public List<Purchase> getPurchase() {
         return purchase;
     }
 
-    public void setShopping(List<Purchase> purchase) {
+    public void setPurchase(List<Purchase> purchase) {
         this.purchase = purchase;
     }
 
@@ -136,13 +135,5 @@ public class Supplier {
 
     public void setSupplierProduct(List<SupplierProducts> supplierProduct) {
         this.supplierProduct = supplierProduct;
-    }
-
-    public List<Purchase> getPurchase() {
-        return purchase;
-    }
-
-    public void setPurchase(List<Purchase> purchase) {
-        this.purchase = purchase;
     }
 }

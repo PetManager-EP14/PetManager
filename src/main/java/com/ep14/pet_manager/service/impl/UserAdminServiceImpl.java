@@ -25,6 +25,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserAdminServiceImpl implements UserAdminService {
 
+    private static final String USER_NOT_FOUND = "User not found";
+    private static final String ROLE_NOT_FOUND = "Role not found";
+    private static final String UNKNOWN_PERMISSION = "Unknown permission: ";
+    private static final String INVALID_USER_ID = "Invalid userId: ";
+
     private final UserRepository userRepo;
     private final RoleRepository roleRepo;
     private final PermissionRepository permRepo;
@@ -36,7 +41,7 @@ public class UserAdminServiceImpl implements UserAdminService {
         UUID uuid = parseUuid(userId);
 
         User u = userRepo.findById(uuid)
-            .orElseThrow(() -> new NoSuchElementException("User not found"));
+            .orElseThrow(() -> new NoSuchElementException(USER_NOT_FOUND));
 
         // Role y permisos del rol (null-safe)
         var role = u.getRole();
@@ -64,8 +69,8 @@ public class UserAdminServiceImpl implements UserAdminService {
     public void assignRole(String userId, Long roleId) {
         UUID uuid = parseUuid(userId);
 
-        var u = userRepo.findById(uuid).orElseThrow(() -> new NoSuchElementException("User not found"));
-        var r = roleRepo.findById(roleId).orElseThrow(() -> new NoSuchElementException("Role not found"));
+        var u = userRepo.findById(uuid).orElseThrow(() -> new NoSuchElementException(USER_NOT_FOUND));
+        var r = roleRepo.findById(roleId).orElseThrow(() -> new NoSuchElementException(ROLE_NOT_FOUND));
 
         u.setRole(r);
         
@@ -77,7 +82,7 @@ public class UserAdminServiceImpl implements UserAdminService {
     public void assignDirectPermissions(String userId, Set<String> codes) {
         UUID uuid = parseUuid(userId);
 
-        var u = userRepo.findById(uuid).orElseThrow(() -> new NoSuchElementException("User not found"));
+        var u = userRepo.findById(uuid).orElseThrow(() -> new NoSuchElementException(USER_NOT_FOUND));
 
         // 1) Limpiar actuales (usa método alineado al EmbeddedId)
         userPermRepo.deleteByIdUserId(u.getUserId());
@@ -85,7 +90,7 @@ public class UserAdminServiceImpl implements UserAdminService {
         // 2) Insertar nuevos (resolviendo por code, validando existencia)
         for (String code : codes) {
             var p = permRepo.findByCode(code)
-                .orElseThrow(() -> new NoSuchElementException("Unknown permission: " + code));
+                .orElseThrow(() -> new NoSuchElementException(UNKNOWN_PERMISSION + code));
 
             var upId = new UserPermission.Id(u.getUserId(), p.getPermissionId());
             var up = new UserPermission();
@@ -103,7 +108,7 @@ public class UserAdminServiceImpl implements UserAdminService {
         try {
             return UUID.fromString(raw);
         } catch (IllegalArgumentException ex) {
-            throw new NoSuchElementException("Invalid userId: " + raw);
+            throw new NoSuchElementException(INVALID_USER_ID + raw);
         }
     }
 }

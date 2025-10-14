@@ -111,10 +111,10 @@ public class SaleNotification {
     }
 
     public enum media {
-        email, sms, push
+        EMAIL, SMS, PUSH
     }
 
     public enum type {
-        high_volumen, high_rotation, another
+        HIGH_VOLUMEN, HIGH_ROTATION, ANOTHER
     }
 }

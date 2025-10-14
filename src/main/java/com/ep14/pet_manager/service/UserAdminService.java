@@ -2,7 +2,7 @@ package com.ep14.pet_manager.service;
 
 import java.util.Set;
 
-import com.ep14.pet_manager.DTO.UserSummary;
+import com.ep14.pet_manager.dto.UserSummary;
 
 public interface UserAdminService {
     UserSummary getUserSummary(String userId);

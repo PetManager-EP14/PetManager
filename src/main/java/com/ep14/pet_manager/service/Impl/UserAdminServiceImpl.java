@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ep14.pet_manager.DTO.UserSummary;
+import com.ep14.pet_manager.dto.UserSummary;
 import com.ep14.pet_manager.entity.Permission;
 import com.ep14.pet_manager.entity.User;
 import com.ep14.pet_manager.entity.UserPermission;

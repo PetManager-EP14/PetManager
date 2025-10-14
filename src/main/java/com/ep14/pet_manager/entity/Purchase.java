@@ -53,7 +53,7 @@ public class Purchase {
     private User user;
 
     @OneToMany(mappedBy = "purchase")
-    private List<PurchaseDetails> PurchaseDetails;
+    private List<PurchaseDetails> purchaseDetails;
 
     public Purchase() {
 
@@ -77,15 +77,15 @@ public class Purchase {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.user = user;
-        this.PurchaseDetails = purchaseDetails;
+        this.purchaseDetails = purchaseDetails;
     }
 
     public List<PurchaseDetails> getShoppingDetails() {
-        return PurchaseDetails;
+        return purchaseDetails;
     }
 
     public void setShoppingDetails(List<PurchaseDetails> purchaseDetails) {
-        PurchaseDetails = purchaseDetails;
+        this.purchaseDetails = purchaseDetails;
     }
 
     public Long getPurchaseId() {
@@ -153,11 +153,11 @@ public class Purchase {
     }
 
     public List<PurchaseDetails> getPurchaseDetails() {
-        return PurchaseDetails;
+        return purchaseDetails;
     }
 
     public void setPurchaseDetails(List<PurchaseDetails> purchaseDetails) {
-        PurchaseDetails = purchaseDetails;
+        this.purchaseDetails = purchaseDetails;
     }
 
     public enum statusShopping {

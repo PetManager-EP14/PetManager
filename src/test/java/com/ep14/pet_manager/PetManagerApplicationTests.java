@@ -15,8 +15,8 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 
-import com.ep14.pet_manager.DTO.PurchaseDTO;
 import com.ep14.pet_manager.controller.PurchaseController;
+import com.ep14.pet_manager.dto.PurchaseDTO;
 import com.ep14.pet_manager.service.PurchaseService;
 
 @SpringBootTest

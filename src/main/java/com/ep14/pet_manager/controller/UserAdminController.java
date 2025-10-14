@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ep14.pet_manager.DTO.AssignPermissionsRequest;
-import com.ep14.pet_manager.DTO.AssignRoleRequest;
-import com.ep14.pet_manager.DTO.UserSummary;
+import com.ep14.pet_manager.dto.AssignPermissionsRequest;
+import com.ep14.pet_manager.dto.AssignRoleRequest;
+import com.ep14.pet_manager.dto.UserSummary;
 import com.ep14.pet_manager.service.UserAdminService;
 
 import lombok.RequiredArgsConstructor;

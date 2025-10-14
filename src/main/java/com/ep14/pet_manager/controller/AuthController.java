@@ -12,10 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ep14.pet_manager.repository.UserRepository;
 import com.ep14.pet_manager.service.JwtService;
+import com.ep14.pet_manager.dto.LoginRequest;
+import com.ep14.pet_manager.dto.LoginResponse;
 import com.ep14.pet_manager.entity.User;
-// Add this import if LoginResponse exists in the dto package
-import com.ep14.pet_manager.DTO.LoginResponse;
-import com.ep14.pet_manager.DTO.LoginRequest;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -33,7 +32,7 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );

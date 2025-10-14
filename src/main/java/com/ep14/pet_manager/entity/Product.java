@@ -68,8 +68,8 @@ public class Product {
                    @JsonProperty("createdAt") OffsetDateTime createdAt,
                    @JsonProperty("updatedAt") OffsetDateTime updatedAt,
                    @JsonProperty("saleDetails") List<SaleDetails> saleDetails,
-                   @JsonProperty("supplierProduct") List<SupplierProducts> SupplierProducts,
-                   @JsonProperty("shoppingDetails") List<PurchaseDetails> PurchaseDetails) {
+                   @JsonProperty("supplierProduct") List<SupplierProducts> supplierProducts,
+                   @JsonProperty("shoppingDetails") List<PurchaseDetails> purchaseDetails) {
         this.productId = productId;
         this.name = name;
         this.category = category;
@@ -79,8 +79,8 @@ public class Product {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.saleDetails = saleDetails;
-        this.supplierProducts = SupplierProducts;
-        this.purchaseDetails = PurchaseDetails;
+        this.supplierProducts = supplierProducts;
+        this.purchaseDetails = purchaseDetails;
     }
 
     public Long getProductId() {

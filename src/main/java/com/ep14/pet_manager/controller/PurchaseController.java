@@ -12,15 +12,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ep14.pet_manager.DTO.PurchaseDTO;
+import com.ep14.pet_manager.dto.PurchaseDTO;
 import com.ep14.pet_manager.service.PurchaseService;
 
 @RestController
 @RequestMapping(value = "/api/purchases")
 public class PurchaseController {
 
+    private final PurchaseService purchaseService;
+
     @Autowired
-    private PurchaseService purchaseService;
+    public PurchaseController(PurchaseService purchaseService) {
+    this.purchaseService = purchaseService;
+    }
 
     @PreAuthorize("hasAuthority('purchase.read')")
     @GetMapping

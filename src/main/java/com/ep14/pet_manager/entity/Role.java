@@ -113,8 +113,8 @@ public class Role {
         return users;
     }
 
-    public void setUsers(List<User> Users) {
-        this.users = Users;
+    public void setUsers(List<User> users) {
+        this.users = users;
     }
 
     public Set<Permission> getPermissions() { return permissions; }

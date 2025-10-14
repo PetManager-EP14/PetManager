@@ -1,6 +1,6 @@
 package com.ep14.pet_manager.mapper;
 
-import com.ep14.pet_manager.DTO.PurchaseDTO;
+import com.ep14.pet_manager.dto.PurchaseDTO;
 import com.ep14.pet_manager.entity.Purchase;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

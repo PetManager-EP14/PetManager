@@ -1,4 +1,4 @@
-package com.ep14.pet_manager.DTO;
+package com.ep14.pet_manager.dto;
 
 import java.time.OffsetDateTime;
 import java.util.List;

@@ -98,7 +98,7 @@ jobs:
           path: target/PM.jar
 
       - name: Build & push Docker image
-        uses: mr-smithers-excellent/docker-build-push@v6
+        uses: mr-smithers-excellent/docker-build-push@a6df1cf
         with:
           image: alejandromora564/petmanager
           tags: latest

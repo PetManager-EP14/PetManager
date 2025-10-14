@@ -12,6 +12,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import io.micrometer.common.lang.Nullable;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -19,13 +21,16 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final UsersDetailsService usersDetailsService;
+    private final AuditAccessDeniedHandler auditAccessDeniedHandler;
 
-    @Autowired(required = false)
-    private AuditAccessDeniedHandler auditAccessDeniedHandler;
-
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, UsersDetailsService usersDetailsService) {
+    @Autowired
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter,
+                            UsersDetailsService usersDetailsService,
+                            @Nullable AuditAccessDeniedHandler auditAccessDeniedHandler
+                        ) {
         this.jwtAuthFilter = jwtAuthFilter;
         this.usersDetailsService = usersDetailsService;
+        this.auditAccessDeniedHandler = auditAccessDeniedHandler;
     }
 
     @Bean
@@ -34,7 +39,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain security_filter_chain (HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth

@@ -34,15 +34,15 @@ public class JwtService {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(UserDetails user_details) {
+    public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
 
-        claims.put("role", user_details.getAuthorities().stream().findFirst().map(GrantedAuthority::getAuthority)
+        claims.put("role", userDetails.getAuthorities().stream().findFirst().map(GrantedAuthority::getAuthority)
                 .orElse("role_user"));
 
         return Jwts.builder()
             .setClaims(claims)
-            .setSubject(user_details.getUsername())
+            .setSubject(userDetails.getUsername())
             .setIssuedAt(new Date())
             .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
             .signWith(key, SignatureAlgorithm.HS256)

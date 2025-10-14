@@ -33,6 +33,7 @@ class PetManagerApplicationTests {
         assertThat(purchaseController).isNotNull();
     }
 
+    @SuppressWarnings("null")
     @Test
     void testGetAllPurchases() {
         PurchaseDTO dto = new PurchaseDTO(

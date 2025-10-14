@@ -23,7 +23,7 @@ public class PurchaseController {
 
     @Autowired
     public PurchaseController(PurchaseService purchaseService) {
-    this.purchaseService = purchaseService;
+        this.purchaseService = purchaseService;
     }
 
     @PreAuthorize("hasAuthority('purchase.read')")

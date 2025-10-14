@@ -12,20 +12,20 @@ public class RoleDTO {
     private String description;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
-    private List<User> Users;
+    private List<User> users;
 
     public RoleDTO(){
 
     }
 
     public RoleDTO(Long roleId, String code, String description, OffsetDateTime createdAt, OffsetDateTime updatedAt,
-                   List<User> Users) {
+                   List<User> users) {
         this.roleId = roleId;
         this.code = code;
         this.description = description;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.Users = Users;
+        this.users = users;
     }
 
     public Long getRoleId() {
@@ -69,11 +69,11 @@ public class RoleDTO {
     }
 
     public List<User> getUsers() {
-        return Users;
+        return users;
     }
 
-    public void setUsers(List<User> Users) {
-        this.Users = Users;
+    public void setUsers(List<User> users) {
+        this.users = users;
     }
 
     

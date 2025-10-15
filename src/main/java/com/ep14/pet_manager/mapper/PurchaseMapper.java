@@ -8,8 +8,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface PurchaseMapper {
@@ -39,10 +39,10 @@ public interface PurchaseMapper {
 
     @Named("detailsToIds")
     public static List<Long> detailsToIds(List<PurchaseDetails> details) {
-        if (details == null) return null;
+        if (details == null) return Collections.emptyList();
         return details.stream()
                 .map(PurchaseDetails::getPurchaseDetailId)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     // Este método requiere acceso a un repositorio para buscar por ID, así que normalmente lo implementas en un mapper de servicio, no aquí.
@@ -51,6 +51,6 @@ public interface PurchaseMapper {
     public static List<PurchaseDetails> idsToDetails(List<Long> ids) {
         // Aquí deberías usar un repositorio para buscar los objetos PurchaseDetails por sus IDs.
         // Ejemplo: purchaseDetailsRepository.findAllById(ids)
-        return null;
+        return Collections.emptyList();
     }
 }

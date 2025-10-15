@@ -4,7 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,8 +16,11 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 
+import com.ep14.pet_manager.controller.AccessLogController;
 import com.ep14.pet_manager.controller.PurchaseController;
 import com.ep14.pet_manager.dto.PurchaseDTO;
+import com.ep14.pet_manager.entity.AccessLog;
+import com.ep14.pet_manager.repository.AccessLogRepository;
 import com.ep14.pet_manager.service.PurchaseService;
 
 @SpringBootTest
@@ -65,6 +70,41 @@ class PetManagerApplicationTests {
 
         assertThat(response.getStatusCode().is4xxClientError()).isTrue();
         assertThat(response.getBody()).isEqualTo("El estado es obligatorio");
+    }
+
+    @Mock
+    private AccessLogRepository repo;
+    
+    @InjectMocks
+    private AccessLogController controller;
+
+    @Test
+    void testSearchWithoutParams(){
+        List<AccessLog> logs = Collections.emptyList();
+        when(repo.search(null, null, null)).thenReturn(logs);
+
+        List<AccessLog> result = controller.search(null, null, null);
+
+        assertThat(result).isEqualTo(logs);
+    }
+
+    @Test
+    void testSearchWithParams() {
+        UUID userId = UUID.randomUUID();
+        Instant from = Instant.now().minusSeconds(3600);
+        Instant to = Instant.now();
+
+        AccessLog log = new AccessLog();
+        // puedes setearle valores a log si tu entidad tiene setters
+
+        List<AccessLog> logs = List.of(log);
+
+        when(repo.search(userId, from, to)).thenReturn(logs);
+
+        List<AccessLog> result = controller.search(userId, from, to);
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0)).isEqualTo(log);
     }
 
 }

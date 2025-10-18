@@ -166,7 +166,7 @@ public class Sale {
     }
 
     public enum paymentMethod {
-        CHASH, CARD, TRANSFER, CREDIT;
+        CASH, CARD, TRANSFER, CREDIT;
     }
 
     public enum saleStatus {

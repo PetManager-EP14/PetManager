@@ -23,7 +23,7 @@ public interface SaleMapper {
 
     // SaleDTO -> Sale
     @Mapping(source = "userId", target = "user.userId")
-    @Mapping(source = "details", target = "saleDetails")
+    @Mapping(target = "saleDetails", ignore = true)
     @Mapping(target = "saleNotification", ignore = true)
     Sale toEntity(SaleDTO dto);
 
@@ -35,6 +35,8 @@ public interface SaleMapper {
 
     // Element mapping: SaleDetails -> SaleDetailDTO
     @Mapping(source = "product.productId", target = "productId")
+    @Mapping(source = "amount", target = "amount")
+    @Mapping(source = "saleDetailId", target = "saleDetailId")
     SaleDetailDTO toDTO(SaleDetails entity);
 
     // Helper to map productId <-> Product
@@ -49,11 +51,19 @@ public interface SaleMapper {
     }
 
     @AfterMapping
-    default void setBackReference(@MappingTarget Sale sale) {
-        if (sale != null && sale.getSaleDetails() != null) {
-            for (SaleDetails d : sale.getSaleDetails()) {
-                d.setSale(sale);
-            }
+    default void fillDetailInfo(@MappingTarget SaleDTO dto, Sale sale) {
+        if (sale.getSaleDetails() != null) {
+            dto.setDetails(
+                sale.getSaleDetails().stream()
+                    .map(detail -> {
+                        SaleDetailDTO d = new SaleDetailDTO();
+                        d.setSaleDetailId(detail.getSaleDetailId());
+                        d.setProductId(detail.getProduct().getProductId());
+                        d.setAmount(detail.getAmount());
+                        return d;
+                    })
+                    .toList()
+            );
         }
     }
 }

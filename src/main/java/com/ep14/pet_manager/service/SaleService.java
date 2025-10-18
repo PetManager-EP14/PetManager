@@ -2,6 +2,7 @@ package com.ep14.pet_manager.service;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -55,8 +56,17 @@ public class SaleService {
             ? Sale.paymentMethod.valueOf(dto.getMethod().toUpperCase()) 
             : Sale.paymentMethod.CASH);
 
-        // 3️. Guardar primero la venta para generar ID
-        sale = saleRepo.save(sale);
+
+        // asegurar que la lista no sea nula
+        if (sale.getSaleDetails() == null) {
+            sale.setSaleDetails(new ArrayList<>());
+        }
+
+        // 🔹 Guarda la venta y fuerza la escritura inmediata en la base
+        sale = saleRepo.saveAndFlush(sale);
+
+        // 🔹 Aquí agregas el print para verificar si ya tiene ID
+        System.out.println("Sale ID antes de guardar detalles: " + sale.getSaleId());
 
         BigDecimal total = BigDecimal.ZERO;
 
@@ -76,18 +86,22 @@ public class SaleService {
             total = total.add(subTotal);
 
             SaleDetails detail = new SaleDetails();
-            detail.setSale(sale);
             detail.setProduct(product);
             detail.setAmount(detailDTO.getAmount());
-            saleDetailsRepo.save(detail);
+            detail.setCreatedAt(OffsetDateTime.now());
+            detail.setSale(sale);
+            
+            sale.getSaleDetails().add(detail);
         }
 
         // 5. Actualizar venta con total final
         sale.setTotal(total);
         sale.setUpdatedAt(OffsetDateTime.now());
-        sale = saleRepo.save(sale);
 
-        // 6. Retornar DTO
+        // guardamos TODO
+        sale = saleRepo.saveAndFlush(sale);
+
+        // Recargar la venta completa
         return saleMapper.toDTO(sale);
     }
 

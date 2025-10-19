@@ -62,10 +62,9 @@ public class SaleService {
             sale.setSaleDetails(new ArrayList<>());
         }
 
-        // 🔹 Guarda la venta y fuerza la escritura inmediata en la base
+        // Guarda la venta y fuerza la escritura inmediata en la base
         sale = saleRepo.saveAndFlush(sale);
 
-        // 🔹 Aquí agregas el print para verificar si ya tiene ID
         System.out.println("Sale ID antes de guardar detalles: " + sale.getSaleId());
 
         BigDecimal total = BigDecimal.ZERO;

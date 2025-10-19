@@ -24,7 +24,6 @@ import com.ep14.pet_manager.repository.UserRepository;
 @Service
 public class SaleService {
     private final SaleRepository saleRepo;
-    private final SaleDetailsRepository saleDetailsRepo;
     private final ProductRepository productRepo;
     private final UserRepository userRepo;
     private final SaleMapper saleMapper;
@@ -32,7 +31,6 @@ public class SaleService {
     public SaleService(SaleRepository saleRepo, SaleDetailsRepository saleDetailsRepo,
                        ProductRepository productRepo, UserRepository userRepo, SaleMapper saleMapper) {
         this.saleRepo = saleRepo;
-        this.saleDetailsRepo = saleDetailsRepo;
         this.productRepo = productRepo;
         this.userRepo = userRepo;
         this.saleMapper = saleMapper;

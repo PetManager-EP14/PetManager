@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ep14.pet_manager.dto.SaleDTO;
@@ -47,6 +48,18 @@ public class SaleController {
     @PreAuthorize("hasAuthority('sale.read')")
     public ResponseEntity<List<SaleDTO>> getSalesByUser(@PathVariable UUID userId) {
         List<SaleDTO> sales = saleService.getSalesByUser(userId);
+        return ResponseEntity.ok(sales);
+    }
+
+    @GetMapping("/admin")
+    @PreAuthorize("hasAuthority('sale.read')")
+    public ResponseEntity<List<SaleDTO>> getAllSalesFiltered(
+            @RequestParam(required = false) UUID userId,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            @RequestParam(required = false) Long saleId) {
+
+        List<SaleDTO> sales = saleService.getAllSalesFiltered(userId, startDate, endDate, saleId);
         return ResponseEntity.ok(sales);
     }
 }

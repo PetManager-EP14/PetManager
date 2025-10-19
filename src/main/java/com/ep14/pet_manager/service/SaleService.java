@@ -123,4 +123,22 @@ public class SaleService {
                 .map(saleMapper::toDTO)
                 .toList();
     }
+
+    public List<SaleDTO> getAllSalesFiltered(UUID userId, String startDate, String endDate, Long saleId) {
+        List<Sale> sales;
+
+        if (saleId != null) {
+            sales = saleRepo.findById(saleId).map(List::of).orElse(List.of());
+        } else if (userId != null && startDate != null && endDate != null) {
+            sales = saleRepo.findByUserAndDateRange(userId, OffsetDateTime.parse(startDate), OffsetDateTime.parse(endDate));
+        } else if (userId != null) {
+            sales = saleRepo.findByUser_UserId(userId);
+        } else if (startDate != null && endDate != null) {
+            sales = saleRepo.findByDateBetween(OffsetDateTime.parse(startDate), OffsetDateTime.parse(endDate));
+        } else {
+            sales = saleRepo.findAll();
+        }
+
+        return sales.stream().map(saleMapper::toDTO).toList();
+    }
 }

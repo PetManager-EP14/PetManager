@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -111,5 +112,15 @@ public class SaleService {
     public SaleDTO getSaleById(Long id) {
         return saleRepo.findById(id).map(saleMapper::toDTO)
                 .orElseThrow(() -> new RuntimeException("Venta no encontrada"));
+    }
+
+    public List<SaleDTO> getSalesByUser(UUID userId) {
+        List<Sale> sales = saleRepo.findByUser_UserId(userId);
+        if (sales.isEmpty()) {
+            throw new IllegalArgumentException("El usuario no tiene ventas registradas.");
+        }
+        return sales.stream()
+                .map(saleMapper::toDTO)
+                .toList();
     }
 }

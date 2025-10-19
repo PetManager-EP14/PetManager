@@ -1,6 +1,7 @@
 package com.ep14.pet_manager.controller;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -40,5 +41,12 @@ public class SaleController {
     @GetMapping("/{id}")
     public ResponseEntity<SaleDTO> getSaleById(@PathVariable Long id) {
         return ResponseEntity.ok(saleService.getSaleById(id));
+    }
+
+    @GetMapping("/user/{userId}")
+    @PreAuthorize("hasAuthority('sale.read')")
+    public ResponseEntity<List<SaleDTO>> getSalesByUser(@PathVariable UUID userId) {
+        List<SaleDTO> sales = saleService.getSalesByUser(userId);
+        return ResponseEntity.ok(sales);
     }
 }

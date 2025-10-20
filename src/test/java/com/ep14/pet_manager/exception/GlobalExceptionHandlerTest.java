@@ -27,7 +27,7 @@ class GlobalExceptionHandlerTest {
         handler = new GlobalExceptionHandler();
     }
 
-    // 1️⃣ IllegalArgumentException → BAD_REQUEST
+    // 1️. IllegalArgumentException → BAD_REQUEST
     @Test
     void handleIllegalArgument_shouldReturnBadRequest() {
         IllegalArgumentException ex = new IllegalArgumentException("Campo inválido");
@@ -39,7 +39,7 @@ class GlobalExceptionHandlerTest {
         assertThat(response.getBody().get("error")).isEqualTo("Bad Request");
     }
 
-    // 2️⃣ MethodArgumentNotValidException → BAD_REQUEST con detalles de campos
+    // 2️. MethodArgumentNotValidException → BAD_REQUEST con detalles de campos
     @Test
     void handleValidationErrors_shouldReturnFieldDetails() {
         BeanPropertyBindingResult bindingResult =
@@ -63,7 +63,7 @@ class GlobalExceptionHandlerTest {
                 .containsKeys("nombre", "edad");
     }
 
-    // 3️⃣ DataIntegrityViolationException → CONFLICT con mensaje de "NOT NULL"
+    // 3️. DataIntegrityViolationException → CONFLICT con mensaje de "NOT NULL"
     @Test
     void handleDataIntegrity_shouldReturnConflict_forNotNullMessage() {
         DataIntegrityViolationException ex =
@@ -78,7 +78,7 @@ class GlobalExceptionHandlerTest {
                 .isEqualTo("Faltan campos obligatorios en la solicitud.");
     }
 
-    // 4️⃣ DataIntegrityViolationException → CONFLICT con mensaje de "sale_method_check"
+    // 4️. DataIntegrityViolationException → CONFLICT con mensaje de "sale_method_check"
     @Test
     void handleDataIntegrity_shouldReturnConflict_forSaleMethodCheck() {
         DataIntegrityViolationException ex =
@@ -92,7 +92,7 @@ class GlobalExceptionHandlerTest {
                 .isEqualTo("El campo 'method' (método de pago) no puede ser nulo o inválido.");
     }
 
-    // 5️⃣ Generic Exception → INTERNAL_SERVER_ERROR
+    // 5️. Generic Exception → INTERNAL_SERVER_ERROR
     @Test
     void handleGenericException_shouldReturnInternalServerError() {
         Exception ex = new Exception("Fallo interno");
@@ -104,14 +104,14 @@ class GlobalExceptionHandlerTest {
         assertThat(response.getBody().get("message")).isEqualTo("Fallo interno");
     }
 
-    // 6️⃣ AccessDeniedException → debe relanzarse
+    // 6️. AccessDeniedException → debe relanzarse
     @Test
     void handleException_shouldRethrowAccessDenied() {
         AccessDeniedException ex = new AccessDeniedException("Acceso denegado");
         assertThrows(RuntimeException.class, () -> handler.handleException(ex));
     }
 
-    // 7️⃣ AuthenticationException → debe relanzarse
+    // 7️. AuthenticationException → debe relanzarse
     @Test
     void handleException_shouldRethrowAuthenticationException() {
         AuthenticationException ex = new AuthenticationException("Error de autenticación") {};

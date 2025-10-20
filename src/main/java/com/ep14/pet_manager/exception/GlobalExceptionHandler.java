@@ -17,6 +17,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    // Constantes para evitar duplicación de literales (resuelve los avisos de SonarCloud)
+    private static final String KEY_TIMESTAMP = "timestamp";
+    private static final String KEY_STATUS = "status";
+    private static final String KEY_ERROR = "error";
+    private static final String KEY_MESSAGE = "message";
+
     /**
      * Maneja excepciones genéricas, excepto las relacionadas con seguridad.
      * Las de seguridad deben ser manejadas por Spring Security o el
@@ -30,10 +36,10 @@ public class GlobalExceptionHandler {
         }
 
         Map<String, Object> error = new HashMap<>();
-        error.put("timestamp", LocalDateTime.now());
-        error.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-        error.put("error", "Internal Server Error");
-        error.put("message", ex.getMessage());
+        error.put(KEY_TIMESTAMP, LocalDateTime.now());
+        error.put(KEY_STATUS, HttpStatus.INTERNAL_SERVER_ERROR.value());
+        error.put(KEY_ERROR, "Internal Server Error");
+        error.put(KEY_MESSAGE, ex.getMessage());
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
@@ -44,10 +50,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException ex) {
         Map<String, Object> error = new HashMap<>();
-        error.put("timestamp", LocalDateTime.now());
-        error.put("status", HttpStatus.BAD_REQUEST.value());
-        error.put("error", "Bad Request");
-        error.put("message", ex.getMessage());
+        error.put(KEY_TIMESTAMP, LocalDateTime.now());
+        error.put(KEY_STATUS, HttpStatus.BAD_REQUEST.value());
+        error.put(KEY_ERROR, "Bad Request");
+        error.put(KEY_MESSAGE, ex.getMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
@@ -58,16 +64,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidationErrors(MethodArgumentNotValidException ex) {
         Map<String, Object> error = new HashMap<>();
-        error.put("timestamp", LocalDateTime.now());
-        error.put("status", HttpStatus.BAD_REQUEST.value());
-        error.put("error", "Validation Error");
+        error.put(KEY_TIMESTAMP, LocalDateTime.now());
+        error.put(KEY_STATUS, HttpStatus.BAD_REQUEST.value());
+        error.put(KEY_ERROR, "Validation Error");
 
         Map<String, String> fieldErrors = new HashMap<>();
         for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
             fieldErrors.put(fieldError.getField(), fieldError.getDefaultMessage());
         }
 
-        error.put("message", "Datos inválidos o incompletos");
+        error.put(KEY_MESSAGE, "Datos inválidos o incompletos");
         error.put("details", fieldErrors);
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
@@ -79,9 +85,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Map<String, Object>> handleDataIntegrity(DataIntegrityViolationException ex) {
         Map<String, Object> error = new HashMap<>();
-        error.put("timestamp", LocalDateTime.now());
-        error.put("status", HttpStatus.CONFLICT.value());
-        error.put("error", "Data Integrity Violation");
+        error.put(KEY_TIMESTAMP, LocalDateTime.now());
+        error.put(KEY_STATUS, HttpStatus.CONFLICT.value());
+        error.put(KEY_ERROR, "Data Integrity Violation");
 
         String message = ex.getMostSpecificCause().getMessage();
         if (message.contains("sale_method_check")) {
@@ -90,7 +96,7 @@ public class GlobalExceptionHandler {
             message = "Faltan campos obligatorios en la solicitud.";
         }
 
-        error.put("message", message);
+        error.put(KEY_MESSAGE, message);
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 }

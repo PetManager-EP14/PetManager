@@ -5,6 +5,7 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,19 +18,23 @@ import com.ep14.pet_manager.entity.SaleDetails;
 import com.ep14.pet_manager.entity.User;
 import com.ep14.pet_manager.mapper.SaleMapper;
 import com.ep14.pet_manager.repository.ProductRepository;
-import com.ep14.pet_manager.repository.SaleDetailsRepository;
 import com.ep14.pet_manager.repository.SaleRepository;
 import com.ep14.pet_manager.repository.UserRepository;
 
 @Service
 public class SaleService {
+
+    private static final Logger logger = Logger.getLogger(SaleService.class.getName());
+
     private final SaleRepository saleRepo;
     private final ProductRepository productRepo;
     private final UserRepository userRepo;
     private final SaleMapper saleMapper;
 
-    public SaleService(SaleRepository saleRepo, SaleDetailsRepository saleDetailsRepo,
-                       ProductRepository productRepo, UserRepository userRepo, SaleMapper saleMapper) {
+    public SaleService(SaleRepository saleRepo,
+                        ProductRepository productRepo, 
+                        UserRepository userRepo, 
+                        SaleMapper saleMapper) {
         this.saleRepo = saleRepo;
         this.productRepo = productRepo;
         this.userRepo = userRepo;
@@ -64,7 +69,9 @@ public class SaleService {
         // Guarda la venta y fuerza la escritura inmediata en la base
         sale = saleRepo.saveAndFlush(sale);
 
-        System.out.println("Sale ID antes de guardar detalles: " + sale.getSaleId());
+        if (logger.isLoggable(java.util.logging.Level.INFO)){
+            logger.info(String.valueOf(sale.getSaleId()));
+        }
 
         BigDecimal total = BigDecimal.ZERO;
 
@@ -96,7 +103,7 @@ public class SaleService {
         sale.setTotal(total);
         sale.setUpdatedAt(OffsetDateTime.now());
 
-        // guardamos TODO
+        // guardamos
         sale = saleRepo.saveAndFlush(sale);
 
         // Recargar la venta completa

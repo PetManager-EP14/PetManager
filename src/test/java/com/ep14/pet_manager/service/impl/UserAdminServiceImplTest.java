@@ -91,7 +91,9 @@ class UserAdminServiceImplTest {
     void getUserSummary_whenUserNotFound_throwsException() {
         when(userRepo.findById(any())).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.getUserSummary(userId.toString()))
+        String idString = userId.toString();
+
+        assertThatThrownBy(() -> service.getUserSummary(idString))
                 .isInstanceOf(NoSuchElementException.class)
                 .hasMessageContaining("User not found");
     }
@@ -114,7 +116,9 @@ class UserAdminServiceImplTest {
         when(userRepo.findById(userId)).thenReturn(Optional.of(user));
         when(roleRepo.findById(10L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.assignRole(userId.toString(), 10L))
+        String idString = userId.toString();
+
+        assertThatThrownBy(() -> service.assignRole(idString, 10L))
                 .isInstanceOf(NoSuchElementException.class)
                 .hasMessageContaining("Role not found");
     }
@@ -141,7 +145,9 @@ class UserAdminServiceImplTest {
         when(userRepo.findById(userId)).thenReturn(Optional.of(user));
         when(permRepo.findByCode("X_INVALID")).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.assignDirectPermissions(userId.toString(), Set.of("X_INVALID")))
+        String idString = userId.toString();
+
+        assertThatThrownBy(() -> service.assignDirectPermissions(idString, Set.of("X_INVALID")))
                 .isInstanceOf(NoSuchElementException.class)
                 .hasMessageContaining("Unknown permission");
     }

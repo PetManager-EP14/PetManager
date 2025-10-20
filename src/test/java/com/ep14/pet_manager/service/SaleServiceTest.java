@@ -111,6 +111,8 @@ class SaleServiceTest {
         when(userRepo.findById(any())).thenReturn(Optional.of(user));
         when(productRepo.findById(any())).thenReturn(Optional.empty());
         when(saleMapper.toEntity(any(SaleDTO.class))).thenReturn(sale);
+        when(saleRepo.saveAndFlush(any(Sale.class))).thenReturn(sale);
+
         assertThatThrownBy(() -> service.registerSale(saleDTO))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Producto no encontrado");
@@ -123,6 +125,7 @@ class SaleServiceTest {
         when(userRepo.findById(any())).thenReturn(Optional.of(user));
         when(productRepo.findById(any())).thenReturn(Optional.of(product));
         when(saleMapper.toEntity(any(SaleDTO.class))).thenReturn(sale);
+        when(saleRepo.saveAndFlush(any(Sale.class))).thenReturn(sale);
         assertThatThrownBy(() -> service.registerSale(saleDTO))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Stock insuficiente");
@@ -142,9 +145,9 @@ class SaleServiceTest {
     @Test
     void getSaleById_shouldReturnSale() {
         when(saleRepo.findById(1L)).thenReturn(Optional.of(sale));
-        when(saleMapper.toEntity(any(SaleDTO.class))).thenReturn(sale);
+        when(saleMapper.toDTO(any(Sale.class))).thenReturn(saleDTO);
         SaleDTO result = service.getSaleById(1L);
-        assertThat(result).isNotNull();
+        assertThat(result).isEqualTo(saleDTO);
     }
 
     // Caso 7: obtener venta por ID inexistente

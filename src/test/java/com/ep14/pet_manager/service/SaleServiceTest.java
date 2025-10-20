@@ -174,7 +174,10 @@ class SaleServiceTest {
     @Test
     void getSalesByUser_empty_shouldThrowException() {
         when(saleRepo.findByUser_UserId(any())).thenReturn(Collections.emptyList());
-        assertThatThrownBy(() -> service.getSalesByUser(user.getUserId()))
+
+        UUID userId = user.getUserId();
+
+        assertThatThrownBy(() -> service.getSalesByUser(userId))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("El usuario no tiene ventas registradas");
     }

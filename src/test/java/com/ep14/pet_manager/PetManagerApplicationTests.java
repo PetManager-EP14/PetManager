@@ -168,7 +168,7 @@ class PetManagerApplicationTests {
     @SuppressWarnings("null")
     @Test
     void handleIllegalArgument_returnsBadRequest() {
-        IllegalArgumentException ex = new IllegalArgumentException("Invalid argument");
+        IllegalArgumentException ex = new IllegalArgumentException("Invalid Argument");
         ResponseEntity<Map<String, Object>> response = handler.handleIllegalArgument(ex);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);

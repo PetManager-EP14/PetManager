@@ -96,4 +96,22 @@ class SaleControllerTest {
         assertThat(response.getBody()).isNotNull();
         verify(saleService).getSaleById(1L);
     }
+
+    // 6. Obtener ventas filtradas (por usuario, fechas o ID)
+    @Test
+    void getAllSalesFiltered_shouldReturnOk() {
+        when(saleService.getAllSalesFiltered(any(), any(), any(), any()))
+                .thenReturn(List.of(saleDTO));
+
+        ResponseEntity<List<SaleDTO>> response = controller.getAllSalesFiltered(
+                userId,
+                "2025-10-01T00:00:00Z",
+                "2025-10-19T00:00:00Z",
+                1L
+        );
+
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
+        assertThat(response.getBody()).isNotEmpty();
+        verify(saleService).getAllSalesFiltered(any(), any(), any(), any());
+    }
 }

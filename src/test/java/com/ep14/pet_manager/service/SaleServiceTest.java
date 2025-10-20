@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -175,5 +177,51 @@ class SaleServiceTest {
         assertThatThrownBy(() -> service.getSalesByUser(user.getUserId()))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("El usuario no tiene ventas registradas");
+    }
+
+    @Test
+    void getAllSalesFiltered_withSaleId_shouldReturnList() {
+        when(saleRepo.findById(1L)).thenReturn(Optional.of(sale));
+        when(saleMapper.toDTO(any(Sale.class))).thenReturn(saleDTO);
+
+        List<SaleDTO> result = service.getAllSalesFiltered(null, null, null, 1L);
+
+        assertThat(result).isNotEmpty();
+        verify(saleRepo).findById(1L);
+    }
+
+    @Test
+    void getAllSalesFiltered_withUserAndDates_shouldReturnList() {
+        UUID userId = UUID.randomUUID();
+        when(saleRepo.findByUserAndDateRange(eq(userId), any(), any())).thenReturn(List.of(sale));
+        when(saleMapper.toDTO(any(Sale.class))).thenReturn(saleDTO);
+
+        List<SaleDTO> result = service.getAllSalesFiltered(userId, "2024-10-01T00:00:00Z", "2024-10-19T00:00:00Z", null);
+
+        assertThat(result).hasSize(1);
+        verify(saleRepo).findByUserAndDateRange(eq(userId), any(), any());
+    }
+
+    @Test
+    void getAllSalesFiltered_withUserOnly_shouldReturnList() {
+        UUID userId = UUID.randomUUID();
+        when(saleRepo.findByUser_UserId(userId)).thenReturn(List.of(sale));
+        when(saleMapper.toDTO(any(Sale.class))).thenReturn(saleDTO);
+
+        List<SaleDTO> result = service.getAllSalesFiltered(userId, null, null, null);
+
+        assertThat(result).hasSize(1);
+        verify(saleRepo).findByUser_UserId(userId);
+    }
+
+    @Test
+    void getAllSalesFiltered_withDatesOnly_shouldReturnList() {
+        when(saleRepo.findByDateBetween(any(), any())).thenReturn(List.of(sale));
+        when(saleMapper.toDTO(any(Sale.class))).thenReturn(saleDTO);
+
+        List<SaleDTO> result = service.getAllSalesFiltered(null, "2024-10-01T00:00:00Z", "2024-10-19T00:00:00Z", null);
+
+        assertThat(result).hasSize(1);
+        verify(saleRepo).findByDateBetween(any(), any());
     }
 }

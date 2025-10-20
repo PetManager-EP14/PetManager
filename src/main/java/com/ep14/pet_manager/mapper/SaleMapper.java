@@ -1,0 +1,69 @@
+package com.ep14.pet_manager.mapper;
+
+import org.mapstruct.AfterMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+
+import com.ep14.pet_manager.dto.SaleDTO;
+import com.ep14.pet_manager.dto.SaleDetailDTO;
+import com.ep14.pet_manager.entity.Product;
+import com.ep14.pet_manager.entity.Sale;
+import com.ep14.pet_manager.entity.SaleDetails;
+
+@Mapper(componentModel = "spring")
+public interface SaleMapper {
+
+
+    // Sale -> SaleDTO
+    @Mapping(source = "saleId", target = "saleId")
+    @Mapping(source = "user.userId", target = "userId")
+    @Mapping(source = "saleDetails", target = "details")
+    SaleDTO toDTO(Sale sale);
+
+    // SaleDTO -> Sale
+    @Mapping(source = "userId", target = "user.userId")
+    @Mapping(target = "saleDetails", ignore = true)
+    @Mapping(target = "saleNotification", ignore = true)
+    Sale toEntity(SaleDTO dto);
+
+    // Element mapping: SaleDetailDTO -> SaleDetails
+    @Mapping(source = "productId", target = "product")
+    @Mapping(target = "sale", ignore = true)    
+    @Mapping(target = "createdAt", ignore = true)
+    SaleDetails toEntity(SaleDetailDTO dto);
+
+    // Element mapping: SaleDetails -> SaleDetailDTO
+    @Mapping(source = "product.productId", target = "productId")
+    @Mapping(source = "amount", target = "amount")
+    @Mapping(source = "saleDetailId", target = "saleDetailId")
+    SaleDetailDTO toDTO(SaleDetails entity);
+
+    // Helper to map productId <-> Product
+    default Product map(Long productId) {
+        if (productId == null) return null;
+        Product p = new Product();
+        p.setProductId(productId);
+        return p;
+    }
+    default Long map(Product product) {
+        return product == null ? null : product.getProductId();
+    }
+
+    @AfterMapping
+    default void fillDetailInfo(@MappingTarget SaleDTO dto, Sale sale) {
+        if (sale.getSaleDetails() != null) {
+            dto.setDetails(
+                sale.getSaleDetails().stream()
+                    .map(detail -> {
+                        SaleDetailDTO d = new SaleDetailDTO();
+                        d.setSaleDetailId(detail.getSaleDetailId());
+                        d.setProductId(detail.getProduct().getProductId());
+                        d.setAmount(detail.getAmount());
+                        return d;
+                    })
+                    .toList()
+            );
+        }
+    }
+}

@@ -4,10 +4,13 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -16,7 +19,7 @@ public class GlobalExceptionHandler {
 
     /**
      * Maneja excepciones genéricas, excepto las relacionadas con seguridad.
-     * Las de seguridad deben ser manejadas por Spring Security o tu
+     * Las de seguridad deben ser manejadas por Spring Security o el
      * AuditAccessDeniedHandler.
      */
     @ExceptionHandler(Exception.class)
@@ -47,5 +50,47 @@ public class GlobalExceptionHandler {
         error.put("message", ex.getMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    /**
+     * Maneja errores de validación de datos en DTOs (campos faltantes o inválidos).
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, Object>> handleValidationErrors(MethodArgumentNotValidException ex) {
+        Map<String, Object> error = new HashMap<>();
+        error.put("timestamp", LocalDateTime.now());
+        error.put("status", HttpStatus.BAD_REQUEST.value());
+        error.put("error", "Validation Error");
+
+        Map<String, String> fieldErrors = new HashMap<>();
+        for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
+            fieldErrors.put(fieldError.getField(), fieldError.getDefaultMessage());
+        }
+
+        error.put("message", "Datos inválidos o incompletos");
+        error.put("details", fieldErrors);
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    /**
+     * Maneja errores de integridad de datos (por ejemplo, null en columnas NOT NULL, claves foráneas, etc.)
+     */
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String, Object>> handleDataIntegrity(DataIntegrityViolationException ex) {
+        Map<String, Object> error = new HashMap<>();
+        error.put("timestamp", LocalDateTime.now());
+        error.put("status", HttpStatus.CONFLICT.value());
+        error.put("error", "Data Integrity Violation");
+
+        String message = ex.getMostSpecificCause().getMessage();
+        if (message.contains("sale_method_check")) {
+            message = "El campo 'method' (método de pago) no puede ser nulo o inválido.";
+        } else if (message.contains("NOT NULL")) {
+            message = "Faltan campos obligatorios en la solicitud.";
+        }
+
+        error.put("message", message);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 }

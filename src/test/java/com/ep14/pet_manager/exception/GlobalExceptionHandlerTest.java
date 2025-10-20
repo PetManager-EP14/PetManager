@@ -36,7 +36,7 @@ class GlobalExceptionHandlerTest {
 
         assertThat(response.getStatusCode()).isEqualTo(org.springframework.http.HttpStatus.BAD_REQUEST);
         Assertions.assertNotNull(response.getBody());
-        assertThat(response.getBody()).containsEntry("message", "Campo Invalido");
+        assertThat(response.getBody()).containsEntry("message", "Campo inválido");
         assertThat(response.getBody()).containsEntry("error", "Bad Request");
     }
 
@@ -56,7 +56,7 @@ class GlobalExceptionHandlerTest {
 
         assertThat(response.getStatusCode()).isEqualTo(org.springframework.http.HttpStatus.BAD_REQUEST);
         Assertions.assertNotNull(response.getBody());
-        assertThat(response.getBody()).containsEntry("error", "Error de Validación");
+        assertThat(response.getBody()).containsEntry("error", "Validation Error");
         @SuppressWarnings({ "unchecked", "null" })
         Map<String, String> details = (Map<String, String>) response.getBody().get("details");
 

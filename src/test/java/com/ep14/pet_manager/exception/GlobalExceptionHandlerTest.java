@@ -36,8 +36,8 @@ class GlobalExceptionHandlerTest {
 
         assertThat(response.getStatusCode()).isEqualTo(org.springframework.http.HttpStatus.BAD_REQUEST);
         Assertions.assertNotNull(response.getBody());
-        assertThat(response.getBody().get("message")).isEqualTo("Campo inválido");
-        assertThat(response.getBody().get("error")).isEqualTo("Bad Request");
+        assertThat(response.getBody()).containsEntry("message", "Campo Invalido");
+        assertThat(response.getBody()).containsEntry("error", "Bad Request");
     }
 
     // 2️. MethodArgumentNotValidException → BAD_REQUEST con detalles de campos
@@ -56,7 +56,7 @@ class GlobalExceptionHandlerTest {
 
         assertThat(response.getStatusCode()).isEqualTo(org.springframework.http.HttpStatus.BAD_REQUEST);
         Assertions.assertNotNull(response.getBody());
-        assertThat(response.getBody().get("error")).isEqualTo("Validation Error");
+        assertThat(response.getBody()).containsEntry("error", "Error de Validación");
         @SuppressWarnings({ "unchecked", "null" })
         Map<String, String> details = (Map<String, String>) response.getBody().get("details");
 
@@ -76,9 +76,8 @@ class GlobalExceptionHandlerTest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
         Assertions.assertNotNull(response.getBody());
-        assertThat(response.getBody().get("error")).isEqualTo("Data Integrity Violation");
-        assertThat(response.getBody().get("message"))
-                .isEqualTo("Faltan campos obligatorios en la solicitud.");
+        assertThat(response.getBody()).containsEntry("error", "Data Integrity Violation");
+        assertThat(response.getBody()).containsEntry("message", "Faltan campos obligatorios en la solicitud.");
     }
 
     // 4️. DataIntegrityViolationException → CONFLICT con mensaje de "sale_method_check"
@@ -92,8 +91,7 @@ class GlobalExceptionHandlerTest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
         Assertions.assertNotNull(response.getBody());
-        assertThat(response.getBody().get("message"))
-                .isEqualTo("El campo 'method' (método de pago) no puede ser nulo o inválido.");
+        assertThat(response.getBody()).containsEntry("message", "El campo 'method' (método de pago) no puede ser nulo o inválido.");
     }
 
     // 5️. Generic Exception → INTERNAL_SERVER_ERROR
@@ -105,8 +103,8 @@ class GlobalExceptionHandlerTest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
         Assertions.assertNotNull(response.getBody());
-        assertThat(response.getBody().get("error")).isEqualTo("Internal Server Error");
-        assertThat(response.getBody().get("message")).isEqualTo("Fallo interno");
+        assertThat(response.getBody()).containsEntry("error", "Internal Server Error");
+        assertThat(response.getBody()).containsEntry("message", "Fallo interno");
     }
 
     // 6️. AccessDeniedException → debe relanzarse

@@ -149,8 +149,8 @@ class PetManagerApplicationTests {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
         assertThat(response.getBody()).containsKeys("timestamp", "status", "error", "message");
-        assertThat(response.getBody().get("error")).isEqualTo("Internal Server Error");
-        assertThat(response.getBody().get("message")).isEqualTo("Generic error");
+        assertThat(response.getBody()).containsEntry("error", "Internal Server Error");
+        assertThat(response.getBody()).containsEntry("message", "Generic Error");
     }
 
     @Test
@@ -173,7 +173,7 @@ class PetManagerApplicationTests {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(response.getBody()).containsKeys("timestamp", "status", "error", "message");
-        assertThat(response.getBody().get("error")).isEqualTo("Bad Request");
-        assertThat(response.getBody().get("message")).isEqualTo("Invalid argument");
+        assertThat(response.getBody()).containsEntry("error", "Bad request");
+        assertThat(response.getBody()).containsEntry("message", "Invalid Argument");
     }
 }

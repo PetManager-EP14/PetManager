@@ -1,0 +1,159 @@
+package com.ep14.pet_manager.service;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.*;
+
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import com.ep14.pet_manager.dto.PurchaseDTO;
+import com.ep14.pet_manager.entity.Purchase;
+import com.ep14.pet_manager.entity.Supplier;
+import com.ep14.pet_manager.entity.User;
+import com.ep14.pet_manager.mapper.PurchaseMapper;
+import com.ep14.pet_manager.repository.PurchaseRepository;
+import com.ep14.pet_manager.repository.SupplierRepository;
+import com.ep14.pet_manager.repository.UserRepository;
+
+class PurchaseServiceTest {
+
+    @Mock
+    private PurchaseRepository purchaseRepository;
+
+    @Mock
+    private PurchaseMapper purchaseMapper;
+
+    @Mock
+    private SupplierRepository supplierRepository;
+
+    @Mock
+    private UserRepository userRepository;
+
+    private PurchaseService purchaseService;
+
+    @BeforeEach
+    void setup() {
+        MockitoAnnotations.openMocks(this);
+        purchaseService = new PurchaseService(purchaseRepository, purchaseMapper, supplierRepository, userRepository);
+    }
+
+    // 1. Devuelve todas las compras correctamente mapeadas
+    @Test
+    void getAllPurchases_shouldReturnMappedList() {
+        Purchase purchase = new Purchase();
+        PurchaseDTO dto = new PurchaseDTO();
+
+        when(purchaseRepository.findAll()).thenReturn(List.of(purchase));
+        when(purchaseMapper.toDTO(purchase)).thenReturn(dto);
+
+        List<PurchaseDTO> result = purchaseService.getAllPurchases();
+
+        assertThat(result).hasSize(1).contains(dto);
+        verify(purchaseRepository).findAll();
+        verify(purchaseMapper).toDTO(purchase);
+    }
+
+    // 2. Devuelve una compra por ID si existe
+    @Test
+    void getPurchaseById_shouldReturnPurchaseDTO_whenExists() {
+        Purchase purchase = new Purchase();
+        PurchaseDTO dto = new PurchaseDTO();
+
+        when(purchaseRepository.findById(1L)).thenReturn(Optional.of(purchase));
+        when(purchaseMapper.toDTO(purchase)).thenReturn(dto);
+
+        PurchaseDTO result = purchaseService.getPurchaseById(1L);
+
+        assertThat(result).isEqualTo(dto);
+        verify(purchaseRepository).findById(1L);
+        verify(purchaseMapper).toDTO(purchase);
+    }
+
+    // 3. Lanza excepción si la compra no existe
+    @Test
+    void getPurchaseById_shouldThrowException_whenNotFound() {
+        when(purchaseRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> purchaseService.getPurchaseById(1L))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Compra no encontrada");
+    }
+
+    // 4. Crea una compra correctamente con proveedor y usuario válidos
+    @Test
+    void createPurchase_shouldSaveAndReturnDTO_whenValid() {
+        UUID userId = java.util.UUID.randomUUID();
+
+        PurchaseDTO dto = new PurchaseDTO();
+        dto.setSupplierId(10L);
+        dto.setUserId(userId);
+
+        Supplier supplier = new Supplier();
+        supplier.setSupplierId(10L);
+
+        User user = new User();
+        user.setUserId(userId);
+
+        Purchase entity = new Purchase();
+        Purchase saved = new Purchase();
+
+        when(purchaseMapper.toEntity(dto)).thenReturn(entity);
+        when(supplierRepository.findById(10L)).thenReturn(Optional.of(supplier));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(purchaseRepository.save(any(Purchase.class))).thenReturn(saved);
+        when(purchaseMapper.toDTO(saved)).thenReturn(dto);
+
+        PurchaseDTO result = purchaseService.createPurchase(dto);
+
+        ArgumentCaptor<Purchase> captor = ArgumentCaptor.forClass(Purchase.class);
+        verify(purchaseRepository).save(captor.capture());
+        Purchase captured = captor.getValue();
+
+        assertThat(captured.getSupplier()).isEqualTo(supplier);
+        assertThat(captured.getUser()).isEqualTo(user);
+        assertThat(result).isEqualTo(dto);
+    }
+
+    // 5. Lanza excepción si el proveedor no existe
+    @Test
+    void createPurchase_shouldThrowException_whenSupplierNotFound() {
+        PurchaseDTO dto = new PurchaseDTO();
+        dto.setSupplierId(99L);
+        dto.setUserId(java.util.UUID.randomUUID());
+
+        when(purchaseMapper.toEntity(dto)).thenReturn(new Purchase());
+        when(supplierRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> purchaseService.createPurchase(dto))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Proveedor no encontrado");
+    }
+
+    // 6. Lanza excepción si el usuario no existe
+
+    @Test
+    void createPurchase_shouldThrowException_whenUserNotFound() {
+        UUID missingUserId = java.util.UUID.randomUUID();
+
+        PurchaseDTO dto = new PurchaseDTO();
+        dto.setSupplierId(1L);
+        dto.setUserId(missingUserId);
+
+        when(purchaseMapper.toEntity(dto)).thenReturn(new Purchase());
+        when(supplierRepository.findById(1L)).thenReturn(Optional.of(new Supplier()));
+        when(userRepository.findById(missingUserId)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> purchaseService.createPurchase(dto))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Usuario no encontrado");
+    }
+}

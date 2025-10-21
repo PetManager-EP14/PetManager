@@ -46,7 +46,6 @@ class JwtServiceTest {
         userDetails = mock(UserDetails.class);
         when(userDetails.getUsername()).thenReturn("user@test.com");
         GrantedAuthority authority = () -> "ROLE_USER";
-        Collection<GrantedAuthority> authorities = List.of(authority);
         when(userDetails.getAuthorities()).thenAnswer(invocation -> List.of(authority));
 
 

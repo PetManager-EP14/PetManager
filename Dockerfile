@@ -5,7 +5,7 @@ COPY . .
 RUN mvn clean package -DskipTests
 
 # Etapa de empaquetado (runtime)
-FROM openjdk:17-jdk
+FROM openjdk:26-jdk
 WORKDIR /app
 # Copia el JAR de la etapa 'build' a la etapa actual
 COPY --from=build /app/target/PM.jar PM.jar

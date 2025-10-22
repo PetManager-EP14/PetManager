@@ -1,138 +1,226 @@
 package com.ep14.pet_manager.entity;
 
 import org.junit.jupiter.api.Test;
-
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.Set;
-import java.util.UUID;
-
+import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class EntitiesTest {
 
-    // 1. AccessLog
     @Test
-    void accessLog_shouldStoreAndRetrieveFields() {
+    void testAccessLog() {
         AccessLog log = new AccessLog();
-        UUID id = UUID.randomUUID();
+        UUID uid = UUID.randomUUID();
         OffsetDateTime now = OffsetDateTime.now();
 
         log.setAccessLogId(1L);
-        log.setUserId(id);
+        log.setUserId(uid);
         log.setPath("/api/test");
         log.setMethod("GET");
-        log.setDecision("DENIED");
-        log.setRequiredPermission("user.read");
-        log.setReason("no role");
+        log.setRequiredPermission("perm.read");
+        log.setDecision("ALLOWED");
+        log.setReason("OK");
         log.setRemoteAddr("127.0.0.1");
         log.setCreatedAt(now);
         log.setUpdatedAt(now);
 
         assertThat(log.getAccessLogId()).isEqualTo(1L);
-        assertThat(log.getUserId()).isEqualTo(id);
-        assertThat(log.getPath()).isEqualTo("/api/test");
-        assertThat(log.getDecision()).isEqualTo("DENIED");
+        assertThat(log.getUserId()).isEqualTo(uid);
+        assertThat(log.getDecision()).isEqualTo("ALLOWED");
+        assertThat(log.getCreatedAt()).isEqualTo(now);
     }
 
-    // 2. Permission
     @Test
-    void permission_shouldHoldCodeAndDescription() {
-        Permission p = new Permission();
-        p.setPermissionId(5L);
-        p.setCode("READ_USER");
-        p.setDescription("Can read users");
-
-        assertThat(p.getCode()).isEqualTo("READ_USER");
-        assertThat(p.getDescription()).contains("read users");
-    }
-
-    // 3. Role
-    @Test
-    void role_shouldStoreCodeAndPermissions() {
-        Role r = new Role();
-        r.setRoleId(10L);
-        r.setCode("ADMIN");
-        r.setDescription("System administrator");
-
+    void testPermissionAndRole() {
         Permission perm = new Permission();
-        perm.setCode("ALL");
-        r.setPermissions(Set.of(perm));
+        perm.setPermissionId(10L);
+        perm.setCode("user.read");
+        perm.setDescription("Read users");
 
-        assertThat(r.getCode()).isEqualTo("ADMIN");
-        assertThat(r.getPermissions()).hasSize(1);
-    }
-
-    // 4. User
-    @Test
-    void user_shouldStoreBasicFieldsAndRole() {
         Role role = new Role();
-        role.setCode("EMPLOYEE");
+        role.setRoleId(1L);
+        role.setCode("ADMIN");
+        role.setDescription("Administrator");
+        role.setPermissions(Set.of(perm));
 
-        User u = new User();
+        perm.setRoles(Set.of(role));
+
+        assertThat(role.getPermissions()).contains(perm);
+        assertThat(perm.getRoles()).contains(role);
+    }
+
+    @Test
+    void testRoleJsonCreatorConstructor() {
+        OffsetDateTime now = OffsetDateTime.now();
+        Role role = new Role(1L, "USER", "Standard", now, now, new ArrayList<>());
+        assertThat(role.getCode()).isEqualTo("USER");
+        assertThat(role.getCreatedAt()).isEqualTo(now);
+    }
+
+    @Test
+    void testUserEntityAndRole() {
+        Role role = new Role();
+        role.setCode("CLIENT");
         UUID uid = UUID.randomUUID();
-        u.setUserId(uid);
-        u.setName("Brayan");
-        u.setEmail("brayan@example.com");
-        u.setPhone("3001112233");
-        u.setAddress("Medellín");
-        u.setPasswordHash("hash123");
-        u.setRole(role);
 
-        assertThat(u.getRole().getCode()).isEqualTo("EMPLOYEE");
-        assertThat(u.getName()).isEqualTo("Brayan");
-        assertThat(u.getEmail()).contains("@");
+        User u = new User(uid, "Juan", "juan@test.com", "300", "Calle 1", "hash",
+                OffsetDateTime.now(), OffsetDateTime.now(), role, List.of(), List.of());
+
+        assertThat(u.getRole().getCode()).isEqualTo("CLIENT");
+        assertThat(u.getEmail()).isEqualTo("juan@test.com");
+        assertThat(u.getName()).isEqualTo("Juan");
     }
 
-    // 5. Product
     @Test
-    void product_shouldHandlePricesAndRelations() {
-        Product p = new Product();
-        p.setName("Dog Food");
-        p.setCategory("Pets");
-        p.setStock(BigDecimal.TEN);
-        p.setPriceShopping(BigDecimal.valueOf(5000));
-        p.setPriceSale(BigDecimal.valueOf(8000));
+    void testProductEntityAndJsonCreator() {
+        OffsetDateTime now = OffsetDateTime.now();
+        Product p = new Product(
+                1L,
+                "Producto A",
+                "Alimentos",
+                BigDecimal.TEN,
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(1500),
+                now,
+                now,
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>()
+        );
 
-        assertThat(p.getPriceSale()).isEqualByComparingTo("8000");
-        assertThat(p.getCategory()).isEqualTo("Pets");
+        assertThat(p.getProductId()).isEqualTo(1L);
+        assertThat(p.getCategory()).isEqualTo("Alimentos");
+        assertThat(p.getPriceSale()).isEqualTo(BigDecimal.valueOf(1500));
     }
 
-    // 6. Supplier
     @Test
-    void supplier_shouldStoreContactInfo() {
+    void testSupplierAndJsonCreator() {
+        OffsetDateTime now = OffsetDateTime.now();
+        Supplier s = new Supplier(
+                5L,
+                "Proveedor A",
+                "prov@test.com",
+                "900111222",
+                "12345",
+                now,
+                now,
+                new ArrayList<>(),
+                new ArrayList<>()
+        );
+
+        assertThat(s.getSupplierId()).isEqualTo(5L);
+        assertThat(s.getEmail()).isEqualTo("prov@test.com");
+        assertThat(s.getNit()).isEqualTo("900111222");
+    }
+
+    @Test
+    void testPurchaseAndJsonCreator() {
+        OffsetDateTime now = OffsetDateTime.now();
         Supplier s = new Supplier();
-        s.setSupplierId(99L);
-        s.setName("Acme");
-        s.setEmail("acme@mail.com");
-        s.setNit("900123456");
-        s.setPhone("601234567");
+        User u = new User();
 
-        assertThat(s.getName()).isEqualTo("Acme");
-        assertThat(s.getEmail()).endsWith("@mail.com");
+        Purchase p = new Purchase(
+                10L,
+                s,
+                now,
+                Purchase.statusShopping.REGISTERED,
+                BigDecimal.valueOf(50000),
+                now,
+                now,
+                u,
+                new ArrayList<>()
+        );
+
+        assertThat(p.getStatus()).isEqualTo(Purchase.statusShopping.REGISTERED);
+        assertThat(p.getTotal()).isEqualTo(BigDecimal.valueOf(50000));
+        assertThat(p.getUser()).isEqualTo(u);
     }
 
-    // 7. SupplierProducts
     @Test
-    void supplierProducts_shouldHandleFields() {
-        Product prod = new Product();
-        Supplier supp = new Supplier();
+    void testPurchaseDetailsAndJsonCreator() {
+        OffsetDateTime now = OffsetDateTime.now();
+        Purchase purchase = new Purchase();
+        Product product = new Product();
 
-        SupplierProducts sp = new SupplierProducts();
-        sp.setProduct(prod);
-        sp.setSupplier(supp);
-        sp.setCostRef(BigDecimal.valueOf(1000));
-        sp.setLeadTimeDays(7);
-        sp.setActive(true);
+        PurchaseDetails pd = new PurchaseDetails(
+                1L,
+                purchase,
+                product,
+                BigDecimal.ONE,
+                now
+        );
 
-        assertThat(sp.getCostRef()).isEqualByComparingTo("1000");
+        assertThat(pd.getAmount()).isEqualTo(BigDecimal.ONE);
+        assertThat(pd.getCreatedAt()).isEqualTo(now);
+        assertThat(pd.getProduct()).isNotNull();
+    }
+
+    @Test
+    void testSaleAndJsonCreator() {
+        OffsetDateTime now = OffsetDateTime.now();
+        User u = new User();
+
+        Sale sale = new Sale(
+                1L,
+                u,
+                now,
+                Sale.paymentMethod.CARD,
+                Sale.saleStatus.REGISTERED,
+                BigDecimal.valueOf(20000),
+                now,
+                now,
+                null,
+                new ArrayList<>()
+        );
+
+        assertThat(sale.getStatus()).isEqualTo(Sale.saleStatus.REGISTERED);
+        assertThat(sale.getTotal()).isEqualTo(BigDecimal.valueOf(20000));
+        assertThat(sale.getMethod()).isEqualTo(Sale.paymentMethod.CARD);
+    }
+
+    @Test
+    void testSaleNotificationAndJsonCreator() {
+        OffsetDateTime now = OffsetDateTime.now();
+        Sale sale = new Sale();
+
+        SaleNotification sn = new SaleNotification(
+                1L,
+                sale,
+                now,
+                SaleNotification.media.EMAIL,
+                SaleNotification.type.HIGH_ROTATION,
+                now
+        );
+
+        assertThat(sn.getMedia()).isEqualTo(SaleNotification.media.EMAIL);
+        assertThat(sn.getType()).isEqualTo(SaleNotification.type.HIGH_ROTATION);
+        assertThat(sn.getSale()).isNotNull();
+    }
+
+    @Test
+    void testSupplierProductsAndJsonCreator() {
+        OffsetDateTime now = OffsetDateTime.now();
+        Product p = new Product();
+        Supplier s = new Supplier();
+
+        SupplierProducts sp = new SupplierProducts(
+                p,
+                s,
+                BigDecimal.valueOf(100),
+                5,
+                true,
+                now,
+                now
+        );
+
+        assertThat(sp.getCostRef()).isEqualTo(BigDecimal.valueOf(100));
+        assertThat(sp.getSupplier()).isEqualTo(s);
         assertThat(sp.isActive()).isTrue();
-        assertThat(sp.getLeadTimeDays()).isEqualTo(7);
     }
 
-    // 8. SupplierProductId
     @Test
-    void supplierProductId_shouldCompareEqualityCorrectly() {
+    void testSupplierProductIdEqualsAndHash() {
         SupplierProductId id1 = new SupplierProductId();
         SupplierProductId id2 = new SupplierProductId();
 
@@ -140,91 +228,23 @@ class EntitiesTest {
         assertThat(id1).hasSameHashCodeAs(id2);
     }
 
-    // 9. Purchase
     @Test
-    void purchase_shouldRelateUserAndSupplier() {
-        Supplier s = new Supplier();
-        s.setName("Proveedor 1");
-        User u = new User();
-        u.setName("Usuario 1");
+    void testUserPermissionAndEmbeddedId() {
+        UUID uuid = UUID.randomUUID();
+        UserPermission.Id id = new UserPermission.Id(uuid, 77L);
+        UserPermission up = new UserPermission();
+        up.setId(id);
 
-        Purchase p = new Purchase();
-        p.setSupplier(s);
-        p.setUser(u);
-        p.setTotal(BigDecimal.valueOf(12345));
-        p.setStatus(Purchase.statusShopping.REGISTERED);
-
-        assertThat(p.getSupplier().getName()).isEqualTo("Proveedor 1");
-        assertThat(p.getUser().getName()).isEqualTo("Usuario 1");
-        assertThat(p.getStatus()).isEqualTo(Purchase.statusShopping.REGISTERED);
+        assertThat(up.getId().getUserId()).isEqualTo(uuid);
+        assertThat(up.getId().getPermissionId()).isEqualTo(77L);
     }
 
-    // 10. PurchaseDetails
     @Test
-    void purchaseDetails_shouldLinkProductAndPurchase() {
-        PurchaseDetails d = new PurchaseDetails();
-        d.setAmount(BigDecimal.valueOf(3));
-        Product prod = new Product();
-        Purchase purchase = new Purchase();
-        d.setProduct(prod);
-        d.setPurchase(purchase);
-
-        assertThat(d.getAmount()).isEqualByComparingTo("3");
-        assertThat(d.getProduct()).isNotNull();
-        assertThat(d.getPurchase()).isNotNull();
-    }
-
-    // 11. Sale
-    @Test
-    void sale_shouldHandleStatusAndTotals() {
-        Sale sale = new Sale();
-        sale.setStatus(Sale.saleStatus.REGISTERED);
-        sale.setMethod(Sale.paymentMethod.CARD);
-        sale.setTotal(BigDecimal.valueOf(25000));
-
-        assertThat(sale.getStatus()).isEqualTo(Sale.saleStatus.REGISTERED);
-        assertThat(sale.getTotal()).isEqualByComparingTo("25000");
-    }
-
-    // 12. SaleDetails
-    @Test
-    void saleDetails_shouldLinkSaleAndProduct() {
-        SaleDetails det = new SaleDetails();
-        det.setAmount(BigDecimal.valueOf(5));
-        Sale sale = new Sale();
-        Product prod = new Product();
-        det.setSale(sale);
-        det.setProduct(prod);
-
-        assertThat(det.getSale()).isNotNull();
-        assertThat(det.getAmount()).isEqualByComparingTo("5");
-    }
-
-    // 13. SaleNotification
-    @Test
-    void saleNotification_shouldStoreEnumsAndDate() {
-        SaleNotification n = new SaleNotification();
-        n.setMedia(SaleNotification.media.EMAIL);
-        n.setType(SaleNotification.type.HIGH_ROTATION);
-        n.setShippingDate(OffsetDateTime.now());
-
-        assertThat(n.getMedia()).isEqualTo(SaleNotification.media.EMAIL);
-        assertThat(n.getType()).isEqualTo(SaleNotification.type.HIGH_ROTATION);
-    }
-
-    // 14. UserPermission + EmbeddedId
-    @Test
-    void userPermission_shouldLinkUserAndPermission() {
-        User user = new User();
-        user.setUserId(UUID.randomUUID());
-        Permission perm = new Permission();
-        perm.setPermissionId(44L);
-
-        UserPermission up = new UserPermission(user, perm);
-        up.setId(new UserPermission.Id(user.getUserId(), perm.getPermissionId()));
-
-        assertThat(up.getPermission().getPermissionId()).isEqualTo(44L);
-        assertThat(up.getId().getUserId()).isEqualTo(user.getUserId());
-        assertThat(up.getId().getPermissionId()).isEqualTo(44L);
+    void testEnumsCoverage() {
+        assertThat(Sale.paymentMethod.valueOf("CARD")).isEqualTo(Sale.paymentMethod.CARD);
+        assertThat(Sale.saleStatus.valueOf("REGISTERED")).isEqualTo(Sale.saleStatus.REGISTERED);
+        assertThat(Purchase.statusShopping.valueOf("DRAFT")).isEqualTo(Purchase.statusShopping.DRAFT);
+        assertThat(SaleNotification.media.valueOf("PUSH")).isEqualTo(SaleNotification.media.PUSH);
+        assertThat(SaleNotification.type.valueOf("HIGH_VOLUMEN")).isEqualTo(SaleNotification.type.HIGH_VOLUMEN);
     }
 }

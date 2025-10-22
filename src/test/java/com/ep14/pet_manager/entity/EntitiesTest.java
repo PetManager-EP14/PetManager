@@ -137,7 +137,7 @@ class EntitiesTest {
         SupplierProductId id2 = new SupplierProductId();
 
         assertThat(id1.equals(id2)).isTrue();
-        assertThat(id1.hashCode()).isEqualTo(id2.hashCode());
+        assertThat(id1).hasSameHashCodeAs(id2);
     }
 
     // 9. Purchase

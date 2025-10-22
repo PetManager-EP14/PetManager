@@ -13,6 +13,7 @@ import com.ep14.pet_manager.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -147,7 +148,9 @@ class UserAdminServiceImplTest {
 
         String idString = userId.toString();
 
-        assertThatThrownBy(() -> service.assignDirectPermissions(idString, Set.of("X_INVALID")))
+        ThrowingCallable action = () -> service.assignDirectPermissions(idString, Set.of("X_INVALID"));
+
+        assertThatThrownBy(action)
                 .isInstanceOf(NoSuchElementException.class)
                 .hasMessageContaining("Unknown permission");
     }

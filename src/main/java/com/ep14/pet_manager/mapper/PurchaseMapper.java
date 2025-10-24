@@ -23,4 +23,9 @@ public interface PurchaseMapper {
     @Mapping(source = "createdAt", target = "createdAt")
     @Mapping(source = "updatedAt", target = "updatedAt")
     Purchase toEntity(PurchaseDTO purchaseDTO);
+
+    default Purchase.statusShopping mapStatus(PurchaseDTO.StatusShopping status) {
+        if (status == null) return null;
+        return Purchase.statusShopping.valueOf(status.name());
+    }
 }

@@ -61,4 +61,38 @@ public class PurchaseService {
         Purchase saved = purchaseRepository.save(entity);
         return purchaseMapper.toDTO(saved);
     }
+
+    public PurchaseDTO updatePurchase(Long id, PurchaseDTO purchaseDTO) {
+        Purchase existingPurchase = purchaseRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Compra no encontrada"));
+
+        existingPurchase.setDate(purchaseDTO.getDate());
+        if (purchaseDTO.getStatus() != null) {
+            existingPurchase.setStatus(purchaseMapper.mapStatus(purchaseDTO.getStatus()));
+        }
+        existingPurchase.setTotal(purchaseDTO.getTotal());
+        existingPurchase.setUpdatedAt(OffsetDateTime.now());
+
+        if (purchaseDTO.getSupplierId() != null) {
+            Supplier supplier = supplierRepository.findById(purchaseDTO.getSupplierId())
+                    .orElseThrow(() -> new IllegalArgumentException("Proveedor no encontrado: " + purchaseDTO.getSupplierId()));
+            existingPurchase.setSupplier(supplier);
+        }
+
+        if (purchaseDTO.getUserId() != null) {
+            User user = userRepository.findById(purchaseDTO.getUserId())
+                    .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado: " + purchaseDTO.getUserId()));
+            existingPurchase.setUser(user);
+        }
+
+        Purchase updated = purchaseRepository.save(existingPurchase);
+        return purchaseMapper.toDTO(updated);
+    }
+
+    public void deletePurchase(Long id) {
+        if (!purchaseRepository.existsById(id)) {
+            throw new RuntimeException("Compra no encontrada");
+        }
+        purchaseRepository.deleteById(id);
+    }
 }

@@ -3,6 +3,9 @@ package com.ep14.pet_manager.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -129,6 +132,65 @@ class PurchaseControllerTest {
         controller.createPurchase(purchaseDTO);
 
         verify(purchaseService).createPurchase(any(PurchaseDTO.class));
+    }
+
+    @Test
+    void updatePurchase_shouldReturnOk() {
+        when(purchaseService.updatePurchase(anyLong(), any(PurchaseDTO.class))).thenReturn(purchaseDTO);
+
+        ResponseEntity<PurchaseDTO> response = controller.updatePurchase(1L, purchaseDTO);
+
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
+        assertThat(response.getBody()).isNotNull();
+        verify(purchaseService).updatePurchase(1L, purchaseDTO);
+    }
+
+    @Test
+    void updatePurchase_whenException_shouldPropagate() {
+        when(purchaseService.updatePurchase(anyLong(), any(PurchaseDTO.class)))
+                .thenThrow(new RuntimeException("Compra no encontrada"));
+
+        assertThatThrownBy(() -> controller.updatePurchase(999L, purchaseDTO))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Compra no encontrada");
+    }
+
+    @Test
+    void deletePurchase_shouldReturnOk() {
+        doNothing().when(purchaseService).deletePurchase(anyLong());
+
+        ResponseEntity<?> response = controller.deletePurchase(1L);
+
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
+        verify(purchaseService).deletePurchase(1L);
+    }
+
+    @Test
+    void deletePurchase_whenException_shouldPropagate() {
+        doThrow(new RuntimeException("Compra no encontrada"))
+                .when(purchaseService).deletePurchase(anyLong());
+
+        assertThatThrownBy(() -> controller.deletePurchase(999L))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Compra no encontrada");
+    }
+
+    @Test
+    void updatePurchase_shouldInvokeExpectedMethods() {
+        when(purchaseService.updatePurchase(anyLong(), any(PurchaseDTO.class))).thenReturn(purchaseDTO);
+
+        controller.updatePurchase(1L, purchaseDTO);
+
+        verify(purchaseService).updatePurchase(1L, purchaseDTO);
+    }
+
+    @Test
+    void deletePurchase_shouldInvokeExpectedMethods() {
+        doNothing().when(purchaseService).deletePurchase(anyLong());
+
+        controller.deletePurchase(1L);
+
+        verify(purchaseService).deletePurchase(1L);
     }
 }
 

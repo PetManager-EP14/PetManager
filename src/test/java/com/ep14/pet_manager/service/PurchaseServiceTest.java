@@ -3,8 +3,10 @@ package com.ep14.pet_manager.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
 
-
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -155,5 +157,71 @@ class PurchaseServiceTest {
         assertThatThrownBy(() -> purchaseService.createPurchase(dto))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Usuario no encontrado");
+    }
+
+    @Test
+    void updatePurchase_shouldUpdateAndReturnDTO_whenValid() {
+        UUID userId = UUID.randomUUID();
+        Purchase existingPurchase = new Purchase();
+        existingPurchase.setPurchaseId(1L);
+
+        PurchaseDTO dto = new PurchaseDTO();
+        dto.setDate(OffsetDateTime.now());
+        dto.setStatus(PurchaseDTO.StatusShopping.REGISTERED);
+        dto.setTotal(BigDecimal.valueOf(2000.00));
+        dto.setSupplierId(20L);
+        dto.setUserId(userId);
+
+        Supplier supplier = new Supplier();
+        supplier.setSupplierId(20L);
+
+        User user = new User();
+        user.setUserId(userId);
+
+        PurchaseDTO responseDTO = new PurchaseDTO();
+        responseDTO.setId(1L);
+        responseDTO.setStatus(PurchaseDTO.StatusShopping.REGISTERED);
+
+        when(purchaseRepository.findById(1L)).thenReturn(Optional.of(existingPurchase));
+        when(supplierRepository.findById(20L)).thenReturn(Optional.of(supplier));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(purchaseMapper.mapStatus(PurchaseDTO.StatusShopping.REGISTERED)).thenReturn(Purchase.statusShopping.REGISTERED);
+        when(purchaseRepository.save(existingPurchase)).thenReturn(existingPurchase);
+        when(purchaseMapper.toDTO(existingPurchase)).thenReturn(responseDTO);
+
+        PurchaseDTO result = purchaseService.updatePurchase(1L, dto);
+
+        verify(purchaseRepository).save(existingPurchase);
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(1L);
+    }
+
+    @Test
+    void updatePurchase_shouldThrowException_whenNotFound() {
+        PurchaseDTO dto = new PurchaseDTO();
+
+        when(purchaseRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> purchaseService.updatePurchase(1L, dto))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Compra no encontrada");
+    }
+
+    @Test
+    void deletePurchase_shouldDelete_whenExists() {
+        when(purchaseRepository.existsById(1L)).thenReturn(true);
+
+        purchaseService.deletePurchase(1L);
+
+        verify(purchaseRepository).deleteById(1L);
+    }
+
+    @Test
+    void deletePurchase_shouldThrowException_whenNotFound() {
+        when(purchaseRepository.existsById(1L)).thenReturn(false);
+
+        assertThatThrownBy(() -> purchaseService.deletePurchase(1L))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Compra no encontrada");
     }
 }

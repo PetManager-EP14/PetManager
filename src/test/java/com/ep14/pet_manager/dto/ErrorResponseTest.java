@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
 import java.time.temporal.ChronoUnit;
 
-public class ErrorResponseTest {
+class ErrorResponseTest {
     
     @Test
     void testGetErrorCode() {

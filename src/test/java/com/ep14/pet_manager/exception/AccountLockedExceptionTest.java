@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AccountLockedExceptionTest {
+class AccountLockedExceptionTest {
     
     @Test
     void testGetLockTime() {

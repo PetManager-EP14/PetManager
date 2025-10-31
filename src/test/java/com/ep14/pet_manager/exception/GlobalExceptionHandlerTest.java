@@ -28,7 +28,6 @@ class GlobalExceptionHandlerTest {
     }
 
     // 1️. IllegalArgumentException → BAD_REQUEST
-    @SuppressWarnings("null")
     @Test
     void handleIllegalArgument_shouldReturnBadRequest() {
         IllegalArgumentException ex = new IllegalArgumentException("Campo inválido");
@@ -57,7 +56,7 @@ class GlobalExceptionHandlerTest {
         assertThat(response.getStatusCode()).isEqualTo(org.springframework.http.HttpStatus.BAD_REQUEST);
         Assertions.assertNotNull(response.getBody());
         assertThat(response.getBody()).containsEntry("error", "Validation Error");
-        @SuppressWarnings({ "unchecked", "null" })
+        @SuppressWarnings({ })
         Map<String, String> details = (Map<String, String>) response.getBody().get("details");
 
         assertThat(details)
@@ -66,7 +65,6 @@ class GlobalExceptionHandlerTest {
     }
 
     // 3️. DataIntegrityViolationException → CONFLICT con mensaje de "NOT NULL"
-    @SuppressWarnings("null")
     @Test
     void handleDataIntegrity_shouldReturnConflict_forNotNullMessage() {
         DataIntegrityViolationException ex =
@@ -81,7 +79,6 @@ class GlobalExceptionHandlerTest {
     }
 
     // 4️. DataIntegrityViolationException → CONFLICT con mensaje de "sale_method_check"
-    @SuppressWarnings("null")
     @Test
     void handleDataIntegrity_shouldReturnConflict_forSaleMethodCheck() {
         DataIntegrityViolationException ex =
@@ -95,7 +92,6 @@ class GlobalExceptionHandlerTest {
     }
 
     // 5️. Generic Exception → INTERNAL_SERVER_ERROR
-    @SuppressWarnings("null")
     @Test
     void handleGenericException_shouldReturnInternalServerError() {
         Exception ex = new Exception("Fallo interno");

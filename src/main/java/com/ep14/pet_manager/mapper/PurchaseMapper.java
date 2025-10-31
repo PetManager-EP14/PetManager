@@ -17,6 +17,7 @@ public interface PurchaseMapper {
     @Mapping(source = "updatedAt", target = "updatedAt")
     PurchaseDTO toDTO(Purchase purchase);
 
+  
     @Mapping(source = "id", target = "purchaseId")
     @Mapping(source = "supplierId", target = "supplier.supplierId")
     @Mapping(source = "userId", target = "user.userId")

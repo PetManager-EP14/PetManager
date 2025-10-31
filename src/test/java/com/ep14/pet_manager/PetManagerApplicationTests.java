@@ -141,7 +141,6 @@ class PetManagerApplicationTests {
 
     private final GlobalExceptionHandler handler = new GlobalExceptionHandler();
 
-    @SuppressWarnings("null")
     @Test
     void handleGenericException_returnsInternalServerError() {
         Exception ex = new Exception("Generic error");
@@ -165,7 +164,6 @@ class PetManagerApplicationTests {
         assertThrows(RuntimeException.class, () -> handler.handleException(ex));
     }
 
-    @SuppressWarnings("null")
     @Test
     void handleIllegalArgument_returnsBadRequest() {
         IllegalArgumentException ex = new IllegalArgumentException("Invalid Argument");

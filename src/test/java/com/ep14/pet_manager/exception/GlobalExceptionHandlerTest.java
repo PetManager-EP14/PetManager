@@ -56,7 +56,7 @@ class GlobalExceptionHandlerTest {
         assertThat(response.getStatusCode()).isEqualTo(org.springframework.http.HttpStatus.BAD_REQUEST);
         Assertions.assertNotNull(response.getBody());
         assertThat(response.getBody()).containsEntry("error", "Validation Error");
-        @SuppressWarnings({ })
+        @SuppressWarnings({"unchecked" })
         Map<String, String> details = (Map<String, String>) response.getBody().get("details");
 
         assertThat(details)

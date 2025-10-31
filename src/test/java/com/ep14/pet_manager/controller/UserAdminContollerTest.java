@@ -69,6 +69,7 @@ class UserAdminControllerTest {
         controller.assignPermissions(userId, req);
 
         ArgumentCaptor<String> idCaptor = ArgumentCaptor.forClass(String.class);
+        @SuppressWarnings("unchecked")
         ArgumentCaptor<Set<String>> permsCaptor = ArgumentCaptor.forClass(Set.class);
 
         verify(service).assignDirectPermissions(idCaptor.capture(), permsCaptor.capture());

@@ -34,7 +34,7 @@ class LoginAttemptServiceTest {
         service.loginFailed(email);
         
         assertThat(service.isBlocked(email)).isTrue();
-        assertThat(service.getRemainingAttempts(email)).isEqualTo(0);
+        assertThat(service.getRemainingAttempts(email)).isZero();
         assertThat(service.getLockTime(email)).isNotNull();
     }
     
@@ -51,7 +51,7 @@ class LoginAttemptServiceTest {
     }
     
     @Test
-    void shouldUnblockAfterLockTimePasses() throws InterruptedException {
+    void shouldUnblockAfterLockTimePasses() {
         String email = "test@example.com";
         
         // Simular 3 intentos fallidos

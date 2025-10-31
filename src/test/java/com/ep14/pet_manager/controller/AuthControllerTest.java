@@ -12,9 +12,11 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,6 +34,7 @@ import com.ep14.pet_manager.repository.UserRepository;
 import com.ep14.pet_manager.service.JwtService;
 import com.ep14.pet_manager.service.LoginAttemptService;
 
+@ExtendWith(MockitoExtension.class)
 class AuthControllerTest {
 
     @Mock
@@ -52,132 +55,132 @@ class AuthControllerTest {
     @Mock
     private LoginAttemptService loginAttemptService;
 
+    @InjectMocks
     private AuthController authController;
+
+    private LoginRequest validLoginRequest;
+    private User testUser;
+    private Role userRole;
 
     @BeforeEach
     void setup() {
-        MockitoAnnotations.openMocks(this);
-        authController = new AuthController(
-                authenticationManager,
-                jwtService,
-                userRepository,
-                loginAttemptService);
+        validLoginRequest = new LoginRequest("test@example.com", "password123");
+        
+        userRole = new Role();
+        userRole.setCode("USER");
+        
+        testUser = new User();
+        testUser.setName("John Doe");
+        testUser.setEmail("test@example.com");
+        testUser.setRole(userRole);
     }
 
-    // 1. Login exitoso: autentica, genera token y devuelve LoginResponse
     @SuppressWarnings("null")
     @Test
     void login_shouldReturnLoginResponse_whenCredentialsAreValid() {
-        LoginRequest request = new LoginRequest();
-        request.setEmail("test@example.com");
-        request.setPassword("1234");
-
-        // Configurar mocks de autenticación
+        // Given
+        when(loginAttemptService.isBlocked(validLoginRequest.getEmail())).thenReturn(false);
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(userDetails);
-        when(userDetails.getUsername()).thenReturn("test@example.com");
-
-        // Simular token generado
+        when(userDetails.getUsername()).thenReturn(validLoginRequest.getEmail());
         when(jwtService.generateToken(userDetails)).thenReturn("fake-jwt-token");
+        when(userRepository.findByEmail(validLoginRequest.getEmail())).thenReturn(Optional.of(testUser));
 
-        // Simular usuario en base de datos
-        Role role = new Role();
-        role.setCode("ADMIN");
-        User user = new User();
-        user.setName("John Doe");
-        user.setRole(role);
-        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
+        // When
+        ResponseEntity<?> response = authController.login(validLoginRequest);
 
-        // Ejecutar
-        ResponseEntity<LoginResponse> response = (ResponseEntity<LoginResponse>) authController.login(request);
+        // Then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isInstanceOf(LoginResponse.class);
+        
+        LoginResponse loginResponse = (LoginResponse) response.getBody();
+        assertThat(loginResponse.getToken()).isEqualTo("fake-jwt-token");
+        assertThat(loginResponse.getRole()).isEqualTo("USER");
+        assertThat(loginResponse.getName()).isEqualTo("John Doe");
 
-        // Verificar respuesta
-        assertThat(response.getStatusCode()).isEqualTo(org.springframework.http.HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getToken()).isEqualTo("fake-jwt-token");
-        assertThat(response.getBody().getRole()).isEqualTo("ADMIN");
-        assertThat(response.getBody().getName()).isEqualTo("John Doe");
-
-        // Capturar autenticación usada
+        verify(loginAttemptService).loginSucceeded(validLoginRequest.getEmail());
+        
         ArgumentCaptor<UsernamePasswordAuthenticationToken> captor = ArgumentCaptor
                 .forClass(UsernamePasswordAuthenticationToken.class);
         verify(authenticationManager).authenticate(captor.capture());
+        
         UsernamePasswordAuthenticationToken authToken = captor.getValue();
-        assertThat(authToken.getPrincipal()).isEqualTo("test@example.com");
-        assertThat(authToken.getCredentials()).isEqualTo("1234");
+        assertThat(authToken.getPrincipal()).isEqualTo(validLoginRequest.getEmail());
+        assertThat(authToken.getCredentials()).isEqualTo(validLoginRequest.getPassword());
     }
 
-    // 2. Usuario no encontrado: el repositorio lanza excepción
     @Test
     void login_shouldThrowException_whenUserNotFound() {
-        LoginRequest request = new LoginRequest();
-        request.setEmail("missing@example.com");
-        request.setPassword("pwd");
-
+        // Given
+        when(loginAttemptService.isBlocked(validLoginRequest.getEmail())).thenReturn(false);
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(userDetails);
-        when(userDetails.getUsername()).thenReturn("missing@example.com");
-
+        when(userDetails.getUsername()).thenReturn(validLoginRequest.getEmail());
         when(jwtService.generateToken(userDetails)).thenReturn("fake-token");
-        when(userRepository.findByEmail("missing@example.com")).thenReturn(Optional.empty());
+        when(userRepository.findByEmail(validLoginRequest.getEmail())).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> authController.login(request))
-                .isInstanceOf(java.util.NoSuchElementException.class);
+        // When & Then
+        assertThatThrownBy(() -> authController.login(validLoginRequest))
+                .isInstanceOf(RuntimeException.class);
+        
+        verify(loginAttemptService, never()).loginSucceeded(any());
     }
 
-    // 3. Verifica que se llamen los métodos correctos en el flujo de login
     @Test
-    void login_shouldInvokeExpectedMethods() {
-        LoginRequest request = new LoginRequest();
-        request.setEmail("invocations@test.com");
-        request.setPassword("secret");
-
+    void login_shouldInvokeExpectedMethods_whenLoginIsSuccessful() {
+        // Given
+        when(loginAttemptService.isBlocked(validLoginRequest.getEmail())).thenReturn(false);
         when(authenticationManager.authenticate(any())).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(userDetails);
-        when(userDetails.getUsername()).thenReturn("invocations@test.com");
+        when(userDetails.getUsername()).thenReturn(validLoginRequest.getEmail());
         when(jwtService.generateToken(userDetails)).thenReturn("token");
+        when(userRepository.findByEmail(validLoginRequest.getEmail()))
+                .thenReturn(Optional.of(testUser));
 
-        Role role = new Role();
-        role.setCode("USER");
+        // When
+        authController.login(validLoginRequest);
 
-        User user = new User();
-        user.setName("Any Name");
-        user.setRole(role);
-
-        when(userRepository.findByEmail("invocations@test.com"))
-                .thenReturn(Optional.of(user));
-
-        authController.login(request);
-
+        // Then
+        verify(loginAttemptService).isBlocked(validLoginRequest.getEmail());
         verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
         verify(jwtService).generateToken(userDetails);
-        verify(userRepository).findByEmail("invocations@test.com");
+        verify(userRepository).findByEmail(validLoginRequest.getEmail());
+        verify(loginAttemptService).loginSucceeded(validLoginRequest.getEmail());
     }
 
     @SuppressWarnings("null")
     @Test
-    void shouldReturnLockedStatusWhenAccountIsBlocked() {
+    void login_shouldReturnLockedStatus_whenAccountIsBlocked() {
+        // Given
         String email = "blocked@example.com";
         LoginRequest request = new LoginRequest(email, "password");
+        LocalDateTime lockTime = LocalDateTime.now().plusMinutes(15);
 
         when(loginAttemptService.isBlocked(email)).thenReturn(true);
-        when(loginAttemptService.getLockTime(email)).thenReturn(LocalDateTime.now().plusMinutes(15));
+        when(loginAttemptService.getLockTime(email)).thenReturn(lockTime);
 
+        // When
         ResponseEntity<?> response = authController.login(request);
 
+        // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.LOCKED);
         assertThat(response.getBody()).isInstanceOf(ErrorResponse.class);
 
         ErrorResponse error = (ErrorResponse) response.getBody();
         assertThat(error.getErrorCode()).isEqualTo("ACCOUNT_LOCKED");
+        assertThat(error.getMessage()).contains("Account locked");
 
         verify(authenticationManager, never()).authenticate(any());
+        verify(loginAttemptService, never()).loginFailed(any());
+        verify(loginAttemptService, never()).loginSucceeded(any());
     }
 
+    @SuppressWarnings("null")
     @Test
-    void shouldIncrementAttemptsOnFailedLogin() {
+    void login_shouldIncrementAttempts_whenCredentialsAreInvalid() {
+        // Given
         String email = "user@example.com";
         LoginRequest request = new LoginRequest(email, "wrongpassword");
 
@@ -186,45 +189,53 @@ class AuthControllerTest {
         when(authenticationManager.authenticate(any()))
                 .thenThrow(new BadCredentialsException("Invalid credentials"));
 
+        // When
         ResponseEntity<?> response = authController.login(request);
 
+        // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+        assertThat(response.getBody()).isInstanceOf(ErrorResponse.class);
+        
+        ErrorResponse error = (ErrorResponse) response.getBody();
+        assertThat(error.getErrorCode()).isEqualTo("INVALID_CREDENTIALS");
+        
         verify(loginAttemptService).loginFailed(email);
+        verify(loginAttemptService, never()).loginSucceeded(any());
+        verify(jwtService, never()).generateToken(any());
     }
 
     @Test
-    void shouldResetAttemptsOnSuccessfulLogin() {
-        String email = "user@example.com";
-        LoginRequest request = new LoginRequest(email, "correctpassword");
-
-        // 1. Configurar que NO está bloqueado
-        when(loginAttemptService.isBlocked(email)).thenReturn(false);
-
-        // 2. Configurar el authenticationManager para retornar un authentication válido
+    void login_shouldResetAttempts_whenLoginIsSuccessful() {
+        // Given
+        when(loginAttemptService.isBlocked(validLoginRequest.getEmail())).thenReturn(false);
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenReturn(authentication);
-
-        // 3. Configurar el principal del authentication
         when(authentication.getPrincipal()).thenReturn(userDetails);
-
-        // 4. Configurar el username del UserDetails
-        when(userDetails.getUsername()).thenReturn(email);
-
-        // 5. Configurar el token JWT
+        when(userDetails.getUsername()).thenReturn(validLoginRequest.getEmail());
         when(jwtService.generateToken(userDetails)).thenReturn("fake-jwt-token");
+        when(userRepository.findByEmail(validLoginRequest.getEmail())).thenReturn(Optional.of(testUser));
 
-        // 6. Configurar el usuario en la base de datos
-        Role role = new Role();
-        role.setCode("USER");
-        User user = new User();
-        user.setName("Test User");
-        user.setRole(role);
-        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        // When
+        authController.login(validLoginRequest);
 
-        // Ejecutar
-        authController.login(request);
+        // Then
+        verify(loginAttemptService).loginSucceeded(validLoginRequest.getEmail());
+        verify(loginAttemptService, never()).loginFailed(any());
+    }
 
-        // Verificar que se resetean los intentos
-        verify(loginAttemptService).loginSucceeded(email);
+    @Test
+    void login_shouldReturnErrorResponse_whenAuthenticationFails() {
+        // Given
+        when(loginAttemptService.isBlocked(validLoginRequest.getEmail())).thenReturn(false);
+        when(authenticationManager.authenticate(any()))
+                .thenThrow(new BadCredentialsException("Bad credentials"));
+
+        // When
+        ResponseEntity<?> response = authController.login(validLoginRequest);
+
+        // Then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+        assertThat(response.getBody()).isInstanceOf(ErrorResponse.class);
+        verify(loginAttemptService).loginFailed(validLoginRequest.getEmail());
     }
 }

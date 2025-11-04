@@ -11,6 +11,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 import io.micrometer.common.lang.Nullable;
 
@@ -24,23 +29,24 @@ public class SecurityConfig {
     private final AuditAccessDeniedHandler auditAccessDeniedHandler;
 
     @Autowired
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter,
-                            UsersDetailsService usersDetailsService,
-                            @Nullable AuditAccessDeniedHandler auditAccessDeniedHandler
-                        ) {
+    public SecurityConfig(
+            JwtAuthenticationFilter jwtAuthFilter,
+            UsersDetailsService usersDetailsService,
+            @Nullable AuditAccessDeniedHandler auditAccessDeniedHandler) {
         this.jwtAuthFilter = jwtAuthFilter;
         this.usersDetailsService = usersDetailsService;
         this.auditAccessDeniedHandler = auditAccessDeniedHandler;
     }
 
     @Bean
-    public AuthenticationManager authenticationManager (AuthenticationConfiguration config) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
+            .cors(cors -> cors.configurationSource(corsConfigurationSource())) // 👈 Habilita CORS global
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**", "/v3/api-docs/**", "/swagger-ui/**", "/actuator/**").permitAll()
@@ -55,5 +61,23 @@ public class SecurityConfig {
 
         return http.build();
     }
-    
+
+    /**
+     * Configuración global de CORS para permitir el frontend de Vercel y localhost
+     */
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of(
+            "https://petmanager-frontend.vercel.app",
+            "http://localhost:5173"
+        ));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 }

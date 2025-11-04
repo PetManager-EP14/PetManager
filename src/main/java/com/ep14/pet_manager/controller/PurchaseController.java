@@ -23,16 +23,23 @@ public class PurchaseController {
 
     private final PurchaseService purchaseService;
 
+
     @Autowired
     public PurchaseController(PurchaseService purchaseService) {
         this.purchaseService = purchaseService;
     }
 
-    @PreAuthorize("hasAuthority('purchase.read')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'purchase.read')")
+    @GetMapping
+    public ResponseEntity<List<PurchaseDTO>> getAllPurchases() {
+        return ResponseEntity.ok(purchaseService.getAllPurchases());
+    }// Para las pruebas de integracion (hay que modificar despues)
+
+    /*@PreAuthorize("hasAuthority('purchase.read')")
     @GetMapping
     public ResponseEntity<List<PurchaseDTO>> getAllPurchases(){
         return ResponseEntity.ok(purchaseService.getAllPurchases());
-    }
+    }*/
 
     @PreAuthorize("hasAuthority('purchase.read')")
     @GetMapping("/{id}")

@@ -65,7 +65,7 @@ class AuthControllerTest {
     }
 
     // 1. Login exitoso: autentica, genera token y devuelve LoginResponse
-    @SuppressWarnings("null")
+    @SuppressWarnings("unchecked")
     @Test
     void login_shouldReturnLoginResponse_whenCredentialsAreValid() {
         LoginRequest request = new LoginRequest();
@@ -156,7 +156,6 @@ class AuthControllerTest {
         verify(userRepository).findByEmail("invocations@test.com");
     }
 
-    @SuppressWarnings("null")
     @Test
     void shouldReturnLockedStatusWhenAccountIsBlocked() {
         String email = "blocked@example.com";

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,15 +31,21 @@ public class SaleService {
     private final ProductRepository productRepo;
     private final UserRepository userRepo;
     private final SaleMapper saleMapper;
+    private final NotificationService notificationService;
+
+    @Value("${notification.high-volume.threshold:10}")
+    private int highVolumeThreshold;
 
     public SaleService(SaleRepository saleRepo,
                         ProductRepository productRepo, 
                         UserRepository userRepo, 
-                        SaleMapper saleMapper) {
+                        SaleMapper saleMapper,
+                        NotificationService notificationService) {
         this.saleRepo = saleRepo;
         this.productRepo = productRepo;
         this.userRepo = userRepo;
         this.saleMapper = saleMapper;
+        this.notificationService = notificationService;
     }
 
     @Transactional
@@ -106,8 +113,40 @@ public class SaleService {
         // guardamos
         sale = saleRepo.saveAndFlush(sale);
 
+        // 6. Verificar si es una venta de alto volumen y enviar notificación
+        checkAndNotifyHighVolumeSale(sale);
+
         // Recargar la venta completa
         return saleMapper.toDTO(sale);
+    }
+
+    /**
+     * Verifica si una venta supera el umbral de alto volumen y envía notificación
+     * @param sale La venta a verificar
+     */
+    private void checkAndNotifyHighVolumeSale(Sale sale) {
+        // Calcular la cantidad total de productos vendidos
+        BigDecimal totalQuantity = sale.getSaleDetails().stream()
+            .map(SaleDetails::getAmount)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+        
+        if (logger.isLoggable(java.util.logging.Level.INFO)) {
+            logger.info(String.format("Venta ID %d - Cantidad total: %s - Umbral: %d", 
+                sale.getSaleId(), totalQuantity, highVolumeThreshold));
+        }
+        
+        // Si supera el umbral, crear notificación
+        if (totalQuantity.compareTo(BigDecimal.valueOf(highVolumeThreshold)) > 0) {
+            logger.info(String.format("¡Venta de alto volumen detectada! ID: %d, Cantidad: %s", 
+                sale.getSaleId(), totalQuantity));
+            
+            try {
+                notificationService.createHighVolumeNotification(sale);
+            } catch (Exception e) {
+                // Log el error pero no fallar la transacción de venta
+                logger.warning("Error al crear notificación de alto volumen: " + e.getMessage());
+            }
+        }
     }
 
     public List<SaleDTO> getAllSales() {

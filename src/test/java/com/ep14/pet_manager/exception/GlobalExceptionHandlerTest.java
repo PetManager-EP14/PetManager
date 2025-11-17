@@ -40,7 +40,6 @@ class GlobalExceptionHandlerTest {
     }
 
     // 2️. MethodArgumentNotValidException → BAD_REQUEST con detalles de campos
-    @SuppressWarnings("null")
     @Test
     void handleValidationErrors_shouldReturnFieldDetails() {
         BeanPropertyBindingResult bindingResult =

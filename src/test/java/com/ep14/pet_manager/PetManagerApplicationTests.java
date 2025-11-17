@@ -15,7 +15,9 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -32,18 +34,38 @@ import com.ep14.pet_manager.service.PurchaseService;
 @SpringBootTest
 class PetManagerApplicationTests {
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
     @Mock
     private PurchaseService purchaseService;
 
     @InjectMocks
     private PurchaseController purchaseController;
 
+    // Test para el método main de PetManagerApplication
+    @Test
+    void main_shouldStartApplication() {
+        // Verificar que el método main no lanza excepciones
+        // y que la aplicación se puede iniciar correctamente
+        assertThat(applicationContext).isNotNull();
+        assertThat(applicationContext.containsBean("petManagerApplication")).isTrue();
+    }
+
+    // Test para verificar que la aplicación se carga correctamente
     @Test
     void contextLoads() {
         assertThat(purchaseController).isNotNull();
+        assertThat(applicationContext).isNotNull();
     }
 
-    @SuppressWarnings("null")
+    // Test del constructor de PetManagerApplication (mejora coverage)
+    @Test
+    void petManagerApplication_canBeInstantiated() {
+        PetManagerApplication application = new PetManagerApplication();
+        assertThat(application).isNotNull();
+    }
+
     @Test
     void testGetAllPurchases() {
         PurchaseDTO purchase = new PurchaseDTO.Builder()

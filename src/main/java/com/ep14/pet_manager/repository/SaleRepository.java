@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.ep14.pet_manager.dto.SalesReportDetailDTO;
 import com.ep14.pet_manager.entity.Sale;
 
 @Repository
@@ -21,5 +22,22 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
     List<Sale> findByUserAndDateRange(@Param("userId") UUID userId,
                                     @Param("start") OffsetDateTime start,
                                     @Param("end") OffsetDateTime end);
+
+    @Query("""
+    SELECT new com.ep14.pet_manager.dto.SalesReportDetailDTO(
+        p.name,
+        SUM(sd.amount),
+        SUM(sd.amount * p.priceSale)
+    )
+    FROM SaleDetails sd
+    JOIN sd.sale s
+    JOIN sd.product p
+    WHERE s.createdAt BETWEEN :start AND :end
+      AND s.status = com.ep14.pet_manager.entity.Sale.saleStatus.REGISTERED
+    GROUP BY p.name
+    """)
+    List<SalesReportDetailDTO> getReportByDateRange(
+            @Param("start") OffsetDateTime start,
+            @Param("end") OffsetDateTime end);
 
 }

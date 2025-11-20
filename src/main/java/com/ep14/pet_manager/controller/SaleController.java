@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ep14.pet_manager.dto.SaleDTO;
+import com.ep14.pet_manager.dto.SalesReportDTO;
 import com.ep14.pet_manager.service.SaleService;
 
 @RestController
@@ -61,5 +62,17 @@ public class SaleController {
 
         List<SaleDTO> sales = saleService.getAllSalesFiltered(userId, startDate, endDate, saleId);
         return ResponseEntity.ok(sales);
+    }
+
+    @PreAuthorize("hasAuthority('sale.read')")
+    @GetMapping("/report/daily")
+    public ResponseEntity<SalesReportDTO> getDailyReport() {
+        return ResponseEntity.ok(saleService.getDailyReport());
+    }
+
+    @PreAuthorize("hasAuthority('sale.read')")
+    @GetMapping("/report/weekly")
+    public ResponseEntity<SalesReportDTO> getWeeklyReport() {
+        return ResponseEntity.ok(saleService.getWeeklyReport());
     }
 }

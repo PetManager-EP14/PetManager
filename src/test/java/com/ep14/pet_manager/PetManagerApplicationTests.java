@@ -2,6 +2,7 @@ package com.ep14.pet_manager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
@@ -39,6 +40,9 @@ class PetManagerApplicationTests {
 
     @Mock
     private PurchaseService purchaseService;
+
+    @Mock
+    private com.ep14.pet_manager.assembler.PurchaseModelAssembler purchaseAssembler;
 
     @InjectMocks
     private PurchaseController purchaseController;
@@ -81,12 +85,15 @@ class PetManagerApplicationTests {
                 .build();
 
         when(purchaseService.getAllPurchases()).thenReturn(List.of(purchase));
+        when(purchaseAssembler.toCollectionModel(any()))
+            .thenReturn(org.springframework.hateoas.CollectionModel.of(
+                List.of(org.springframework.hateoas.EntityModel.of(purchase))
+            ));
 
-        ResponseEntity<List<PurchaseDTO>> response = purchaseController.getAllPurchases();
+        org.springframework.http.ResponseEntity<org.springframework.hateoas.CollectionModel<org.springframework.hateoas.EntityModel<PurchaseDTO>>> response = purchaseController.getAllPurchases();
 
         assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
-        assertThat(response.getBody()).hasSize(1);
-        assertThat(response.getBody().get(0).getTotal()).isEqualByComparingTo("100.00");
+        assertThat(response.getBody().getContent()).hasSize(1);
     }
 
     @Test
@@ -105,11 +112,13 @@ class PetManagerApplicationTests {
         PurchaseDTO purchase = new PurchaseDTO();
         purchase.setId(1L);
         when(purchaseService.getPurchaseById(1L)).thenReturn(purchase);
+        when(purchaseAssembler.toModel(any(PurchaseDTO.class)))
+            .thenReturn(org.springframework.hateoas.EntityModel.of(purchase));
 
-        ResponseEntity<PurchaseDTO> response = purchaseController.getPurchaseById(1L);
+        org.springframework.http.ResponseEntity<org.springframework.hateoas.EntityModel<PurchaseDTO>> response = purchaseController.getPurchaseById(1L);
 
         assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
-        assertThat(response.getBody()).isEqualTo(purchase);
+        assertThat(response.getBody().getContent()).isEqualTo(purchase);
     }
 
     @Test

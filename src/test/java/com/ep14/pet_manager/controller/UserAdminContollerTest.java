@@ -11,7 +11,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.hateoas.EntityModel;
 
+import com.ep14.pet_manager.assembler.UserSummaryModelAssembler;
 import com.ep14.pet_manager.dto.AssignPermissionsRequest;
 import com.ep14.pet_manager.dto.AssignRoleRequest;
 import com.ep14.pet_manager.dto.UserSummary;
@@ -22,12 +24,15 @@ class UserAdminControllerTest {
     @Mock
     private UserAdminService service;
 
+    @Mock
+    private UserSummaryModelAssembler assembler;
+
     private UserAdminController controller;
 
     @BeforeEach
     void setup() {
         MockitoAnnotations.openMocks(this);
-        controller = new UserAdminController(service);
+        controller = new UserAdminController(service, assembler);
     }
 
     // 1. get(): devuelve el resumen de usuario obtenido del servicio
@@ -36,10 +41,11 @@ class UserAdminControllerTest {
         UserSummary expected = new UserSummary("123", "John", "john@example.com", "ADMIN", Set.of("user.read"));
 
         when(service.getUserSummary("123")).thenReturn(expected);
+        when(assembler.toModel(any(UserSummary.class))).thenReturn(EntityModel.of(expected));
 
-        UserSummary result = controller.get("123");
+        EntityModel<UserSummary> result = controller.get("123");
 
-        assertThat(result).isEqualTo(expected);
+        assertThat(result.getContent()).isEqualTo(expected);
         verify(service).getUserSummary("123");
     }
 

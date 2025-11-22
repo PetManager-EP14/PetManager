@@ -3,7 +3,9 @@ package com.ep14.pet_manager.service;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,17 +37,31 @@ public class JwtService {
     }
 
     public String generateToken(UserDetails userDetails) {
-        Map<String, Object> claims = new HashMap<>();
+        Map<String, Object> extraClaims = new HashMap<>();
 
-        claims.put("role", userDetails.getAuthorities().stream().findFirst().map(GrantedAuthority::getAuthority)
-                .orElse("role_user"));
+        // Extraer TODAS las autoridades/permisos**
+        List<String> authorities = userDetails.getAuthorities().stream()
+            .map(GrantedAuthority::getAuthority)
+            .collect(Collectors.toList());
 
+        // **1. Inyectar la lista de permisos bajo el CLAIM 'authorities'**
+        extraClaims.put("authorities", authorities);
+
+        // 2. Inyectar el rol principal (mantener 'role' por si acaso)
+        userDetails.getAuthorities().stream()
+            .filter(a -> a.getAuthority().startsWith("ROLE_"))
+            .findFirst()
+            .ifPresent(authority -> extraClaims.put("role", authority.getAuthority()));
+
+        // Construir el token 
+        long now = System.currentTimeMillis();
+        
         return Jwts.builder()
-            .setClaims(claims)
-            .setSubject(userDetails.getUsername())
-            .setIssuedAt(new Date())
-            .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
-            .signWith(key, SignatureAlgorithm.HS256)
+            .setClaims(extraClaims) // Usa el mapa que ahora contiene 'authorities'
+            .setSubject(userDetails.getUsername()) // [11]
+            .setIssuedAt(new Date(now)) // [11]
+            .setExpiration(new Date(now + expirationMs)) // [11]
+            .signWith(key, SignatureAlgorithm.HS256) // [12]
             .compact();
     }
 

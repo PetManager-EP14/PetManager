@@ -2,6 +2,7 @@ package com.ep14.pet_manager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
@@ -18,6 +19,8 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -39,6 +42,9 @@ class PetManagerApplicationTests {
 
     @Mock
     private PurchaseService purchaseService;
+
+    @Mock
+    com.ep14.pet_manager.assembler.PurchaseModelAssembler purchaseModelAssembler;
 
     @InjectMocks
     private PurchaseController purchaseController;
@@ -80,13 +86,18 @@ class PetManagerApplicationTests {
                 .shoppingDetailIds(List.of(1L, 2L, 3L))
                 .build();
 
-        when(purchaseService.getAllPurchases()).thenReturn(List.of(purchase));
+        List<PurchaseDTO> purchases = List.of(purchase);
+        CollectionModel<EntityModel<PurchaseDTO>> collectionModel = 
+            CollectionModel.of(Collections.singletonList(EntityModel.of(purchase)));
 
-        ResponseEntity<List<PurchaseDTO>> response = purchaseController.getAllPurchases();
+        when(purchaseService.getAllPurchases()).thenReturn(purchases);
+        when(purchaseModelAssembler.toCollectionModel(purchases)).thenReturn(collectionModel);
+
+        ResponseEntity<CollectionModel<EntityModel<PurchaseDTO>>> response = purchaseController.getAllPurchases();
 
         assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
-        assertThat(response.getBody()).hasSize(1);
-        assertThat(response.getBody().get(0).getTotal()).isEqualByComparingTo("100.00");
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getContent()).hasSize(1);
     }
 
     @Test
@@ -105,11 +116,12 @@ class PetManagerApplicationTests {
         PurchaseDTO purchase = new PurchaseDTO();
         purchase.setId(1L);
         when(purchaseService.getPurchaseById(1L)).thenReturn(purchase);
+        when(purchaseModelAssembler.toModel(any(PurchaseDTO.class))).thenReturn(EntityModel.of(purchase));
 
-        ResponseEntity<PurchaseDTO> response = purchaseController.getPurchaseById(1L);
+        ResponseEntity<EntityModel<PurchaseDTO>> response = purchaseController.getPurchaseById(1L);
 
         assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
-        assertThat(response.getBody()).isEqualTo(purchase);
+        assertThat(response.getBody().getContent()).isEqualTo(purchase);
     }
 
     @Test
@@ -118,11 +130,15 @@ class PetManagerApplicationTests {
         dto.setStatus(PurchaseDTO.StatusShopping.DRAFT); // estado válido
 
         when(purchaseService.createPurchase(dto)).thenReturn(dto);
+        when(purchaseModelAssembler.toModel(any(PurchaseDTO.class))).thenReturn(EntityModel.of(dto));
 
         ResponseEntity<?> response = purchaseController.createPurchase(dto);
 
         assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
-        assertThat(response.getBody()).isEqualTo(dto);
+        assertThat(response.getBody()).isInstanceOf(EntityModel.class);
+        @SuppressWarnings("unchecked")
+        EntityModel<PurchaseDTO> entityModel = (EntityModel<PurchaseDTO>) response.getBody();
+        assertThat(entityModel.getContent()).isEqualTo(dto);
     }
 
     // AccessLogController Tests

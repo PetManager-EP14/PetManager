@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 public class SaleDTO {
     private Long saleId;
     private UUID userId;
+    private String customerName;
     private OffsetDateTime date;
     private String method;
     private String status;
@@ -24,5 +25,4 @@ public class SaleDTO {
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
     private List<SaleDetailDTO> details;
-    private String customerName;
 }

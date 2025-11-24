@@ -29,7 +29,7 @@ import com.ep14.pet_manager.repository.SaleRepository;
 import com.ep14.pet_manager.repository.UserRepository;
 
 class SaleServiceTest {
-    
+
     @Mock
     private SaleRepository saleRepo;
     @Mock
@@ -39,13 +39,13 @@ class SaleServiceTest {
     @Mock
     private SaleMapper saleMapper;
     
-    // Asumimos que NotificationService es mockeado para la prueba
+    // Se añade el mock para NotificationService, ya que SaleService lo requiere
     @Mock
     private NotificationService notificationService;
 
     @InjectMocks
     private SaleService service;
-    
+
     private User user;
     private Product product;
     private Sale sale;
@@ -55,6 +55,7 @@ class SaleServiceTest {
     void setup() {
         MockitoAnnotations.openMocks(this);
         
+        // Inicialización de User, Product, y Sale
         user = new User();
         user.setUserId(UUID.randomUUID());
         
@@ -70,6 +71,7 @@ class SaleServiceTest {
         sale.setSaleDetails(new ArrayList<>());
         sale.setTotal(BigDecimal.ZERO);
         
+        // Inicialización de SaleDTO
         saleDTO = new SaleDTO();
         saleDTO.setUserId(user.getUserId());
         
@@ -82,156 +84,154 @@ class SaleServiceTest {
     // Caso 1: registro exitoso de venta
     @Test
     void registerSale_successful() {
-        when(userRepo.findById(any())).thenReturn(Optional.of(user));
-        when(productRepo.findById(any())).thenReturn(Optional.of(product));
-        when(saleRepo.saveAndFlush(any(Sale.class))).thenReturn(sale);
-        when(saleMapper.toEntity(any(SaleDTO.class))).thenReturn(sale);
-        when(saleMapper.toDTO(any(Sale.class))).thenReturn(saleDTO);
-
+        when(userRepo.findById(any())).thenReturn(Optional.of(user)); 
+        when(productRepo.findById(any())).thenReturn(Optional.of(product)); 
+        when(saleRepo.saveAndFlush(any(Sale.class))).thenReturn(sale); 
+        when(saleMapper.toEntity(any(SaleDTO.class))).thenReturn(sale); 
+        when(saleMapper.toDTO(any(Sale.class))).thenReturn(saleDTO); 
+        
         SaleDTO result = service.registerSale(saleDTO);
-
+        
         assertThat(result).isNotNull();
-        verify(saleRepo, times(2)).saveAndFlush(any(Sale.class));
-        verify(productRepo, times(1)).save(any(Product.class));
+        verify(saleRepo, times(2)).saveAndFlush(any(Sale.class)); 
+        verify(productRepo, times(1)).save(any(Product.class)); 
     }
 
     // Caso 2: usuario no encontrado
     @Test
     void registerSale_whenUserNotFound_shouldThrowException() {
-        when(userRepo.findById(any())).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> service.registerSale(saleDTO))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("Usuario no encontrado");
+        when(userRepo.findById(any())).thenReturn(Optional.empty()); 
+        
+        assertThatThrownBy(() -> service.registerSale(saleDTO)) 
+            .isInstanceOf(IllegalArgumentException.class) 
+            .hasMessageContaining("Usuario no encontrado"); 
     }
 
     // Caso 3: producto no encontrado
     @Test
     void registerSale_whenProductNotFound_shouldThrowException() {
-        when(userRepo.findById(any())).thenReturn(Optional.of(user));
-        when(productRepo.findById(any())).thenReturn(Optional.empty());
-        when(saleMapper.toEntity(any(SaleDTO.class))).thenReturn(sale);
-        when(saleRepo.saveAndFlush(any(Sale.class))).thenReturn(sale);
-
-        assertThatThrownBy(() -> service.registerSale(saleDTO))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("Producto no encontrado");
+        when(userRepo.findById(any())).thenReturn(Optional.of(user)); 
+        when(productRepo.findById(any())).thenReturn(Optional.empty()); 
+        when(saleMapper.toEntity(any(SaleDTO.class))).thenReturn(sale); 
+        when(saleRepo.saveAndFlush(any(Sale.class))).thenReturn(sale); 
+        
+        assertThatThrownBy(() -> service.registerSale(saleDTO)) 
+            .isInstanceOf(IllegalArgumentException.class) 
+            .hasMessageContaining("Producto no encontrado"); 
     }
 
     // Caso 4: stock insuficiente
     @Test
     void registerSale_whenStockInsufficient_shouldThrowException() {
-        product.setStock(BigDecimal.ZERO);
-        when(userRepo.findById(any())).thenReturn(Optional.of(user));
-        when(productRepo.findById(any())).thenReturn(Optional.of(product));
-        when(saleMapper.toEntity(any(SaleDTO.class))).thenReturn(sale);
-        when(saleRepo.saveAndFlush(any(Sale.class))).thenReturn(sale);
-
-        assertThatThrownBy(() -> service.registerSale(saleDTO))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("Stock insuficiente");
+        product.setStock(BigDecimal.ZERO); 
+        when(userRepo.findById(any())).thenReturn(Optional.of(user)); 
+        when(productRepo.findById(any())).thenReturn(Optional.of(product)); 
+        when(saleMapper.toEntity(any(SaleDTO.class))).thenReturn(sale); 
+        when(saleRepo.saveAndFlush(any(Sale.class))).thenReturn(sale); 
+        
+        assertThatThrownBy(() -> service.registerSale(saleDTO)) 
+            .isInstanceOf(IllegalArgumentException.class) 
+            .hasMessageContaining("Stock insuficiente"); 
     }
 
-    // Caso 5: obtener todas las ventas (CORRECCIÓN CLAVE)
+    // Caso 5: obtener todas las ventas (CORRECCIÓN CLAVE para el BUILD FAILURE)
     @Test
     void getAllSales_shouldReturnList() {
-
-        when(saleRepo.findAll()).thenReturn(List.of(sale)); 
+        when(saleRepo.findAllWithDetailsAndProduct()).thenReturn(List.of(sale)); 
+        when(saleMapper.toDTO(any(Sale.class))).thenReturn(saleDTO); // Simulación del mapeo a DTO
         
-        when(saleMapper.toDTO(any(Sale.class))).thenReturn(saleDTO);
+        List<SaleDTO> result = service.getAllSales(); 
 
-        List<SaleDTO> result = service.getAllSales();
-
-        assertThat(result).isNotEmpty();
+        assertThat(result).isNotEmpty(); 
         verify(saleRepo).findAll(); 
     }
-    
+
     // Caso 6: obtener venta por ID existente
     @Test
     void getSaleById_shouldReturnSale() {
-        when(saleRepo.findById(1L)).thenReturn(Optional.of(sale));
-        when(saleMapper.toDTO(any(Sale.class))).thenReturn(saleDTO);
+        when(saleRepo.findById(1L)).thenReturn(Optional.of(sale)); 
+        when(saleMapper.toDTO(any(Sale.class))).thenReturn(saleDTO); 
+        
+        SaleDTO result = service.getSaleById(1L); 
 
-        SaleDTO result = service.getSaleById(1L);
-
-        assertThat(result).isEqualTo(saleDTO);
+        assertThat(result).isEqualTo(saleDTO); 
     }
 
     // Caso 7: obtener venta por ID inexistente
     @Test
     void getSaleById_notFound_shouldThrowException() {
-        when(saleRepo.findById(1L)).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> service.getSaleById(1L))
-            .isInstanceOf(RuntimeException.class)
-            .hasMessageContaining("Venta no encontrada");
+        when(saleRepo.findById(1L)).thenReturn(Optional.empty()); 
+        
+        assertThatThrownBy(() -> service.getSaleById(1L)) 
+            .isInstanceOf(RuntimeException.class) 
+            .hasMessageContaining("Venta no encontrada"); 
     }
 
     // Caso 8: ventas por usuario con resultados
     @Test
     void getSalesByUser_shouldReturnList() {
-        when(saleRepo.findByUser_UserId(any())).thenReturn(List.of(sale));
-        when(saleMapper.toDTO(any(Sale.class))).thenReturn(saleDTO);
+        when(saleRepo.findByUser_UserId(any())).thenReturn(List.of(sale)); 
+        when(saleMapper.toDTO(any(Sale.class))).thenReturn(saleDTO); 
+        
+        List<SaleDTO> result = service.getSalesByUser(user.getUserId()); 
 
-        List<SaleDTO> result = service.getSalesByUser(user.getUserId());
-
-        assertThat(result).hasSize(1);
+        assertThat(result).hasSize(1); 
     }
 
     // Caso 9: ventas por usuario sin resultados
     @Test
     void getSalesByUser_empty_shouldThrowException() {
-        when(saleRepo.findByUser_UserId(any())).thenReturn(Collections.emptyList());
-        UUID userId = user.getUserId();
-
-        assertThatThrownBy(() -> service.getSalesByUser(userId))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("El usuario no tiene ventas registradas");
+        when(saleRepo.findByUser_UserId(any())).thenReturn(Collections.emptyList());    
+        UUID userId = user.getUserId(); 
+        
+        assertThatThrownBy(() -> service.getSalesByUser(userId)) 
+            .isInstanceOf(IllegalArgumentException.class) 
+            .hasMessageContaining("El usuario no tiene ventas registradas"); 
     }
 
     @Test
     void getAllSalesFiltered_withSaleId_shouldReturnList() {
-        when(saleRepo.findById(1L)).thenReturn(Optional.of(sale));
-        when(saleMapper.toDTO(any(Sale.class))).thenReturn(saleDTO);
+        when(saleRepo.findById(1L)).thenReturn(Optional.of(sale)); 
+        when(saleMapper.toDTO(any(Sale.class))).thenReturn(saleDTO); 
+        
+        List<SaleDTO> result = service.getAllSalesFiltered(null, null, null, 1L); 
 
-        List<SaleDTO> result = service.getAllSalesFiltered(null, null, null, 1L);
-
-        assertThat(result).isNotEmpty();
-        verify(saleRepo).findById(1L);
+        assertThat(result).isNotEmpty(); 
+        verify(saleRepo).findById(1L); 
     }
 
     @Test
     void getAllSalesFiltered_withUserAndDates_shouldReturnList() {
-        UUID userId = UUID.randomUUID();
-        when(saleRepo.findByUserAndDateRange(eq(userId), any(), any())).thenReturn(List.of(sale));
-        when(saleMapper.toDTO(any(Sale.class))).thenReturn(saleDTO);
+        UUID userId = UUID.randomUUID(); 
+        when(saleRepo.findByUserAndDateRange(eq(userId), any(), any())).thenReturn(List.of(sale)); 
+        when(saleMapper.toDTO(any(Sale.class))).thenReturn(saleDTO); 
+        
+        List<SaleDTO> result = service.getAllSalesFiltered(userId, "2024-10-01T00:00:00Z", "2024-10-19T00:00:00Z", null); 
 
-        List<SaleDTO> result = service.getAllSalesFiltered(userId, "2024-10-01T00:00:00Z", "2024-10-19T00:00:00Z", null);
-
-        assertThat(result).hasSize(1);
-        verify(saleRepo).findByUserAndDateRange(eq(userId), any(), any());
+        assertThat(result).hasSize(1); 
+        verify(saleRepo).findByUserAndDateRange(eq(userId), any(), any()); 
     }
 
     @Test
     void getAllSalesFiltered_withUserOnly_shouldReturnList() {
-        UUID userId = UUID.randomUUID();
-        when(saleRepo.findByUser_UserId(userId)).thenReturn(List.of(sale));
-        when(saleMapper.toDTO(any(Sale.class))).thenReturn(saleDTO);
+        UUID userId = UUID.randomUUID(); 
+        when(saleRepo.findByUser_UserId(userId)).thenReturn(List.of(sale)); 
+        when(saleMapper.toDTO(any(Sale.class))).thenReturn(saleDTO); 
+        
+        List<SaleDTO> result = service.getAllSalesFiltered(userId, null, null, null); 
 
-        List<SaleDTO> result = service.getAllSalesFiltered(userId, null, null, null);
-
-        assertThat(result).hasSize(1);
-        verify(saleRepo).findByUser_UserId(userId);
+        assertThat(result).hasSize(1); 
+        verify(saleRepo).findByUser_UserId(userId); 
     }
 
     @Test
     void getAllSalesFiltered_withDatesOnly_shouldReturnList() {
-        when(saleRepo.findByDateBetween(any(), any())).thenReturn(List.of(sale));
-        when(saleMapper.toDTO(any(Sale.class))).thenReturn(saleDTO);
+        when(saleRepo.findByDateBetween(any(), any())).thenReturn(List.of(sale)); 
+        when(saleMapper.toDTO(any(Sale.class))).thenReturn(saleDTO); 
+        
+        List<SaleDTO> result = service.getAllSalesFiltered(null, "2024-10-01T00:00:00Z", "2024-10-19T00:00:00Z", null); 
 
-        List<SaleDTO> result = service.getAllSalesFiltered(null, "2024-10-01T00:00:00Z", "2024-10-19T00:00:00Z", null);
-
-        assertThat(result).hasSize(1);
-        verify(saleRepo).findByDateBetween(any(), any());
+        assertThat(result).hasSize(1); 
+        verify(saleRepo).findByDateBetween(any(), any()); 
     }
 }

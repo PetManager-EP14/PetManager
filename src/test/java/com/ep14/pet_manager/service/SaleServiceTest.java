@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,13 +13,11 @@ import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
-
 import com.ep14.pet_manager.dto.SaleDTO;
 import com.ep14.pet_manager.dto.SaleDetailDTO;
 import com.ep14.pet_manager.entity.Product;
@@ -32,22 +29,23 @@ import com.ep14.pet_manager.repository.SaleRepository;
 import com.ep14.pet_manager.repository.UserRepository;
 
 class SaleServiceTest {
-
+    
     @Mock
     private SaleRepository saleRepo;
-
     @Mock
     private ProductRepository productRepo;
-
     @Mock
     private UserRepository userRepo;
-
     @Mock
     private SaleMapper saleMapper;
+    
+    // Asumimos que NotificationService es mockeado para la prueba
+    @Mock
+    private NotificationService notificationService;
 
     @InjectMocks
     private SaleService service;
-
+    
     private User user;
     private Product product;
     private Sale sale;
@@ -56,29 +54,28 @@ class SaleServiceTest {
     @BeforeEach
     void setup() {
         MockitoAnnotations.openMocks(this);
-
+        
         user = new User();
         user.setUserId(UUID.randomUUID());
-
+        
         product = new Product();
         product.setProductId(1L);
         product.setName("Collar");
         product.setStock(BigDecimal.valueOf(10));
         product.setPriceSale(BigDecimal.valueOf(10000));
-
+        
         sale = new Sale();
         sale.setSaleId(1L);
         sale.setUser(user);
         sale.setSaleDetails(new ArrayList<>());
         sale.setTotal(BigDecimal.ZERO);
-
+        
         saleDTO = new SaleDTO();
         saleDTO.setUserId(user.getUserId());
-
+        
         SaleDetailDTO detail = new SaleDetailDTO();
         detail.setProductId(1L);
         detail.setAmount(BigDecimal.ONE);
-
         saleDTO.setDetails(List.of(detail));
     }
 
@@ -102,9 +99,10 @@ class SaleServiceTest {
     @Test
     void registerSale_whenUserNotFound_shouldThrowException() {
         when(userRepo.findById(any())).thenReturn(Optional.empty());
+
         assertThatThrownBy(() -> service.registerSale(saleDTO))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Usuario no encontrado");
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("Usuario no encontrado");
     }
 
     // Caso 3: producto no encontrado
@@ -116,8 +114,8 @@ class SaleServiceTest {
         when(saleRepo.saveAndFlush(any(Sale.class))).thenReturn(sale);
 
         assertThatThrownBy(() -> service.registerSale(saleDTO))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Producto no encontrado");
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("Producto no encontrado");
     }
 
     // Caso 4: stock insuficiente
@@ -128,27 +126,34 @@ class SaleServiceTest {
         when(productRepo.findById(any())).thenReturn(Optional.of(product));
         when(saleMapper.toEntity(any(SaleDTO.class))).thenReturn(sale);
         when(saleRepo.saveAndFlush(any(Sale.class))).thenReturn(sale);
+
         assertThatThrownBy(() -> service.registerSale(saleDTO))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Stock insuficiente");
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("Stock insuficiente");
     }
 
-    // Caso 5: obtener todas las ventas
+    // Caso 5: obtener todas las ventas (CORRECCIÓN CLAVE)
     @Test
     void getAllSales_shouldReturnList() {
-        when(saleRepo.findAll()).thenReturn(List.of(sale));
-        when(saleMapper.toEntity(any(SaleDTO.class))).thenReturn(sale);
-        List<SaleDTO> result = service.getAllSales();
-        assertThat(result).isNotEmpty();
-        verify(saleRepo).findAll();
-    }
 
+        when(saleRepo.findAll()).thenReturn(List.of(sale)); 
+        
+        when(saleMapper.toDTO(any(Sale.class))).thenReturn(saleDTO);
+
+        List<SaleDTO> result = service.getAllSales();
+
+        assertThat(result).isNotEmpty();
+        verify(saleRepo).findAll(); 
+    }
+    
     // Caso 6: obtener venta por ID existente
     @Test
     void getSaleById_shouldReturnSale() {
         when(saleRepo.findById(1L)).thenReturn(Optional.of(sale));
         when(saleMapper.toDTO(any(Sale.class))).thenReturn(saleDTO);
+
         SaleDTO result = service.getSaleById(1L);
+
         assertThat(result).isEqualTo(saleDTO);
     }
 
@@ -156,17 +161,20 @@ class SaleServiceTest {
     @Test
     void getSaleById_notFound_shouldThrowException() {
         when(saleRepo.findById(1L)).thenReturn(Optional.empty());
+
         assertThatThrownBy(() -> service.getSaleById(1L))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("Venta no encontrada");
+            .isInstanceOf(RuntimeException.class)
+            .hasMessageContaining("Venta no encontrada");
     }
 
     // Caso 8: ventas por usuario con resultados
     @Test
     void getSalesByUser_shouldReturnList() {
         when(saleRepo.findByUser_UserId(any())).thenReturn(List.of(sale));
-        when(saleMapper.toEntity(any(SaleDTO.class))).thenReturn(sale);
+        when(saleMapper.toDTO(any(Sale.class))).thenReturn(saleDTO);
+
         List<SaleDTO> result = service.getSalesByUser(user.getUserId());
+
         assertThat(result).hasSize(1);
     }
 
@@ -174,12 +182,11 @@ class SaleServiceTest {
     @Test
     void getSalesByUser_empty_shouldThrowException() {
         when(saleRepo.findByUser_UserId(any())).thenReturn(Collections.emptyList());
-
         UUID userId = user.getUserId();
 
         assertThatThrownBy(() -> service.getSalesByUser(userId))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("El usuario no tiene ventas registradas");
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("El usuario no tiene ventas registradas");
     }
 
     @Test

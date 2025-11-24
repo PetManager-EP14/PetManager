@@ -1,8 +1,6 @@
 package com.ep14.pet_manager.controller;
-
 import java.util.List;
 import java.util.UUID;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,14 +10,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.ep14.pet_manager.dto.SaleDTO;
 import com.ep14.pet_manager.service.SaleService;
 
 @RestController
 @RequestMapping("/api/sales")
 public class SaleController {
-
     private final SaleService saleService;
 
     public SaleController(SaleService saleService) {
@@ -58,7 +54,6 @@ public class SaleController {
             @RequestParam(required = false) String startDate,
             @RequestParam(required = false) String endDate,
             @RequestParam(required = false) Long saleId) {
-
         List<SaleDTO> sales = saleService.getAllSalesFiltered(userId, startDate, endDate, saleId);
         return ResponseEntity.ok(sales);
     }

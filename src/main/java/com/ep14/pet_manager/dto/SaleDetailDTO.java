@@ -6,6 +6,8 @@ public class SaleDetailDTO {
     private Long saleDetailId;
     private Long productId;
     private BigDecimal amount;
+    private String productName;
+    private BigDecimal unitPrice;
 
     // Getters & Setters
     public Long getSaleDetailId() {
@@ -31,4 +33,21 @@ public class SaleDetailDTO {
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
+
+        public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+        public BigDecimal getUnitPrice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(BigDecimal unitPrice) {
+        this.unitPrice = unitPrice;
+    }
+
 }

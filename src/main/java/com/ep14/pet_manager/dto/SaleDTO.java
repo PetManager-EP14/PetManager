@@ -24,5 +24,5 @@ public class SaleDTO {
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
     private List<SaleDetailDTO> details;
-     private String customerName;
+    private String customerName;
 }

@@ -1,29 +1,20 @@
 package com.ep14.pet_manager.dto;
 
 import java.math.BigDecimal;
+import java.io.Serializable;
+// Se recomienda el uso de camelCase para variables y clases [3-5].
 
-/**
- * DTO para representar el detalle de un producto dentro de una compra.
- * Necesario para enviar información anidada de producto, cantidad y precio.
- */
-public class PurchaseDetailDTO {
+public class PurchaseDetailDTO implements Serializable {
 
-    // ID del detalle de la compra (mapeado desde PurchaseDetails.purchaseDetailId)
     private Long purchaseDetailId;
-
-    // ID del producto (para re-crear la relación en el mapper)
     private Long productId;
-
-    // Cantidad comprada (PurchaseDetails.amount)
+    // Cantidad comprada
     private BigDecimal amount;
-
-    // Nombre del producto (mapeado desde Product.name por el mapper)
+    // Nombre del producto (mapeado desde Product.name)
     private String productName;
-
-    // Precio unitario de compra (mapeado desde Product.priceShopping por el mapper)
+    // Precio unitario de compra (mapeado desde Product.priceShopping)
     private BigDecimal unitPrice;
 
-    // Constructores (vacío y completo si se requiere)
     public PurchaseDetailDTO() {
     }
 
@@ -64,7 +55,7 @@ public class PurchaseDetailDTO {
         return unitPrice;
     }
 
-    public void setUnitPrice(BigDecimal unitPrice) { 
+    public void setUnitPrice(BigDecimal unitPrice) {
         this.unitPrice = unitPrice;
     }
 }

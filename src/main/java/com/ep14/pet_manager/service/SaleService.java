@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.ep14.pet_manager.dto.SaleDTO;
 import com.ep14.pet_manager.dto.SaleDetailDTO;
+import com.ep14.pet_manager.dto.SalesReportDTO;
+import com.ep14.pet_manager.dto.SalesReportDetailDTO;
 import com.ep14.pet_manager.entity.Product;
 import com.ep14.pet_manager.entity.Sale;
 import com.ep14.pet_manager.entity.SaleDetails;
@@ -182,5 +184,45 @@ public class SaleService {
             sales = saleRepo.findAll(); 
         }
         return sales.stream().map(saleMapper::toDTO).toList(); 
+    }
+
+    //Reporte generico (Sin fechas establecidas)
+    public SalesReportDTO getReportByRange(OffsetDateTime start, OffsetDateTime end) {
+        List<SalesReportDetailDTO> details = saleRepo.getReportByDateRange(start, end);
+
+        BigDecimal totalRevenue = details.stream()
+                .map(SalesReportDetailDTO::getRevenue)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalQuantity = details.stream()
+                .map(SalesReportDetailDTO::getQuantitySold)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return new SalesReportDTO(
+            end,
+            totalRevenue,
+            totalQuantity,
+            details
+        );
+    }
+
+    //Reporte diario
+    public SalesReportDTO getDailyReport() {
+        OffsetDateTime start = OffsetDateTime.now()
+                .toLocalDate()
+                .atStartOfDay()
+                .atOffset(OffsetDateTime.now().getOffset());
+
+        OffsetDateTime end = start.plusDays(1);
+
+        return getReportByRange(start, end);
+    }
+
+    //Reporte semanal
+    public SalesReportDTO getWeeklyReport() {
+        OffsetDateTime end = OffsetDateTime.now();
+        OffsetDateTime start = end.minusDays(7);
+
+        return getReportByRange(start, end);
     }
 }

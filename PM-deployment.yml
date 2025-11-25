@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: PM-app
+spec:
+  replicas: 2
+  selector: 
+    matchLabels:
+      app: PM
+  template:
+    metadata:
+      labels:
+        app: PM
+    spec:
+      containers:
+        - name: PM-app
+          image: PM-app:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8089
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://ep-billowing-bush-adcebu8v-pooler.c-2.us-east-1.aws.neon.tech:5432/neondb?sslmode=require"
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_USER
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_PASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lab3-service
+spec:
+  ports:
+    - port: 8089
+      targetPort: 8089
+  selector:
+    app: lab3
+  type: LoadBalancer

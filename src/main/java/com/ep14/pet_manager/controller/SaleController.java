@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.ep14.pet_manager.dto.SaleDTO;
 import com.ep14.pet_manager.dto.SalesReportDTO;
 import com.ep14.pet_manager.service.ReportExportService;
@@ -24,7 +23,6 @@ import com.ep14.pet_manager.service.SaleService;
 @RestController
 @RequestMapping("/api/sales")
 public class SaleController {
-
     private final SaleService saleService;
     private final ReportExportService reportExportService;
 
@@ -65,7 +63,6 @@ public class SaleController {
             @RequestParam(required = false) String startDate,
             @RequestParam(required = false) String endDate,
             @RequestParam(required = false) Long saleId) {
-
         List<SaleDTO> sales = saleService.getAllSalesFiltered(userId, startDate, endDate, saleId);
         return ResponseEntity.ok(sales);
     }

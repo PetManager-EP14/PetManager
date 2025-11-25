@@ -1,9 +1,7 @@
 package com.ep14.pet_manager.repository;
-
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,14 +12,15 @@ import com.ep14.pet_manager.entity.Sale;
 
 @Repository
 public interface SaleRepository extends JpaRepository<Sale, Long> {
+
     List<Sale> findByUser_UserId(UUID userId);
 
     List<Sale> findByDateBetween(OffsetDateTime start, OffsetDateTime end);
 
     @Query("SELECT s FROM Sale s WHERE s.user.userId = :userId AND s.date BETWEEN :start AND :end")
     List<Sale> findByUserAndDateRange(@Param("userId") UUID userId,
-                                    @Param("start") OffsetDateTime start,
-                                    @Param("end") OffsetDateTime end);
+                                      @Param("start") OffsetDateTime start,
+                                      @Param("end") OffsetDateTime end);
 
     @Query("""
     SELECT new com.ep14.pet_manager.dto.SalesReportDetailDTO(
@@ -40,4 +39,7 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
             @Param("start") OffsetDateTime start,
             @Param("end") OffsetDateTime end);
 
+    // NUEVO MÉTODO CORREGIDO: Carga la Venta, sus Detalles y el Producto asociado en una sola consulta
+    @Query("SELECT s FROM Sale s JOIN FETCH s.saleDetails sd JOIN FETCH sd.product")
+    List<Sale> findAllWithDetailsAndProduct();
 }

@@ -1,7 +1,6 @@
 package com.ep14.pet_manager.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -14,12 +13,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.ep14.pet_manager.assembler.NotificationModelAssembler;
 import com.ep14.pet_manager.entity.Sale;
 import com.ep14.pet_manager.entity.SaleNotification;
 import com.ep14.pet_manager.service.NotificationService;
@@ -29,15 +25,12 @@ class NotificationControllerTest {
     @Mock
     private NotificationService notificationService;
 
-    @Mock
-    private NotificationModelAssembler assembler;
-
     private NotificationController notificationController;
 
     @BeforeEach
     void setup() {
         MockitoAnnotations.openMocks(this);
-        notificationController = new NotificationController(notificationService, assembler);
+        notificationController = new NotificationController(notificationService);
     }
 
     // 1. Obtener notificaciones por venta - retorna lista de notificaciones
@@ -66,21 +59,22 @@ class NotificationControllerTest {
             OffsetDateTime.now()
         );
 
+        List<SaleNotification> expectedNotifications = Arrays.asList(notification1, notification2);
+
         // Configurar mock
-        when(assembler.toCollectionModel(any()))
-            .thenReturn(CollectionModel.of(List.of(
-                EntityModel.of(notification1),
-                EntityModel.of(notification2)
-            )));
+        when(notificationService.getNotificationsBySale(saleId))
+            .thenReturn(expectedNotifications);
 
         // Ejecutar
-        ResponseEntity<CollectionModel<EntityModel<SaleNotification>>> response = 
+        ResponseEntity<List<SaleNotification>> response = 
             notificationController.getNotificationsBySale(saleId);
 
         // Verificar
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getContent()).hasSize(2);
+        assertThat(response.getBody()).hasSize(2);
+        assertThat(response.getBody().get(0).getSaleNotificationId()).isEqualTo(1L);
+        assertThat(response.getBody().get(1).getSaleNotificationId()).isEqualTo(2L);
         
         verify(notificationService).getNotificationsBySale(saleId);
     }
@@ -95,16 +89,14 @@ class NotificationControllerTest {
         when(notificationService.getNotificationsBySale(saleId))
             .thenReturn(Collections.emptyList());
 
-        when(assembler.toCollectionModel(any())).thenReturn(CollectionModel.empty());
-
         // Ejecutar
-        ResponseEntity<CollectionModel<EntityModel<SaleNotification>>> response = 
+        ResponseEntity<List<SaleNotification>> response = 
             notificationController.getNotificationsBySale(saleId);
 
         // Verificar
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getContent()).isEmpty();
+        assertThat(response.getBody()).isEmpty();
         
         verify(notificationService).getNotificationsBySale(saleId);
     }
@@ -139,18 +131,17 @@ class NotificationControllerTest {
         // Configurar mock
         when(notificationService.getNotificationsByType(SaleNotification.type.HIGH_VOLUMEN))
             .thenReturn(expectedNotifications);
-        
-        when(assembler.toCollectionModel(any()))
-            .thenReturn(CollectionModel.of(List.of(EntityModel.of(notification1), EntityModel.of(notification2))));
 
         // Ejecutar
-        ResponseEntity<CollectionModel<EntityModel<SaleNotification>>> response = 
+        ResponseEntity<List<SaleNotification>> response = 
             notificationController.getNotificationsByType(SaleNotification.type.HIGH_VOLUMEN);
 
         // Verificar
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getContent()).hasSize(2);
+        assertThat(response.getBody()).hasSize(2);
+        assertThat(response.getBody().get(0).getType()).isEqualTo(SaleNotification.type.HIGH_VOLUMEN);
+        assertThat(response.getBody().get(1).getType()).isEqualTo(SaleNotification.type.HIGH_VOLUMEN);
         
         verify(notificationService).getNotificationsByType(SaleNotification.type.HIGH_VOLUMEN);
     }
@@ -176,18 +167,16 @@ class NotificationControllerTest {
         // Configurar mock
         when(notificationService.getNotificationsByType(SaleNotification.type.HIGH_ROTATION))
             .thenReturn(expectedNotifications);
-        
-        when(assembler.toCollectionModel(any()))
-            .thenReturn(CollectionModel.of(List.of(EntityModel.of(notification))));
 
         // Ejecutar
-        ResponseEntity<CollectionModel<EntityModel<SaleNotification>>> response = 
+        ResponseEntity<List<SaleNotification>> response = 
             notificationController.getNotificationsByType(SaleNotification.type.HIGH_ROTATION);
 
         // Verificar
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getContent()).hasSize(1);
+        assertThat(response.getBody()).hasSize(1);
+        assertThat(response.getBody().get(0).getType()).isEqualTo(SaleNotification.type.HIGH_ROTATION);
         
         verify(notificationService).getNotificationsByType(SaleNotification.type.HIGH_ROTATION);
     }
@@ -213,18 +202,16 @@ class NotificationControllerTest {
         // Configurar mock
         when(notificationService.getNotificationsByType(SaleNotification.type.HIGH_VOLUMEN))
             .thenReturn(expectedNotifications);
-        
-        when(assembler.toCollectionModel(any()))
-            .thenReturn(CollectionModel.of(List.of(EntityModel.of(notification))));
 
         // Ejecutar con tipo null
-        ResponseEntity<CollectionModel<EntityModel<SaleNotification>>> response = 
+        ResponseEntity<List<SaleNotification>> response = 
             notificationController.getNotificationsByType(null);
 
         // Verificar
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getContent()).hasSize(1);
+        assertThat(response.getBody()).hasSize(1);
+        assertThat(response.getBody().get(0).getType()).isEqualTo(SaleNotification.type.HIGH_VOLUMEN);
         
         verify(notificationService).getNotificationsByType(SaleNotification.type.HIGH_VOLUMEN);
     }
@@ -235,18 +222,15 @@ class NotificationControllerTest {
         // Configurar mock
         when(notificationService.getNotificationsByType(SaleNotification.type.ANOTHER))
             .thenReturn(Collections.emptyList());
-        
-        when(assembler.toCollectionModel(any()))
-            .thenReturn(CollectionModel.empty());
 
         // Ejecutar
-        ResponseEntity<CollectionModel<EntityModel<SaleNotification>>> response = 
+        ResponseEntity<List<SaleNotification>> response = 
             notificationController.getNotificationsByType(SaleNotification.type.ANOTHER);
 
         // Verificar
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getContent()).isEmpty();
+        assertThat(response.getBody()).isEmpty();
         
         verify(notificationService).getNotificationsByType(SaleNotification.type.ANOTHER);
     }
@@ -292,21 +276,17 @@ class NotificationControllerTest {
         // Configurar mock
         when(notificationService.getNotificationsBySale(saleId))
             .thenReturn(expectedNotifications);
-        
-        when(assembler.toCollectionModel(any()))
-            .thenReturn(CollectionModel.of(List.of(
-                EntityModel.of(emailNotification),
-                EntityModel.of(smsNotification),
-                EntityModel.of(pushNotification)
-            )));
 
         // Ejecutar
-        ResponseEntity<CollectionModel<EntityModel<SaleNotification>>> response = 
+        ResponseEntity<List<SaleNotification>> response = 
             notificationController.getNotificationsBySale(saleId);
 
         // Verificar
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getContent()).hasSize(3);
+        assertThat(response.getBody()).hasSize(3);
+        assertThat(response.getBody().get(0).getMedia()).isEqualTo(SaleNotification.media.EMAIL);
+        assertThat(response.getBody().get(1).getMedia()).isEqualTo(SaleNotification.media.SMS);
+        assertThat(response.getBody().get(2).getMedia()).isEqualTo(SaleNotification.media.PUSH);
     }
 }

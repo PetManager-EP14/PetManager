@@ -20,11 +20,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 
-import com.ep14.pet_manager.assembler.PurchaseModelAssembler;
 import com.ep14.pet_manager.dto.PurchaseDTO;
 import com.ep14.pet_manager.service.PurchaseService;
 
@@ -32,9 +29,6 @@ class PurchaseControllerTest {
 
     @Mock
     private PurchaseService purchaseService;
-
-    @Mock
-    private PurchaseModelAssembler assembler;
 
     @InjectMocks
     private PurchaseController controller;
@@ -57,16 +51,11 @@ class PurchaseControllerTest {
     void getAllPurchases_shouldReturnOkWithList() {
         when(purchaseService.getAllPurchases()).thenReturn(List.of(purchaseDTO));
 
-        when(assembler.toCollectionModel(any()))
-            .thenReturn(CollectionModel.of(List.of(
-                EntityModel.of(purchaseDTO)
-            )));
-
-        ResponseEntity<CollectionModel<EntityModel<PurchaseDTO>>> response = controller.getAllPurchases();
+        ResponseEntity<List<PurchaseDTO>> response = controller.getAllPurchases();
 
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getContent()).isNotEmpty();
+        assertThat(response.getBody()).isNotEmpty();
         verify(purchaseService).getAllPurchases();
     }
 
@@ -74,23 +63,17 @@ class PurchaseControllerTest {
     void getPurchaseById_shouldReturnOk() {
         when(purchaseService.getPurchaseById(1L)).thenReturn(purchaseDTO);
 
-        when(assembler.toModel(any(PurchaseDTO.class)))
-            .thenReturn(EntityModel.of(purchaseDTO));
-
-        ResponseEntity<EntityModel<PurchaseDTO>> response = controller.getPurchaseById(1L);
+        ResponseEntity<PurchaseDTO> response = controller.getPurchaseById(1L);
 
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getContent().getId()).isEqualTo(1L);
+        assertThat(response.getBody().getId()).isEqualTo(1L);
         verify(purchaseService).getPurchaseById(1L);
     }
 
     @Test
     void createPurchase_shouldReturnOk_whenStatusIsNotNull() {
         when(purchaseService.createPurchase(any(PurchaseDTO.class))).thenReturn(purchaseDTO);
-
-        when(assembler.toModel(any(PurchaseDTO.class)))
-            .thenReturn(EntityModel.of(purchaseDTO));
 
         ResponseEntity<?> response = controller.createPurchase(purchaseDTO);
 
@@ -155,10 +138,7 @@ class PurchaseControllerTest {
     void updatePurchase_shouldReturnOk() {
         when(purchaseService.updatePurchase(anyLong(), any(PurchaseDTO.class))).thenReturn(purchaseDTO);
 
-        when(assembler.toModel(any(PurchaseDTO.class)))
-            .thenReturn(EntityModel.of(purchaseDTO));
-
-        ResponseEntity<EntityModel<PurchaseDTO>> response = controller.updatePurchase(1L, purchaseDTO);
+        ResponseEntity<PurchaseDTO> response = controller.updatePurchase(1L, purchaseDTO);
 
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         assertThat(response.getBody()).isNotNull();

@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.ep14.pet_manager.assembler.SaleModelAssembler;
 import com.ep14.pet_manager.dto.SaleDTO;
 import com.ep14.pet_manager.dto.SalesReportDTO;
 import com.ep14.pet_manager.service.ReportExportService;
@@ -28,11 +24,6 @@ import com.ep14.pet_manager.service.SaleService;
 @RequestMapping("/api/sales")
 public class SaleController {
     private final SaleService saleService;
-    private final SaleModelAssembler assembler;
-
-    public SaleController(SaleService saleService, SaleModelAssembler assembler) {
-        this.saleService = saleService;
-        this.assembler = assembler;
     private final ReportExportService reportExportService;
 
     public SaleController(SaleService saleService, ReportExportService reportExportService) {
@@ -42,41 +33,38 @@ public class SaleController {
 
     @PreAuthorize("hasAuthority('sale.create')")
     @PostMapping
-    public ResponseEntity<EntityModel<SaleDTO>> registerSale(@RequestBody SaleDTO saleDTO) {
-        SaleDTO created = saleService.registerSale(saleDTO);
-        return ResponseEntity.ok(assembler.toModel(created));
+    public ResponseEntity<SaleDTO> registerSale(@RequestBody SaleDTO saleDTO) {
+        return ResponseEntity.ok(saleService.registerSale(saleDTO));
     }
 
     @PreAuthorize("hasAuthority('sale.read')")
     @GetMapping
-    public ResponseEntity<CollectionModel<EntityModel<SaleDTO>>> getAllSales() {
-        List<SaleDTO> sales = saleService.getAllSales();
-        return ResponseEntity.ok(assembler.toCollectionModel(sales));
+    public ResponseEntity<List<SaleDTO>> getAllSales() {
+        return ResponseEntity.ok(saleService.getAllSales());
     }
 
     @PreAuthorize("hasAuthority('sale.read')")
     @GetMapping("/{id}")
-    public ResponseEntity<EntityModel<SaleDTO>> getSaleById(@PathVariable Long id) {
-        SaleDTO sale = saleService.getSaleById(id);
-        return ResponseEntity.ok(assembler.toModel(sale));
+    public ResponseEntity<SaleDTO> getSaleById(@PathVariable Long id) {
+        return ResponseEntity.ok(saleService.getSaleById(id));
     }
 
     @GetMapping("/user/{userId}")
     @PreAuthorize("hasAuthority('sale.read')")
-    public ResponseEntity<CollectionModel<EntityModel<SaleDTO>>> getSalesByUser(@PathVariable UUID userId) {
+    public ResponseEntity<List<SaleDTO>> getSalesByUser(@PathVariable UUID userId) {
         List<SaleDTO> sales = saleService.getSalesByUser(userId);
-        return ResponseEntity.ok(assembler.toCollectionModel(sales));
+        return ResponseEntity.ok(sales);
     }
 
     @GetMapping("/admin")
     @PreAuthorize("hasAuthority('sale.read')")
-    public ResponseEntity<CollectionModel<EntityModel<SaleDTO>>> getAllSalesFiltered(
+    public ResponseEntity<List<SaleDTO>> getAllSalesFiltered(
             @RequestParam(required = false) UUID userId,
             @RequestParam(required = false) String startDate,
             @RequestParam(required = false) String endDate,
             @RequestParam(required = false) Long saleId) {
         List<SaleDTO> sales = saleService.getAllSalesFiltered(userId, startDate, endDate, saleId);
-        return ResponseEntity.ok(assembler.toCollectionModel(sales));
+        return ResponseEntity.ok(sales);
     }
 
     @PreAuthorize("hasAuthority('sale.read')")

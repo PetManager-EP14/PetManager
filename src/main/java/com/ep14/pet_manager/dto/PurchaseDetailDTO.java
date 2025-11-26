@@ -1,21 +1,30 @@
 package com.ep14.pet_manager.dto;
 
 import java.math.BigDecimal;
+import java.io.Serializable;
+// Se recomienda el uso de camelCase para variables y clases [3-5].
 
-public class SaleDetailDTO {
-    private Long saleDetailId;
+public class PurchaseDetailDTO implements Serializable {
+
+    private Long purchaseDetailId;
     private Long productId;
+    // Cantidad comprada
     private BigDecimal amount;
+    // Nombre del producto (mapeado desde Product.name)
     private String productName;
+    // Precio unitario de compra (mapeado desde Product.priceShopping)
     private BigDecimal unitPrice;
 
-    // Getters & Setters
-    public Long getSaleDetailId() {
-        return saleDetailId;
+    public PurchaseDetailDTO() {
     }
 
-    public void setSaleDetailId(Long saleDetailId) {
-        this.saleDetailId = saleDetailId;
+    // Getters y Setters
+    public Long getPurchaseDetailId() {
+        return purchaseDetailId;
+    }
+
+    public void setPurchaseDetailId(Long purchaseDetailId) {
+        this.purchaseDetailId = purchaseDetailId;
     }
 
     public Long getProductId() {
@@ -34,7 +43,7 @@ public class SaleDetailDTO {
         this.amount = amount;
     }
 
-        public String getProductName() {
+    public String getProductName() {
         return productName;
     }
 
@@ -42,12 +51,11 @@ public class SaleDetailDTO {
         this.productName = productName;
     }
 
-        public BigDecimal getUnitPrice() {
+    public BigDecimal getUnitPrice() {
         return unitPrice;
     }
 
     public void setUnitPrice(BigDecimal unitPrice) {
         this.unitPrice = unitPrice;
     }
-
 }

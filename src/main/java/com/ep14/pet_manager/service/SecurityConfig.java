@@ -49,7 +49,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // 👈 Habilita CORS global
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/actuator/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/actuator/**", "/explorer/**", "/browser/**", "/", "/api").permitAll()
                         .anyRequest().authenticated())
                 .userDetailsService(usersDetailsService)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

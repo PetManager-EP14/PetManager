@@ -6,7 +6,6 @@ import com.ep14.pet_manager.dto.SaleDetailDTO;
 import com.ep14.pet_manager.entity.Product;
 import com.ep14.pet_manager.entity.Sale;
 import com.ep14.pet_manager.entity.SaleDetails;
-import com.ep14.pet_manager.entity.User; 
 
 @Mapper(componentModel = "spring")
 public interface SaleMapper {

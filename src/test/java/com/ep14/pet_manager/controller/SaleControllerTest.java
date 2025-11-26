@@ -12,8 +12,11 @@ import org.mockito.Mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 
+import com.ep14.pet_manager.assembler.SaleModelAssembler;
 import com.ep14.pet_manager.dto.SaleDTO;
 import com.ep14.pet_manager.service.SaleService;
 
@@ -21,6 +24,9 @@ class SaleControllerTest {
 
     @Mock
     private SaleService saleService;
+
+    @Mock
+    private SaleModelAssembler assembler;
 
     @InjectMocks
     private SaleController controller;
@@ -41,7 +47,10 @@ class SaleControllerTest {
     void registerSale_shouldReturnOk() {
         when(saleService.registerSale(any(SaleDTO.class))).thenReturn(saleDTO);
 
-        ResponseEntity<SaleDTO> response = controller.registerSale(saleDTO);
+        when(assembler.toModel(any(SaleDTO.class)))
+            .thenReturn(EntityModel.of(saleDTO));
+
+        ResponseEntity<EntityModel<SaleDTO>> response = controller.registerSale(saleDTO);
 
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         assertThat(response.getBody()).isNotNull();
@@ -66,10 +75,15 @@ class SaleControllerTest {
     void getAllSales_shouldReturnList() {
         when(saleService.getAllSales()).thenReturn(List.of(saleDTO));
 
-        ResponseEntity<List<SaleDTO>> response = controller.getAllSales();
+        when(assembler.toCollectionModel(any()))
+            .thenReturn(CollectionModel.of(List.of(
+                EntityModel.of(saleDTO)
+            )));
+
+        ResponseEntity<CollectionModel<EntityModel<SaleDTO>>> response = controller.getAllSales();
 
         assertThat(response.getStatusCode().value()).isEqualTo(200);
-        assertThat(response.getBody()).isNotEmpty();
+        assertThat(response.getBody().getContent()).isNotEmpty();
         verify(saleService).getAllSales();
     }
 
@@ -78,10 +92,15 @@ class SaleControllerTest {
     void getSalesByUser_shouldReturnOk() {
         when(saleService.getSalesByUser(any(UUID.class))).thenReturn(List.of(saleDTO));
 
-        ResponseEntity<List<SaleDTO>> response = controller.getSalesByUser(userId);
+        when(assembler.toCollectionModel(any()))
+            .thenReturn(CollectionModel.of(List.of(
+                EntityModel.of(saleDTO)
+            )));
+
+        ResponseEntity<CollectionModel<EntityModel<SaleDTO>>> response = controller.getSalesByUser(userId);
 
         assertThat(response.getStatusCode().value()).isEqualTo(200);
-        assertThat(response.getBody()).isNotEmpty();
+        assertThat(response.getBody().getContent()).isNotEmpty();
         verify(saleService).getSalesByUser(userId);
     }
 
@@ -90,7 +109,10 @@ class SaleControllerTest {
     void getSaleById_shouldReturnOk() {
         when(saleService.getSaleById(1L)).thenReturn(saleDTO);
 
-        ResponseEntity<SaleDTO> response = controller.getSaleById(1L);
+        when(assembler.toModel(any(SaleDTO.class)))
+            .thenReturn(EntityModel.of(saleDTO));
+
+        ResponseEntity<EntityModel<SaleDTO>> response = controller.getSaleById(1L);
 
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         assertThat(response.getBody()).isNotNull();
@@ -101,9 +123,14 @@ class SaleControllerTest {
     @Test
     void getAllSalesFiltered_shouldReturnOk() {
         when(saleService.getAllSalesFiltered(any(), any(), any(), any()))
-                .thenReturn(List.of(saleDTO));
+            .thenReturn(List.of(saleDTO));
+        
+        when(assembler.toCollectionModel(any()))
+            .thenReturn(CollectionModel.of(List.of(
+                EntityModel.of(saleDTO)
+            )));
 
-        ResponseEntity<List<SaleDTO>> response = controller.getAllSalesFiltered(
+        ResponseEntity<CollectionModel<EntityModel<SaleDTO>>> response = controller.getAllSalesFiltered(
                 userId,
                 "2025-10-01T00:00:00Z",
                 "2025-10-19T00:00:00Z",
@@ -111,7 +138,7 @@ class SaleControllerTest {
         );
 
         assertThat(response.getStatusCode().value()).isEqualTo(200);
-        assertThat(response.getBody()).isNotEmpty();
+        assertThat(response.getBody().getContent()).isNotEmpty();
         verify(saleService).getAllSalesFiltered(any(), any(), any(), any());
     }
 }

@@ -143,7 +143,7 @@ class SaleServiceTest {
         List<SaleDTO> result = service.getAllSales(); 
 
         assertThat(result).isNotEmpty(); 
-        verify(saleRepo).findAll(); 
+        verify(saleRepo).findAllWithDetailsAndProduct(); 
     }
 
     // Caso 6: obtener venta por ID existente

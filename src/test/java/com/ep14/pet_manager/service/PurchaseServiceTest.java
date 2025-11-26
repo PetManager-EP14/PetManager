@@ -54,13 +54,13 @@ class PurchaseServiceTest {
         Purchase purchase = new Purchase();
         PurchaseDTO dto = new PurchaseDTO();
 
-        when(purchaseRepository.findAll()).thenReturn(List.of(purchase));
+        when(purchaseRepository.findAllWithDetailsAndProduct()).thenReturn(List.of(purchase));
         when(purchaseMapper.toDTO(purchase)).thenReturn(dto);
 
         List<PurchaseDTO> result = purchaseService.getAllPurchases();
 
         assertThat(result).hasSize(1).contains(dto);
-        verify(purchaseRepository).findAll();
+        verify(purchaseRepository).findAllWithDetailsAndProduct();
         verify(purchaseMapper).toDTO(purchase);
     }
 
@@ -165,6 +165,15 @@ class PurchaseServiceTest {
         Purchase existingPurchase = new Purchase();
         existingPurchase.setPurchaseId(1L);
 
+        Supplier existingSupplier = new Supplier();
+        existingSupplier.setSupplierId(20L);
+        existingPurchase.setSupplier(existingSupplier);
+
+        User existingUser = new User();
+        existingUser.setUserId(userId);
+        existingPurchase.setUser(existingUser);
+        existingPurchase.setCreatedAt(OffsetDateTime.now().minusDays(1));
+
         PurchaseDTO dto = new PurchaseDTO();
         dto.setDate(OffsetDateTime.now());
         dto.setStatus(PurchaseDTO.StatusShopping.REGISTERED);
@@ -172,26 +181,25 @@ class PurchaseServiceTest {
         dto.setSupplierId(20L);
         dto.setUserId(userId);
 
+        Purchase updatedEntity = new Purchase();
+        updatedEntity.setSupplier(existingSupplier);
+
         Supplier supplier = new Supplier();
         supplier.setSupplierId(20L);
-
-        User user = new User();
-        user.setUserId(userId);
 
         PurchaseDTO responseDTO = new PurchaseDTO();
         responseDTO.setId(1L);
         responseDTO.setStatus(PurchaseDTO.StatusShopping.REGISTERED);
 
         when(purchaseRepository.findById(1L)).thenReturn(Optional.of(existingPurchase));
+        when(purchaseMapper.toEntity(dto)).thenReturn(updatedEntity);
         when(supplierRepository.findById(20L)).thenReturn(Optional.of(supplier));
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(purchaseMapper.mapStatus(PurchaseDTO.StatusShopping.REGISTERED)).thenReturn(Purchase.statusShopping.REGISTERED);
-        when(purchaseRepository.save(existingPurchase)).thenReturn(existingPurchase);
+        when(purchaseRepository.save(any(Purchase.class))).thenReturn(existingPurchase);
         when(purchaseMapper.toDTO(existingPurchase)).thenReturn(responseDTO);
 
         PurchaseDTO result = purchaseService.updatePurchase(1L, dto);
 
-        verify(purchaseRepository).save(existingPurchase);
+        verify(purchaseRepository).save(any(Purchase.class));
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(1L);
     }

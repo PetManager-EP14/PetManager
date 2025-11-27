@@ -24,7 +24,8 @@ public interface PurchaseMapper {
         @Mapping(source = "createdAt", target = "createdAt"),
         @Mapping(source = "updatedAt", target = "updatedAt"),
         // Mapeo CLAVE: Transfiere la lista de entidades de detalles a la lista 'details' del DTO
-        @Mapping(source = "purchaseDetails", target = "details") 
+        @Mapping(source = "purchaseDetails", target = "details"),
+        @Mapping(target = "shoppingDetailIds", ignore = true)
     })
     PurchaseDTO toDTO(Purchase purchase);
 

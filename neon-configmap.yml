@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: neon-config
+data:
+  SPRING_DATASOURCE_URL: "jdbc:postgresql://ep-billowing-bush-adcebu8v-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+  SPRING_DATASOURCE_USERNAME: "neondb_owner"
